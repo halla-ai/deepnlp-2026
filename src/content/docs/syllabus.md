@@ -75,27 +75,32 @@ description: 딥러닝자연어처리 (131307379A) 2026-2
 
 부교재
 
+- **_Reinforcement Learning from Human Feedback_** - Nathan Lambert. **arXiv v1 2025-04-16 공개, v11 2026-08-03 개정, 239쪽**
+  - 학생 접근은 계속 갱신되는 [웹 교재](https://rlhfbook.com/) 우선, 인용·검증은 [arXiv v11](https://arxiv.org/abs/2504.12501v11)로 고정. [공식 강의](https://rlhfbook.com/course)는 선택 학습자료
+  - **전체 239쪽 일괄 지정 아님.** 1·10·11주차 필수 범위와 1·5·12·13주차 선택 범위만 활용
 - **_NLP with Transformers_ 실습 노트북** - Colab 대응 12개. 무료. 책 본문은 별도 유료 저작물이다
 - **Hugging Face Course** 11장·12장. 영문
 
 ### 주차별 읽기 범위
 
-FoLM = Foundations of LLM.
+FoLM = Foundations of LLM, RLHF Book = Reinforcement Learning from Human Feedback.
 
 | 주 | 읽기 |
 |---|---|
-| 1 | SLP3 ch8 + 상태공간모델 논문(Mamba·RWKV·Jamba) |
+| 1 | SLP3 ch8 + 상태공간모델 논문(Mamba·RWKV·Jamba) + **필수: RLHF Book ch1 Introduction; 선택: ch2 A Tiny History of RLHF, ch3 Training Overview** |
 | 2 | SLP3 ch6 Neural Networks |
 | 3 | SLP3 ch10 + FoLM 4장 + LoRA·QLoRA 원전 |
 | 4 | SLP3 ch7 + FoLM 3장 Prompting |
-| 5 | SLP3 ch4.10, ch4.11, ch11.6 + pass@k 원전 |
+| 5 | SLP3 ch4.10, ch4.11, ch11.6 + pass@k 원전 + RLHF Book ch16 Evaluation(선택) |
 | 6 | CLIP·Flamingo·LLaVA 논문 |
 | 7 | FoLM 2장·5장 + Lost in the Middle |
 | 9 | SLP3 ch11 Retrieval-based Models |
-| 10 | SLP3 ch10.1~10.3 + FoLM 4장 + 정렬 계보 논문 |
-| 11 | SLP3 ch10.4 + FoLM 5장 + 과정 감독 논문 |
+| 10 | **필수: RLHF Book ch3 Training Overview, ch5 Reward Modeling, ch6 Reinforcement Learning §6.2.8 Group Relative Policy Optimization(GRPO), ch8 Direct-Alignment Algorithms** + SLP3 ch10.1~10.3 + FoLM 4장 + 정렬 계보 논문 |
+| 11 | **필수: RLHF Book ch5 Reward Modeling §5.5 Outcome Reward Models·§5.6 Process Reward Models, ch7 Reasoning and Inference-Time Scaling** + SLP3 ch10.4 + FoLM 5장 + 과정 감독 논문 |
+| 12 | EU AI Act 원문 + **택1 탐색 읽기: RLHF Book ch10 The Nature of Preferences, ch11 Preference Data, ch14 Over-Optimization** |
+| 13 | 서지 논문 + **택1 탐색 읽기: RLHF Book ch12 Synthetic Data & Distillation, ch13 Tool Use and Function Calling, ch15 Regularization, ch16 Evaluation** |
 
-8·12·13·14·15주차는 지정 장이 없다. 논문과 공식 문서로 진행한다.
+8·14·15주차는 신규 지정 장 없음. 12·13주차 RLHF Book 범위는 선택 읽기이며, 논문과 공식 문서 중심 진행.
 
 ## 실습 환경
 
