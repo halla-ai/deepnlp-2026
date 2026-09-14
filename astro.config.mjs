@@ -4,6 +4,9 @@ import starlight from '@astrojs/starlight';
 
 export default defineConfig({
   site: 'https://deepnlp-2026.halla.ai',
+  // Astro 6.4 leaves markdown.gfm undefined, and @astrojs/mdx 5.0.6 only adds remark-gfm
+  // when it is truthy, so tables in .mdx pages render as raw pipes without this.
+  markdown: { gfm: true },
   integrations: [
     starlight({
       title: '딥러닝 NLP 2026',
