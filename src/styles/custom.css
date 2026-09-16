@@ -1424,3 +1424,56 @@ body {
   .sdlc-panels { width: 100%; }
   .sdlc-commands { grid-template-columns: 1fr; }
 }
+
+/* ─── Focus mode — hide both sidebars, center the content column ─────────── */
+
+.main-frame {
+  transition: padding-inline-start 0.25s ease;
+}
+
+@media (min-width: 50rem) {
+  :root.focus-mode {
+    --sl-content-inline-start: 0rem;
+  }
+
+  :root.focus-mode .sidebar-pane {
+    visibility: hidden;
+  }
+}
+
+@media (min-width: 72rem) {
+  :root.focus-mode .right-sidebar-container {
+    display: none;
+  }
+
+  :root.focus-mode .main-pane {
+    width: 100%;
+    --sl-content-margin-inline: auto;
+  }
+}
+
+/* ─── Sister course link (header) ────────────────────────────────────────── */
+
+.sister-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 9999px;
+  color: var(--sl-color-gray-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.sister-link:hover {
+  color: var(--sl-color-accent-high);
+  border-color: var(--sl-color-accent);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+@media (max-width: 50rem) {
+  .sister-link { display: none; }
+}
