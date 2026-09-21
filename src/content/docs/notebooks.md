@@ -37,6 +37,12 @@ TODO를 건드리지 않아도 노트북은 처음부터 끝까지 돌아간다.
 | 14 | 최종 프로젝트 개발 및 운영 전환 | 준비 중 |
 | 15 | 산업 응용 사례 분석 및 최종 발표 | 없음 |
 
+## 특강
+
+| 주제 | 노트북 |
+|---|---|
+| [Jev와 LLM: 결정 모델과 생성 모델](/topics/jev-vs-llm) | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/topic-jev-vs-llm.ipynb) |
+
 ## 막혔을 때
 
 - 런타임이 끊기면 상단 메뉴에서 다시 연결하고 처음 셀부터 실행한다

@@ -53,6 +53,12 @@ export default defineConfig({
           ],
         },
         {
+          label: '특강',
+          items: [
+            { label: 'Jev와 LLM: 결정 모델과 생성 모델', link: '/topics/jev-vs-llm' },
+          ],
+        },
+        {
           label: '참고자료',
           collapsed: true,
           items: [
