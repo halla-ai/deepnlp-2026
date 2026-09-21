@@ -1,0 +1,150 @@
+---
+/**
+ * Chain-of-Thought 단계 전개 애니메이션.
+ * 질문에서 출발해 1~3단계가 차례로 켜지고 정답 상자가 빛나는 순환.
+ * prefers-reduced-motion이면 전 단계가 켜진 최종 상태로 정지 표시.
+ */
+---
+
+<cot-steps class="cot-steps">
+  <div class="cot-frame">
+    <div class="cot-lane">
+      <div class="cot-box cot-q" data-step="0">
+        <strong>질문</strong>
+        <span>귤 3개에 각 1,200원,<br />2,000원을 낼 때<br />거스름돈은?</span>
+      </div>
+      <span class="cot-arrow">→</span>
+      <div class="cot-box" data-step="1">
+        <strong>1단계</strong>
+        <span>1,200 x 3<br />= 3,600원</span>
+      </div>
+      <span class="cot-arrow">→</span>
+      <div class="cot-box" data-step="2">
+        <strong>2단계</strong>
+        <span>낸 돈 2,000원과<br />비교</span>
+      </div>
+      <span class="cot-arrow">→</span>
+      <div class="cot-box" data-step="3">
+        <strong>3단계</strong>
+        <span>부족한<br />1,600원 확인</span>
+      </div>
+      <span class="cot-arrow">→</span>
+      <div class="cot-box cot-answer" data-step="4">
+        <strong>답</strong>
+        <span>거스름돈은 없고<br />1,600원이 부족하다</span>
+        <span class="cot-check" aria-hidden="true">✓</span>
+      </div>
+    </div>
+    <p class="cot-caption">중간 단계가 정답으로 가는 디딤돌 - 단계가 문맥에 남아 다음 계산을 돕는다</p>
+  </div>
+</cot-steps>
+
+<script>
+  class CotSteps extends HTMLElement {
+    timer: ReturnType<typeof setInterval> | undefined;
+
+    connectedCallback() {
+      const boxes = Array.from(this.querySelectorAll<HTMLElement>('.cot-box'));
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const last = boxes.length - 1;
+
+      const setPhase = (phase: number) => {
+        boxes.forEach((box) => {
+          const step = Number(box.dataset.step);
+          box.classList.toggle('cot-lit', step <= phase);
+          box.classList.toggle('cot-now', step === phase);
+        });
+      };
+
+      if (reduced) {
+        setPhase(last);
+        return;
+      }
+      let phase = 0;
+      setPhase(phase);
+      this.timer = setInterval(() => {
+        phase = phase >= last + 1 ? 0 : phase + 1; // 마지막 상태를 한 박자 쉬고 순환
+        setPhase(Math.min(phase, last));
+      }, 1400);
+    }
+
+    disconnectedCallback() {
+      if (this.timer) clearInterval(this.timer);
+    }
+  }
+  customElements.define('cot-steps', CotSteps);
+</script>
+
+<style>
+  .cot-steps {
+    display: block;
+    margin: 1rem 0;
+  }
+  .cot-frame {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    background: var(--sl-color-bg-nav);
+  }
+  .cot-lane {
+    display: flex;
+    align-items: stretch;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cot-box {
+    position: relative;
+    flex: 1 1 8rem;
+    max-width: 11rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    background: var(--sl-color-bg);
+    opacity: 0.35;
+    transform: translateY(2px);
+    transition: opacity 0.5s, transform 0.5s, border-color 0.5s, box-shadow 0.5s;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .cot-box strong {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--sl-color-gray-3);
+    margin-bottom: 0.15rem;
+  }
+  .cot-box.cot-lit {
+    opacity: 1;
+    transform: none;
+    border-color: var(--sl-color-accent);
+  }
+  .cot-box.cot-now {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sl-color-accent) 25%, transparent);
+  }
+  .cot-answer .cot-check {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.55rem;
+    color: var(--sl-color-green, #2f9e44);
+    font-weight: 800;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .cot-answer.cot-lit {
+    border-color: var(--sl-color-green, #2f9e44);
+  }
+  .cot-answer.cot-lit .cot-check {
+    opacity: 1;
+  }
+  .cot-arrow {
+    align-self: center;
+    color: var(--sl-color-gray-4);
+  }
+  .cot-caption {
+    margin: 0.75rem 0 0;
+    font-size: 0.8rem;
+    color: var(--sl-color-gray-3);
+    text-align: center;
+  }
+</style>
