@@ -3,44 +3,48 @@
  * judge 채점 실험 카드. 정답지를 judge 프롬프트에 넣느냐 마느냐를 토글로 바꾸면
  * 판정이 어떻게 뒤집히는지 보여 준다. 정답지가 없으면 judge는 근거의 "그럴듯함"만
  * 보고 오답을 통과시킨다(false acceptance). 정답지를 주면 뒤집히는데, 이는 judge가
- * 강해진 것이 아니라 정답이라는 외부 근거가 붙은 것임을 드러낸다.
+ * 강해진 것이 아니라 정답이라는 외부 근거가 붙은 것임을 드러낸다. 판정은 설명용 예시다.
  */
 const items = [
   {
     id: 'j1',
     query: '문의: 함덕해수욕장에 샤워실이 있나요?',
+    label: '시설',
     output: '분류: 시설 - 샤워실 유무를 묻는 시설 이용 문의다',
     gold: '시설',
-    why: { none: '질문, 근거, 라벨이 맞아 떨어진다', gold: '정답과 일치하고 근거도 충실하다' },
+    why: { none: '문의, 근거, 라벨이 서로 맞아떨어진다', gold: '정답과 일치하고 근거도 문의 내용을 짚는다' },
     verdict: { none: '정답', gold: '정답' },
   },
   {
     id: 'j2',
-    query: '문의: 성산일출봉 입장료는 얼마인가요?',
-    output: '분류: 요금 - 성인 입장료 5,000원으로 안내함',
+    query: '문의: 우도 왕복 배 삯이 얼마인가요?',
+    label: '요금',
+    output: '분류: 요금 - 뱃삯 금액을 묻는 문의다',
     gold: '요금',
-    why: { none: '요금 문의에 숫자로 답했다. 성실해 보인다', gold: '라벨은 맞지만 금액이 정답지와 다르다. 근거 확인 필요' },
-    verdict: { none: '정답', gold: '의심' },
+    why: { none: '요금을 묻는 문의에 요금 라벨. 모순이 없다', gold: '정답과 일치한다' },
+    verdict: { none: '정답', gold: '정답' },
   },
   {
     id: 'j3',
-    query: '문의: 제주공항 장기 주차장 요금은 하루에 얼마인가요?',
-    output: '분류: 주차 - 문의에 "주차장"이 있으므로 주차 분류다',
-    gold: '요금',
-    why: { none: '근거가 그럴듯하다. 문장에 모순이 없다', gold: '정답은 요금이다. 물은 것은 금액이다' },
+    query: '문의: 천지연폭포 주차장 근처에 화장실이 있나요?',
+    label: '주차',
+    output: '분류: 주차 - 문의에 "주차장"이 있으므로 주차 문의다',
+    gold: '시설',
+    why: { none: '근거가 문의의 단어를 그대로 인용한다. 문장에 모순이 없다', gold: '정답은 시설이다. 물은 것은 화장실이지 주차가 아니다' },
     verdict: { none: '정답', gold: '오답' },
   },
   {
     id: 'j4',
-    query: '문의: 제주공항에서 짐을 보관할 수 있나요?',
-    output: '분류: 기타',
+    query: '문의: 월정리해수욕장에 짐 보관함이 있나요?',
+    label: '주차',
+    output: '분류: 주차 - 방문객이 차에 짐을 두는 문제와 관련된 문의다',
     gold: '시설',
-    why: { none: '무난한 분류로 보인다. 반박할 근거가 없다', gold: '정답은 시설이다. 근거 없이 라벨만 던졌다' },
+    why: { none: '이야기가 자연스럽다. 반박할 근거가 프롬프트 안에 없다', gold: '정답은 시설이다. 근거는 문의에 없는 사정을 지어낸 것이다' },
     verdict: { none: '정답', gold: '오답' },
   },
 ];
 ---
-<div class="jl-wrap" data-items={JSON.stringify(items)}>
+<judge-lab class="jl-wrap not-content" data-items={JSON.stringify(items)}>
   <p class="jl-hint">토글을 바꿔 보세요. judge 프롬프트에 정답을 넣고 빼는 것만으로 판정이 달라집니다.</p>
   <div class="jl-toggle" role="group" aria-label="judge 프롬프트에 정답지 포함 여부">
     <button type="button" class="jl-mode" data-mode="none" aria-pressed="true">정답지 없이 채점</button>
@@ -51,51 +55,46 @@ const items = [
       <div class="jl-card" data-id={it.id}>
         <p class="jl-q">{it.query}</p>
         <p class="jl-out">{it.output}</p>
-        <p class="jl-gold">정답: <strong>{it.gold}</strong></p>
+        <p class="jl-gold">정답지: <strong>{it.gold}</strong></p>
         <div class="jl-verdict-row">
-          <span class="jl-badge">-</span>
-          <span class="jl-why"></span>
+          <span class="jl-badge good">{it.verdict.none}</span>
+          <span class="jl-why">{it.why.none}</span>
         </div>
       </div>
     ))}
   </div>
-  <p class="jl-note"></p>
-</div>
+  <p class="jl-note" aria-live="polite"></p>
+</judge-lab>
 
 <script>
   class JudgeLab extends HTMLElement {
     connectedCallback() {
-      const wrap = this;
-      const items = JSON.parse(wrap.dataset.items || '[]');
-      const modes = Array.from(wrap.querySelectorAll<HTMLElement>('.jl-mode'));
-      const badges = Array.from(wrap.querySelectorAll<HTMLElement>('.jl-badge'));
-      const whys = Array.from(wrap.querySelectorAll<HTMLElement>('.jl-why'));
-      const golds = Array.from(wrap.querySelectorAll<HTMLElement>('.jl-gold'));
-      const cards = Array.from(wrap.querySelectorAll<HTMLElement>('.jl-card'));
-      const note = wrap.querySelector<HTMLElement>('.jl-note');
+      const items = JSON.parse(this.dataset.items || '[]');
+      const modes = Array.from(this.querySelectorAll<HTMLElement>('.jl-mode'));
+      const badges = Array.from(this.querySelectorAll<HTMLElement>('.jl-badge'));
+      const whys = Array.from(this.querySelectorAll<HTMLElement>('.jl-why'));
+      const golds = Array.from(this.querySelectorAll<HTMLElement>('.jl-gold'));
+      const cards = Array.from(this.querySelectorAll<HTMLElement>('.jl-card'));
+      const note = this.querySelector<HTMLElement>('.jl-note');
       let mode = 'none';
 
       const render = () => {
         items.forEach((it: any, i: number) => {
           const v = it.verdict[mode] as string;
-          const w = it.why[mode] as string;
-          const badge = badges[i];
-          const good = v === '정답';
-          badge.textContent = v;
-          badge.classList.toggle('good', good);
-          badge.classList.toggle('bad', v === '오답');
-          badge.classList.toggle('warn', !good && v !== '오답');
-          if (whys[i]) whys[i].textContent = w;
-          if (golds[i]) golds[i].classList.toggle('show', mode === 'gold');
-          if (cards[i]) cards[i].classList.toggle('flipped', v !== it.verdict.none);
+          badges[i].textContent = v;
+          badges[i].classList.toggle('good', v === '정답');
+          badges[i].classList.toggle('bad', v !== '정답');
+          whys[i].textContent = it.why[mode];
+          golds[i].classList.toggle('show', mode === 'gold');
+          cards[i].classList.toggle('flipped', v !== it.verdict.none);
         });
         modes.forEach((m) => m.setAttribute('aria-pressed', String(m.dataset.mode === mode)));
-        const changed = items.filter((it: any) => it.verdict[mode] !== it.verdict.none).length;
-        const accepted = items.filter((it: any) => it.verdict.none === '정답' && it.verdict.gold !== '정답').length;
+        const accepted = items.filter((it: any) => it.verdict.none === '정답' && it.label !== it.gold).length;
+        const changed = items.filter((it: any) => it.verdict.gold !== it.verdict.none).length;
         if (note) {
           note.textContent = mode === 'none'
-            ? 'judge는 정답을 모른다. 문장이 그럴듯하면 오답도 통과시킨다. 4개 중 ' + accepted + '개가 false acceptance다.'
-            : '정답지를 주자 ' + changed + '개의 판정이 바뀌었다. judge가 강해진 것이 아니라, 정답이라는 외부 근거가 프롬프트에 붙은 것이다.';
+            ? 'judge는 정답을 모른다. 4건 모두 "정답"으로 판정했지만 실제로는 ' + accepted + '건이 오답이다. 이 ' + accepted + '건이 false acceptance다.'
+            : '정답지를 주자 ' + changed + '건의 판정이 뒤집혔다. judge가 강해진 것이 아니라, 정답이라는 외부 근거가 프롬프트에 붙은 것이다.';
         }
       };
 
@@ -112,7 +111,7 @@ const items = [
 </script>
 
 <style>
-  .jl-wrap { margin: 1rem 0; }
+  .jl-wrap { display: block; margin: 1rem 0; }
   .jl-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
   .jl-toggle { display: inline-flex; border: 1px solid var(--sl-color-gray-5); border-radius: 8px; overflow: hidden; margin-bottom: 0.75rem; }
   .jl-mode {
@@ -138,9 +137,9 @@ const items = [
   .jl-card.flipped .jl-badge { box-shadow: 0 0 0 2px color-mix(in srgb, var(--sl-color-yellow, #f08c00) 30%, transparent); }
   .jl-q { font-size: 0.82rem; font-weight: 600; margin: 0 0 0.25rem; }
   .jl-out { font-size: 0.78rem; color: var(--sl-color-gray-2); margin: 0 0 0.25rem; }
-  .jl-gold { font-size: 0.78rem; color: var(--sl-color-gray-3); margin: 0 0 0.4rem; }
+  .jl-gold { font-size: 0.78rem; color: var(--sl-color-gray-3); margin: 0 0 0.4rem; visibility: hidden; }
   .jl-gold strong { color: var(--sl-color-text); }
-  .jl-gold.show { color: var(--sl-color-accent-high); }
+  .jl-gold.show { visibility: visible; color: var(--sl-color-accent-high); }
   .jl-verdict-row { display: flex; align-items: flex-start; gap: 0.4rem; }
   .jl-badge {
     font-weight: 700;
@@ -152,7 +151,6 @@ const items = [
   }
   .jl-badge.good { background: color-mix(in srgb, var(--sl-color-green, #2f9e44) 18%, transparent); color: var(--sl-color-green, #2f9e44); }
   .jl-badge.bad { background: color-mix(in srgb, var(--sl-color-red, #e03131) 18%, transparent); color: var(--sl-color-red, #e03131); }
-  .jl-badge.warn { background: color-mix(in srgb, var(--sl-color-yellow, #f08c00) 18%, transparent); color: var(--sl-color-yellow, #f08c00); }
   .jl-why { font-size: 0.76rem; color: var(--sl-color-gray-3); line-height: 1.4; }
   .jl-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin: 0.75rem 0 0; }
 </style>

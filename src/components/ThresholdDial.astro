@@ -1,84 +1,79 @@
 ---
 /**
- * 도메인 임계값 조절 컴포넌트. 점수가 임계값을 넘으면 "긴급"으로 분류한다는 설정에서
- * 임계값을 슬라이더로 움직이면 오답 통과(긴급을 놓침)와 정답 거절(일반을 긴급으로 분류)
- * 트레이드오프가 어떻게 이동하는지 보여 준다. 임계값은 참값이 아니라 선택임을 드러낸다.
+ * 도메인 임계값 조절 컴포넌트. 점수가 임계값 이상이면 "긴급"으로 분류한다는 설정에서
+ * 임계값을 슬라이더로 움직이면 놓침(FN, 긴급을 일반으로)과 오경보(FP, 일반을 긴급으로)가
+ * 어떻게 맞바뀌는지 보여 준다. 점수가 높은 일반 문의(t4)가 있어서 어떤 임계값도 두 실수를
+ * 동시에 0으로 만들지 못한다. 임계값은 참값이 아니라 선택임을 드러낸다. 수치는 설명용 예시다.
  */
 const items = [
-  { id: 't1', text: '정상 영업시간 내 단순 문의 (점수 0.12)', score: 0.12, urgent: false },
-  { id: 't2', text: '안전 신고로 보이는 접수 (점수 0.55)', score: 0.55, urgent: true },
-  { id: 't3', text: '반복 문의 후 열받은 문의 (점수 0.65)', score: 0.65, urgent: true },
-  { id: 't4', text: '오탐 위험이 있는 모호한 문의 (점수 0.90)', score: 0.90, urgent: false },
+  { id: 't1', text: '영업시간 안의 단순 위치 문의', score: 0.12, urgent: false },
+  { id: 't2', text: '탐방로 낙석을 봤다는 안전 신고', score: 0.55, urgent: true },
+  { id: 't3', text: '같은 불편을 세 번째 알리는 항의 문의', score: 0.65, urgent: true },
+  { id: 't4', text: '"급해요"를 여러 번 쓴 일반 예약 문의', score: 0.90, urgent: false },
 ];
+const INITIAL = 0.5;
 ---
-<div class="td-wrap" data-items={JSON.stringify(items)}>
-  <p class="td-hint">슬라이더로 임계값을 움직여 보세요. 같은 문의들이 긴급/일반으로 갈라진다.</p>
+<threshold-dial class="td-wrap not-content" data-items={JSON.stringify(items)}>
+  <p class="td-hint">슬라이더로 임계값을 움직여 보세요. 점수가 임계값 이상이면 긴급으로 분류됩니다.</p>
   <div class="td-control">
-    <label for="td-slider">긴급 임계값 = <span id="td-th-val">0.70</span></label>
-    <input id="td-slider" type="range" min="0" max="1" value="0.70" step="0.05" aria-label="긴급 분류 임계값 선택" />
+    <label for="td-slider">긴급 임계값 = <span class="td-th-val">{INITIAL.toFixed(2)}</span></label>
+    <input id="td-slider" class="td-slider" type="range" min="0" max="1" value={INITIAL} step="0.05" aria-label="긴급 분류 임계값 선택" />
   </div>
   <div class="td-grid">
     {items.map((it) => (
       <div class="td-card" data-id={it.id}>
         <p class="td-text">{it.text}</p>
+        <p class="td-meta">점수 {it.score.toFixed(2)} / 실제: {it.urgent ? '긴급' : '일반'}</p>
         <span class="td-badge">-</span>
         <span class="td-why"></span>
       </div>
     ))}
   </div>
   <div class="td-stats">
-    <span id="td-stat-accept">긴급으로 분류: -건</span>
-    <span id="td-stat-reject">일반으로 분류: -건</span>
+    <span class="td-stat-fn">놓침(FN): -건</span>
+    <span class="td-stat-fp">오경보(FP): -건</span>
   </div>
-  <p class="td-note"></p>
-</div>
+  <p class="td-note" aria-live="polite"></p>
+</threshold-dial>
 
 <script>
   class ThresholdDial extends HTMLElement {
     connectedCallback() {
-      const wrap = this;
-      const items = JSON.parse(wrap.dataset.items || '[]');
-      const slider = wrap.querySelector('#td-slider') as HTMLInputElement;
-      const thVal = wrap.querySelector('#td-th-val') as HTMLElement;
-      const badges = Array.from(wrap.querySelectorAll<HTMLElement>('.td-badge'));
-      const whys = Array.from(wrap.querySelectorAll<HTMLElement>('.td-why'));
-      const statAccept = wrap.querySelector('#td-stat-accept') as HTMLElement;
-      const statReject = wrap.querySelector('#td-stat-reject') as HTMLElement;
-      const note = wrap.querySelector('.td-note') as HTMLElement;
-      let threshold = 0.70;
+      const items = JSON.parse(this.dataset.items || '[]');
+      const slider = this.querySelector('.td-slider') as HTMLInputElement;
+      const thVal = this.querySelector('.td-th-val') as HTMLElement;
+      const badges = Array.from(this.querySelectorAll<HTMLElement>('.td-badge'));
+      const whys = Array.from(this.querySelectorAll<HTMLElement>('.td-why'));
+      const statFn = this.querySelector('.td-stat-fn') as HTMLElement;
+      const statFp = this.querySelector('.td-stat-fp') as HTMLElement;
+      const note = this.querySelector('.td-note') as HTMLElement;
 
       const render = () => {
-        let accept = 0;
-        let reject = 0;
+        const threshold = parseFloat(slider.value);
+        let fn = 0;
+        let fp = 0;
         items.forEach((it: any, i: number) => {
           const urgent = it.score >= threshold;
-          if (urgent) accept++; else reject++;
-          const badge = badges[i];
-          badge.textContent = urgent ? '긴급' : '일반';
-          badge.classList.toggle('bad', urgent && !it.urgent);
-          badge.classList.toggle('warn', !urgent && it.urgent);
-          badge.classList.toggle('good', urgent === it.urgent);
-          const why = it.urgent
-            ? (urgent ? '긴급으로 잘 잡았다' : '긴급인데 일반으로 흘렸다 (오답 통과)')
-            : (urgent ? '긴급이 아닌데 긴급으로 분류됐다 (정답 거절)' : '일반으로 잘 놓았다');
-          if (whys[i]) whys[i].textContent = why;
+          let tone = 'good';
+          let why = urgent ? '긴급을 잘 잡았다' : '일반으로 잘 두었다';
+          if (it.urgent && !urgent) { fn++; tone = 'bad'; why = '긴급인데 일반으로 흘렸다 (놓침, FN)'; }
+          if (!it.urgent && urgent) { fp++; tone = 'warn'; why = '일반인데 긴급으로 올렸다 (오경보, FP)'; }
+          badges[i].textContent = urgent ? '긴급' : '일반';
+          badges[i].classList.remove('good', 'bad', 'warn');
+          badges[i].classList.add(tone);
+          whys[i].textContent = why;
         });
-        statAccept.textContent = '긴급으로 분류: ' + accept + '건';
-        statReject.textContent = '일반으로 분류: ' + reject + '건';
         thVal.textContent = threshold.toFixed(2);
-        if (note) {
-          note.textContent = threshold >= 0.85
-            ? '임계값이 높다. 오답 통과(긴급을 놓침)가 늘어난다. 안전 신고를 놓치면 비용이 크다.'
-            : threshold <= 0.30
-              ? '임계값이 낮다. 정답 거절(일반을 긴급 오분류)이 늘어난다. 긴급 대응 인력이 만원이 된다.'
-              : '임계값은 참값이 아니다. 무엇을 잃을지 보고 고른다. 도메인마다 잃는 것이 다르므로 값도 다르다.';
-        }
+        statFn.textContent = '놓침(FN): ' + fn + '건';
+        statFp.textContent = '오경보(FP): ' + fp + '건';
+        let msg = '';
+        if (fn > 0 && fp === 0) msg = '오경보는 없지만 긴급을 놓친다. 안전 신고를 놓치는 비용이 크다면 받아들이기 어렵다.';
+        else if (fn === 0 && fp > 0) msg = '긴급은 다 잡았지만 오경보 ' + fp + '건. 대응 인력이 헛걸음한다.';
+        else msg = '놓침과 오경보가 함께 있다.';
+        note.textContent = msg + ' 점수 0.90인 일반 문의 때문에 어떤 임계값도 두 실수를 동시에 0으로 만들지 못한다. 임계값은 어느 실수를 감수할지 고르는 선택이다.';
       };
 
-      slider.addEventListener('input', () => {
-        threshold = parseFloat(slider.value);
-        render();
-      });
+      slider.addEventListener('input', render);
       render();
     }
   }
@@ -86,10 +81,10 @@ const items = [
 </script>
 
 <style>
-  .td-wrap { margin: 1rem 0; }
+  .td-wrap { display: block; margin: 1rem 0; }
   .td-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
   .td-control { display: flex; align-items: center; gap: 0.6rem; margin: 0.5rem 0 0.75rem; }
-  .td-control label { font-size: 0.85rem; }
+  .td-control label { font-size: 0.85rem; white-space: nowrap; }
   .td-control input[type='range'] { flex: 1; max-width: 18rem; accent-color: var(--sl-color-accent); }
   .td-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.6rem; }
   .td-card {
@@ -98,7 +93,8 @@ const items = [
     padding: 0.6rem 0.75rem;
     background: var(--sl-color-bg-nav);
   }
-  .td-text { font-size: 0.8rem; font-weight: 600; margin: 0 0 0.4rem; }
+  .td-text { font-size: 0.8rem; font-weight: 600; margin: 0 0 0.2rem; }
+  .td-meta { font-size: 0.76rem; color: var(--sl-color-gray-3); margin: 0 0 0.4rem; }
   .td-badge {
     display: inline-block;
     font-weight: 700;
