@@ -39,5 +39,5 @@ When the same finding appears twice, the correction goes into `AGENTS.md` in the
 ---
 
 Findings require evidence-based disposition: fixed, false positive with evidence, risk accepted by the owner with a reason, or unresolved.
-The review must cover the PR's current head and base SHAs, and a new push makes it stale.
-Merge only on the owner's instruction, pinned with `gh pr merge --match-head-commit <reviewed-sha>`, and never past an unresolved thread or an unadjudicated Important finding.
+The review must cover the PR's current head and base SHAs; a new push or a base change makes it stale.
+Merge only on the owner's instruction, pinned with `gh pr merge --match-head-commit <reviewed-sha>`, and never past an unresolved thread or an Important finding that is unadjudicated or still unresolved.
