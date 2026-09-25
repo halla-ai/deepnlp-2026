@@ -14,7 +14,7 @@ const items = [
 const INITIAL = 0.5;
 ---
 <threshold-dial class="td-wrap not-content" data-items={JSON.stringify(items)}>
-  <p class="td-hint">슬라이더로 임계값을 움직여 보세요. 점수가 임계값 이상이면 긴급으로 분류됩니다.</p>
+  <p class="td-hint">슬라이더로 임계값을 움직여 보세요. 점수가 임계값 이상이면 긴급으로 분류됩니다. (문의와 점수는 설명용 예시)</p>
   <div class="td-control">
     <label for="td-slider">긴급 임계값 = <span class="td-th-val">{INITIAL.toFixed(2)}</span></label>
     <input id="td-slider" class="td-slider" type="range" min="0" max="1" value={INITIAL} step="0.05" aria-label="긴급 분류 임계값 선택" />
