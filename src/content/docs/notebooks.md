@@ -26,7 +26,7 @@ TODO를 건드리지 않아도 노트북은 처음부터 끝까지 돌아간다.
 | 3 | 효율적 미세조정의 원리와 변형 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-03.ipynb) |
 | 4 | 프롬프트와 문맥학습의 원리 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-04.ipynb) |
 | 5 | 평가 시스템과 지표가 측정하지 못하는 것 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-05.ipynb) |
-| 6 | 멀티모달 표현의 결합 | 준비 중 |
+| 6 | 멀티모달 표현의 결합 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-06.ipynb) |
 | 7 | 장문맥 처리와 효율적 추론 | 준비 중 |
 | 8 | 중간고사 및 PEFT 심화 | 준비 중 |
 | 9 | 검색 결합 생성(RAG)의 구조 | 준비 중 |

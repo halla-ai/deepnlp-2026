@@ -1,0 +1,145 @@
+---
+/**
+ * 6주차 인터랙티브 1: 멀티모달 아키텍처 흐름 탐색기.
+ * 이미지 인코더(ViT)와 텍스트 토크나이저가 각각 임베딩을 만들고, 정규화된 뒤
+ * 하나의 공유 벡터 공간에서 비교되는 흐름을 단계 버튼으로 바꿔가며 본다.
+ * 두 갈래가 언제 만나는지(정규화 뒤 공유 공간)가 이 컴포넌트의 핵심 관찰이다.
+ * 수치는 실측값(openai/clip-vit-base-patch32, 제주 사진 5장, 노트북 1-3 참조)이다.
+ */
+const steps = [
+  {
+    id: 0,
+    label: '입력',
+    title: '두 가지 입력이 따로 들어간다',
+    detail: '사진 한 장은 픽셀 값(숫자 격자)으로, 문장은 토큰 id 나열로 바뀐다. 이 시점에는 두 입력의 모양이 전혀 다르고, 모델 안에서도 서로 다른 인코더로 들어간다.',
+    imgLabel: '사진 (3 x 224 x 224 픽셀)',
+    txtLabel: '문장 (토큰 id 나열)',
+    note: '이미지 경로와 텍스트 경로는 아직 만나지 않는다.',
+  },
+  {
+    id: 1,
+    label: '인코딩',
+    title: '각자 다른 인코더로 벡터를 만든다',
+    detail: '이미지는 ViT(이미지 패치 16x16을 토큰처럼 본다)가, 텍스트는 텍스트 트랜스포머가 처리한다. 두 인코더의 내부 구조와 층 수가 달라도, 마지막에 내보내는 벡터의 차원은 같게 맞춰져 있다(CLIP ViT-B/32는 둘 다 512차원).',
+    imgLabel: 'ViT → 벡터 (512차원)',
+    txtLabel: '텍스트 트랜스포머 → 벡터 (512차원)',
+    note: '차원이 같아도 두 벡터는 아직 서로 다른 좌표계에 있다.',
+  },
+  {
+    id: 2,
+    label: '정규화',
+    title: '길이를 1로 맞춘다 (L2 정규화)',
+    detail: '두 벡터를 각자 길이(norm)가 1이 되도록 나눈다. 이제 두 벡터의 내적이 곧 코사인 유사도가 된다. 벡터의 크기 정보는 버리고 방향만 비교하기 위함이다.',
+    imgLabel: '정규화된 벡터 (길이 1)',
+    txtLabel: '정규화된 벡터 (길이 1)',
+    note: '정규화가 없으면 내적 값이 벡터 크기에 따라 흔들린다.',
+  },
+  {
+    id: 3,
+    label: '비교',
+    title: '하나의 공유 공간에서 코사인 유사도로 만난다',
+    detail: '이미지 벡터 하나와 문장 벡터 하나의 내적 = 코사인 유사도. 사진 한 장에 후보 문장 여러 개를 놓고 비교하면 가장 유사한 문장이 고해진다. 이 값에 logit_scale(실측 100.0)을 곱해 소프트맥스를 붙이면 확률이 나온다. CLIP은 이 공간을 4억 개의 이미지-문장 쌍으로 배웠고, 학습 데이터가 영어라서 이 공간의 "문장 방향"은 영어에 붙어 있다.',
+    imgLabel: '공유 공간의 이미지 벡터',
+    txtLabel: '공유 공간의 문장 벡터들',
+    note: '두 모달리티가 만나는 유일한 지점이 이 공유 공간이다.',
+  },
+];
+const INITIAL = 0;
+---
+<clip-flow class="cf-wrap not-content" data-steps={JSON.stringify(steps)} data-initial={INITIAL}>
+  <p class="cf-hint">아래 단계 버튼을 눌러 흐름을 따라가 보세요. (모델은 CLIP ViT-B/32, 수치는 6주차 노트북 실측값)</p>
+  <div class="cf-tabs" role="tablist" aria-label="아키텍처 단계">
+    {steps.map((s) => (
+      <button type="button" class="cf-tab" data-step={s.id} role="tab" aria-selected={s.id === INITIAL}>{s.label}</button>
+    ))}
+  </div>
+  <div class="cf-stage">
+    <div class="cf-lane cf-img">
+      <span class="cf-lane-name">이미지 경로</span>
+      <div class="cf-box cf-box-img"></div>
+    </div>
+    <div class="cf-lane cf-txt">
+      <span class="cf-lane-name">텍스트 경로</span>
+      <div class="cf-box cf-box-txt"></div>
+    </div>
+    <div class="cf-merge" aria-hidden="true">↓ 두 벡터가 만나는 지점: 공유 공간 (코사인 유사도)</div>
+  </div>
+  <p class="cf-title" aria-live="polite"></p>
+  <p class="cf-detail"></p>
+  <p class="cf-note"></p>
+</clip-flow>
+
+<script>
+  class ClipFlow extends HTMLElement {
+    connectedCallback() {
+      const steps = JSON.parse(this.dataset.steps || '[]');
+      const initial = parseInt(this.dataset.initial || '0', 10);
+      const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('.cf-tab'));
+      const title = this.querySelector('.cf-title') as HTMLElement;
+      const detail = this.querySelector('.cf-detail') as HTMLElement;
+      const note = this.querySelector('.cf-note') as HTMLElement;
+      const imgBox = this.querySelector('.cf-box-img') as HTMLElement;
+      const txtBox = this.querySelector('.cf-box-txt') as HTMLElement;
+      const merge = this.querySelector('.cf-merge') as HTMLElement;
+
+      const render = (id: number) => {
+        const s = steps[id];
+        if (!s) return;
+        tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.step === String(id))));
+        title.textContent = s.title;
+        detail.textContent = s.detail;
+        note.textContent = s.note;
+        imgBox.textContent = s.imgLabel;
+        txtBox.textContent = s.txtLabel;
+        const met = id >= 2;
+        imgBox.classList.toggle('cf-met', met);
+        txtBox.classList.toggle('cf-met', met);
+        merge.classList.toggle('cf-on', id >= 3);
+      };
+
+      tabs.forEach((t) => t.addEventListener('click', () => render(parseInt(t.dataset.step || '0', 10))));
+      render(initial);
+    }
+  }
+  customElements.define('clip-flow', ClipFlow);
+</script>
+
+<style>
+  .cf-wrap { display: block; margin: 1rem 0; }
+  .cf-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .cf-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.75rem; }
+  .cf-tab {
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-text);
+    border-radius: 999px;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .cf-tab[aria-selected='true'] {
+    background: var(--sl-color-accent);
+    color: var(--sl-color-bg);
+    border-color: var(--sl-color-accent);
+    font-weight: 700;
+  }
+  .cf-stage { border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.75rem; background: var(--sl-color-bg-nav); }
+  .cf-lane { margin-bottom: 0.5rem; }
+  .cf-lane-name { display: block; font-size: 0.76rem; color: var(--sl-color-gray-3); margin-bottom: 0.2rem; }
+  .cf-box {
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg);
+  }
+  .cf-box-img { border-left: 3px solid var(--sl-color-blue, #4263eb); }
+  .cf-box-txt { border-left: 3px solid var(--sl-color-orange, #f08c00); }
+  .cf-box.cf-met { border-left-color: var(--sl-color-green, #2f9e44); }
+  .cf-merge { font-size: 0.78rem; color: var(--sl-color-gray-3); margin-top: 0.4rem; }
+  .cf-merge.cf-on { color: var(--sl-color-green, #2f9e44); font-weight: 700; }
+  .cf-title { font-size: 0.88rem; font-weight: 700; margin: 0.75rem 0 0.2rem; }
+  .cf-detail { font-size: 0.82rem; line-height: 1.55; color: var(--sl-color-text); margin: 0 0 0.2rem; }
+  .cf-note { font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0; }
+</style>
