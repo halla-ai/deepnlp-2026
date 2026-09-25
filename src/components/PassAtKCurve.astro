@@ -1,0 +1,192 @@
+---
+/**
+ * pass@k 곡선 인터랙티브 컴포넌트 (이번 주차의 중심 그림).
+ * 학습 전 pass@k 곡선 위에 학습 후 pass@1을 수평선으로 그어 대조한다.
+ * 두 시나리오(탐색 효율 개선 / 새 능력)를 토글로 바꿔 같은 "pass@1 상승"이
+ * 곡선에서는 어떻게 다르게 보이는지 보여 준다.
+ * 설명용 단순 모형: 풀 수 있는 문항 비율 s, 그런 문항을 한 번에 맞힐 확률 q일 때
+ * pass@k = s * (1 - (1 - q)^k). 수치는 설명용 예시다.
+ */
+---
+<pass-at-k-curve class="pk-wrap not-content">
+  <p class="pk-hint">시나리오를 고르고 슬라이더로 k(문항당 시도 횟수)를 바꿔 보세요. 점선(학습 후 pass@1)이 학습 전 곡선의 어디에 걸리는지가 핵심입니다.</p>
+  <div class="pk-toggle" role="group" aria-label="학습 후 시나리오 선택">
+    <button type="button" class="pk-mode" data-mode="eff" aria-pressed="true">시나리오 1: 탐색 효율 개선</button>
+    <button type="button" class="pk-mode" data-mode="cap" aria-pressed="false">시나리오 2: 새 능력</button>
+  </div>
+  <div class="pk-control">
+    <label for="pk-slider">k = <span class="pk-k-val">1</span></label>
+    <input id="pk-slider" class="pk-slider" type="range" min="1" max="20" value="1" step="1" aria-label="pass@k의 k 값 선택" />
+  </div>
+  <svg class="pk-svg" viewBox="0 0 420 240" role="img" aria-label="k를 1에서 20까지 늘릴 때 학습 전과 학습 후의 pass@k 곡선과 학습 후 pass@1 수평선" style="width: 100%; height: auto;">
+    <rect x="0" y="0" width="420" height="240" fill="var(--sl-color-bg-nav)" rx="8" />
+    <g stroke="var(--sl-color-gray-6)" stroke-width="1">
+      <line x1="50" y1="200" x2="400" y2="200" />
+      <line x1="50" y1="164" x2="400" y2="164" />
+      <line x1="50" y1="128" x2="400" y2="128" />
+      <line x1="50" y1="92" x2="400" y2="92" />
+      <line x1="50" y1="56" x2="400" y2="56" />
+      <line x1="50" y1="20" x2="400" y2="20" />
+    </g>
+    <g fill="var(--sl-color-gray-3)" font-size="9" text-anchor="end">
+      <text x="46" y="203">0</text>
+      <text x="46" y="167">0.1</text>
+      <text x="46" y="131">0.2</text>
+      <text x="46" y="95">0.3</text>
+      <text x="46" y="59">0.4</text>
+      <text x="46" y="23">0.5</text>
+    </g>
+    <g fill="var(--sl-color-gray-3)" font-size="9" text-anchor="middle">
+      <text x="50" y="215">1</text>
+      <text x="137" y="215">5</text>
+      <text x="225" y="215">10</text>
+      <text x="312" y="215">15</text>
+      <text x="400" y="215">20</text>
+      <text x="225" y="232">k (문항당 시도 횟수)</text>
+    </g>
+    <line class="pk-ceil-b" x1="50" x2="400" stroke="var(--sl-color-red, #e03131)" stroke-width="1" stroke-dasharray="2 3" opacity="0.6" />
+    <line class="pk-p1-a" x1="50" x2="400" stroke="var(--sl-color-green, #2f9e44)" stroke-width="1.5" stroke-dasharray="6 4" />
+    <path class="pk-path-b" d="" fill="none" stroke="var(--sl-color-red, #e03131)" stroke-width="2.5" />
+    <path class="pk-path-a" d="" fill="none" stroke="var(--sl-color-green, #2f9e44)" stroke-width="2.5" />
+    <line class="pk-kline" y1="20" y2="200" stroke="var(--sl-color-gray-4)" stroke-width="1" />
+    <circle class="pk-dot-b" r="4.5" fill="var(--sl-color-red, #e03131)" />
+    <circle class="pk-dot-a" r="4.5" fill="var(--sl-color-green, #2f9e44)" />
+    <g font-size="10" fill="var(--sl-color-gray-2)">
+      <rect x="250" y="150" width="10" height="3" fill="var(--sl-color-red, #e03131)" />
+      <text x="266" y="155">학습 전 pass@k</text>
+      <rect x="250" y="165" width="10" height="3" fill="var(--sl-color-green, #2f9e44)" />
+      <text x="266" y="170">학습 후 pass@k</text>
+      <line x1="250" y1="182" x2="260" y2="182" stroke="var(--sl-color-green, #2f9e44)" stroke-width="1.5" stroke-dasharray="3 2" />
+      <text x="266" y="185">학습 후 pass@1 (수평선)</text>
+    </g>
+  </svg>
+  <div class="pk-readout">
+    <p class="pk-line"><span class="pk-swatch before"></span> 학습 전 pass@<span class="pk-k">1</span> = <strong class="pk-b-val">0.10</strong></p>
+    <p class="pk-line"><span class="pk-swatch after"></span> 학습 후 pass@<span class="pk-k">1</span> = <strong class="pk-a-val">0.21</strong></p>
+  </div>
+  <p class="pk-note" aria-live="polite"></p>
+</pass-at-k-curve>
+
+<script>
+  // 학습 전: 문항의 30%만 풀 수 있고, 그 문항을 한 번에 맞힐 확률 1/3 -> pass@1 0.10, 천장 0.30
+  const BEFORE = { s: 0.30, q: 1 / 3 };
+  const SCENARIOS: Record<string, { s: number; q: number }> = {
+    // 풀 수 있는 범위는 그대로(오히려 약간 좁아짐), 한 번에 맞히는 확률만 크게 오름
+    eff: { s: 0.28, q: 0.75 },
+    // 풀 수 있는 범위 자체가 넓어짐
+    cap: { s: 0.45, q: 0.80 },
+  };
+  const K_MAX = 20;
+  const passAt = (m: { s: number; q: number }, k: number) => m.s * (1 - Math.pow(1 - m.q, k));
+
+  class PassAtKCurve extends HTMLElement {
+    connectedCallback() {
+      const $ = <T extends Element>(sel: string) => this.querySelector(sel) as T;
+      const slider = $<HTMLInputElement>('.pk-slider');
+      const modes = Array.from(this.querySelectorAll<HTMLElement>('.pk-mode'));
+      const pathB = $<SVGPathElement>('.pk-path-b');
+      const pathA = $<SVGPathElement>('.pk-path-a');
+      const ceilB = $<SVGLineElement>('.pk-ceil-b');
+      const p1A = $<SVGLineElement>('.pk-p1-a');
+      const kLine = $<SVGLineElement>('.pk-kline');
+      const dotB = $<SVGCircleElement>('.pk-dot-b');
+      const dotA = $<SVGCircleElement>('.pk-dot-a');
+      const note = $<HTMLElement>('.pk-note');
+      let mode = 'eff';
+
+      const Y_MAX = 0.5;
+      const yScale = (v: number) => 200 - (v / Y_MAX) * 180;
+      const xScale = (k: number) => 50 + ((k - 1) / (K_MAX - 1)) * 350;
+      const setY = (el: SVGLineElement, v: number) => {
+        el.setAttribute('y1', yScale(v).toFixed(1));
+        el.setAttribute('y2', yScale(v).toFixed(1));
+      };
+      const buildPath = (m: { s: number; q: number }) => {
+        let d = '';
+        for (let k = 1; k <= K_MAX; k++) {
+          d += (k === 1 ? 'M' : 'L') + xScale(k).toFixed(1) + ' ' + yScale(passAt(m, k)).toFixed(1) + ' ';
+        }
+        return d;
+      };
+
+      pathB.setAttribute('d', buildPath(BEFORE));
+      setY(ceilB, BEFORE.s);
+
+      const explain = (k: number) => {
+        const after = SCENARIOS[mode];
+        const a1 = passAt(after, 1);
+        const b = passAt(BEFORE, k);
+        const a = passAt(after, k);
+        // 학습 전 곡선이 학습 후 pass@1 높이에 처음 닿는 k
+        let reach = 0;
+        for (let j = 1; j <= K_MAX; j++) {
+          if (passAt(BEFORE, j) >= a1) { reach = j; break; }
+        }
+        if (mode === 'eff') {
+          if (k === 1) return '학습 후 pass@1이 0.10에서 ' + a1.toFixed(2) + '로 두 배가 됐다. 이것만 봐서는 어느 쪽인지 모른다. k를 늘려 보자.';
+          if (k < reach) return '학습 전 곡선이 아직 점선 아래에 있다. 계속 늘려 보자.';
+          if (b < a) return '학습 전 곡선이 k=' + reach + '에서 점선(학습 후 pass@1)에 닿았다. 학습 전에도 ' + reach + '번 시도하면 얻던 정답률을 학습 후에는 1번에 얻는다. 탐색 효율 개선의 신호다.';
+          return 'k=' + k + ': 학습 전 ' + b.toFixed(3) + ', 학습 후 ' + a.toFixed(3) + '. 큰 k에서 학습 전 곡선이 학습 후를 앞지른다. 천장은 오르지 않았고 오히려 약간 낮아졌다. 한 번에 맞히는 효율은 올랐지만 닿는 범위는 넓어지지 않았다.';
+        }
+        if (k === 1) return '학습 후 pass@1은 ' + a1.toFixed(2) + '이다. 학습 전 곡선의 천장(0.30, 붉은 점선)보다 이미 높다.';
+        if (k < 10) return '학습 전 곡선은 k를 아무리 늘려도 천장 0.30을 넘지 못한다. 학습 후에는 한 번 만에 그보다 높다. 학습 전에는 몇 번을 시도해도 못 풀던 문항을 푼다는 뜻이다.';
+        return 'k=' + k + ': 학습 전 ' + b.toFixed(2) + ', 학습 후 ' + a.toFixed(2) + '. 천장 자체가 0.30에서 0.45로 올랐다. 새 능력의 증거다.';
+      };
+
+      const update = () => {
+        const k = parseInt(slider.value, 10);
+        const after = SCENARIOS[mode];
+        const vb = passAt(BEFORE, k);
+        const va = passAt(after, k);
+        this.querySelectorAll('.pk-k-val, .pk-k').forEach((el) => (el.textContent = String(k)));
+        $<HTMLElement>('.pk-b-val').textContent = vb.toFixed(2);
+        $<HTMLElement>('.pk-a-val').textContent = va.toFixed(2);
+        kLine.setAttribute('x1', xScale(k).toFixed(1));
+        kLine.setAttribute('x2', xScale(k).toFixed(1));
+        dotB.setAttribute('cx', xScale(k).toFixed(1));
+        dotB.setAttribute('cy', yScale(vb).toFixed(1));
+        dotA.setAttribute('cx', xScale(k).toFixed(1));
+        dotA.setAttribute('cy', yScale(va).toFixed(1));
+        note.textContent = explain(k);
+      };
+
+      const setMode = (m: string) => {
+        mode = m;
+        pathA.setAttribute('d', buildPath(SCENARIOS[mode]));
+        setY(p1A, passAt(SCENARIOS[mode], 1));
+        modes.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+        update();
+      };
+
+      modes.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode || 'eff')));
+      slider.addEventListener('input', update);
+      setMode('eff');
+    }
+  }
+  customElements.define('pass-at-k-curve', PassAtKCurve);
+</script>
+
+<style>
+  .pk-wrap { display: block; margin: 1rem 0; }
+  .pk-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .pk-toggle { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--sl-color-gray-5); border-radius: 8px; overflow: hidden; }
+  .pk-mode {
+    border: none;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-gray-3);
+    padding: 0.45rem 0.9rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .pk-mode + .pk-mode { border-left: 1px solid var(--sl-color-gray-5); }
+  .pk-mode[aria-pressed='true'] { background: var(--sl-color-accent); color: var(--sl-color-white); }
+  .pk-control { display: flex; align-items: center; gap: 0.6rem; margin: 0.75rem 0; }
+  .pk-control label { font-size: 0.85rem; white-space: nowrap; }
+  .pk-control input[type='range'] { flex: 1; max-width: 18rem; accent-color: var(--sl-color-accent); }
+  .pk-readout { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; font-size: 0.85rem; }
+  .pk-line { margin: 0; }
+  .pk-swatch { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; vertical-align: middle; margin-right: 0.3rem; }
+  .pk-swatch.before { background: var(--sl-color-red, #e03131); }
+  .pk-swatch.after { background: var(--sl-color-green, #2f9e44); }
+  .pk-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin: 0.6rem 0 0; min-height: 2.6em; }
+</style>

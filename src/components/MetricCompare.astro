@@ -1,0 +1,162 @@
+---
+/**
+ * 지표가 무엇을 보고 무엇을 놓치는지 보여 주는 카드 컴포넌트.
+ * 한 문항을 정확도 / F1 / judge / 사람이 각각 어떻게 채점하는지 대조한다.
+ * F1은 문항 하나에 판정을 내리지 않고 부류별 TP·FP·FN 개수에 더할 뿐이므로 그렇게 표시한다.
+ * 첫 카드의 판정은 서버에서 미리 그려 두고, 스크립트는 카드 전환만 맡는다.
+ */
+type Tone = 'good' | 'bad' | 'warn';
+type Verdict = { text: string; tone: Tone };
+const cases: { id: string; query: string; output: string; verdicts: Verdict[]; note: string }[] = [
+  {
+    id: 'c1',
+    query: '우도 왕복 배 삯이 얼마인가요? (정답: 요금)',
+    output: '요금 - 뱃삯 금액을 묻는 문의다',
+    verdicts: [
+      { text: '정답', tone: 'good' },
+      { text: '요금 TP +1', tone: 'good' },
+      { text: '정답', tone: 'good' },
+      { text: '정답', tone: 'good' },
+    ],
+    note: '라벨도 근거도 맞다. 네 채점자가 모두 같은 판정을 내린다. 갈등이 없는 문항이다.',
+  },
+  {
+    id: 'c2',
+    query: '만장굴 안을 휠체어가 다닐 수 있나요? (정답: 시설)',
+    output: '주차 - 만장굴 방문 교통편 문의로 보인다',
+    verdicts: [
+      { text: '오답', tone: 'bad' },
+      { text: '주차 FP +1, 시설 FN +1', tone: 'bad' },
+      { text: '오답', tone: 'bad' },
+      { text: '오답 (치명적)', tone: 'bad' },
+    ],
+    note: '모두 틀렸다고 본다. 그러나 정확도와 F1은 이 실수를 그냥 1건으로 센다. 휠체어 이용자가 접근성 안내를 못 받는 실수와 파라솔 문의를 잘못 보낸 실수가 같은 무게다. 치명도는 사람만 본다.',
+  },
+  {
+    id: 'c3',
+    query: '함덕해수욕장에 샤워실이 있나요? (정답: 시설)',
+    output: '시설 - 함덕은 유명한 해수욕장이기 때문이다',
+    verdicts: [
+      { text: '정답', tone: 'good' },
+      { text: '시설 TP +1', tone: 'good' },
+      { text: '정답', tone: 'good' },
+      { text: '근거 부적절', tone: 'warn' },
+    ],
+    note: '라벨은 맞았지만 근거가 문의 내용(샤워실)과 상관없다. 라벨만 보는 정확도와 F1은 물론 judge도 통과시킨다. 근거가 엉뚱하다는 것은 사람만 잡는다.',
+  },
+  {
+    id: 'c4',
+    query: '천지연폭포 주차장 근처에 화장실이 있나요? (정답: 시설)',
+    output: '주차 - 문의에 "주차장"이 있으므로 주차 문의다',
+    verdicts: [
+      { text: '오답', tone: 'bad' },
+      { text: '주차 FP +1, 시설 FN +1', tone: 'bad' },
+      { text: '정답 (오판)', tone: 'warn' },
+      { text: '오답', tone: 'bad' },
+    ],
+    note: '물은 것은 화장실(시설)인데 "주차장"이라는 단어에 끌려 주차로 분류했다. 근거 문장이 문의의 단어를 그대로 인용해 그럴듯해 보이므로 judge가 통과시킨다. 이것이 false acceptance다.',
+  },
+];
+const first = cases[0];
+const rows = [
+  { metric: '정확도', sees: '라벨이 정답과 같은가', misses: '왜 틀렸는지, 얼마나 치명적인지' },
+  { metric: 'F1', sees: '부류별 TP·FP·FN 개수', misses: '문항 하나하나의 사정, 라벨 밖의 근거' },
+  { metric: 'LLM judge', sees: '출력이 루브릭에 비춰 그럴듯한가', misses: '그럴듯하게 포장된 오답' },
+  { metric: '사람', sees: '근거, 맥락, 실제 비용', misses: '속도와 일관성 (대량 채점엔 비쌈)' },
+];
+---
+<metric-compare class="mx-wrap not-content" data-cases={JSON.stringify(cases)}>
+  <p class="mx-hint">예시 카드를 눌러 보세요. 같은 문항을 네 채점자가 각각 어떻게 판정하는지 표가 바뀝니다. (모델 출력과 판정은 설명용 예시)</p>
+  <div class="mx-row">
+    {cases.map((c, i) => (
+      <button type="button" class="mx-card" data-id={c.id} aria-pressed={String(i === 0)}>
+        <span class="mx-idx">예시 {i + 1}</span>
+        <span class="mx-q">{c.query}</span>
+        <span class="mx-out">모델: {c.output}</span>
+      </button>
+    ))}
+  </div>
+  <table class="mx-table">
+    <thead>
+      <tr>
+        <th>채점자</th>
+        <th>보는 것</th>
+        <th>이 예시의 판정</th>
+        <th>놓치는 것</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((r, i) => (
+        <tr>
+          <th>{r.metric}</th>
+          <td>{r.sees}</td>
+          <td class={`cell-v cell-${first.verdicts[i].tone}`}>{first.verdicts[i].text}</td>
+          <td>{r.misses}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <p class="mx-note" aria-live="polite">{first.note}</p>
+</metric-compare>
+
+<script>
+  class MetricCompare extends HTMLElement {
+    connectedCallback() {
+      const cases = JSON.parse(this.dataset.cases || '[]');
+      const cards = Array.from(this.querySelectorAll<HTMLElement>('.mx-card'));
+      const cells = Array.from(this.querySelectorAll<HTMLElement>('.cell-v'));
+      const note = this.querySelector<HTMLElement>('.mx-note');
+
+      const render = (id: string) => {
+        const c = cases.find((x: { id: string }) => x.id === id);
+        if (!c) return;
+        cells.forEach((cell, i) => {
+          const v = c.verdicts[i];
+          cell.textContent = v.text;
+          cell.classList.remove('cell-good', 'cell-bad', 'cell-warn');
+          cell.classList.add('cell-' + v.tone);
+        });
+        cards.forEach((card) => card.setAttribute('aria-pressed', String(card.dataset.id === id)));
+        if (note) note.textContent = c.note;
+      };
+
+      cards.forEach((card) => card.addEventListener('click', () => render(card.dataset.id || '')));
+    }
+  }
+  customElements.define('metric-compare', MetricCompare);
+</script>
+
+<style>
+  .mx-wrap { display: block; margin: 1rem 0; }
+  .mx-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .mx-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .mx-card {
+    flex: 1 1 12rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-text);
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .mx-card:hover { border-color: var(--sl-color-accent); }
+  .mx-card[aria-pressed='true'] {
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
+  }
+  .mx-idx { display: block; font-weight: 700; color: var(--sl-color-accent-high); margin-bottom: 0.2rem; }
+  .mx-q { display: block; }
+  .mx-out { display: block; margin-top: 0.25rem; color: var(--sl-color-gray-3); }
+  .mx-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .mx-table th, .mx-table td { border: 1px solid var(--sl-color-gray-5); padding: 0.45rem 0.6rem; text-align: left; }
+  .mx-table thead th { background: var(--sl-color-bg-nav); }
+  .cell-v { font-weight: 700; }
+  .cell-good { color: var(--sl-color-green, #2f9e44); }
+  .cell-bad { color: var(--sl-color-red, #e03131); }
+  .cell-warn { color: var(--sl-color-yellow, #f08c00); }
+  .mx-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin-top: 0.6rem; }
+</style>
