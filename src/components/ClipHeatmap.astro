@@ -1,0 +1,151 @@
+---
+/**
+ * 6주차 인터랙티브 2: CLIP 제로샷 유사도 히트맵 탐색기.
+ * 제주 공개 사진 5장(openai/clip-vit-base-patch32 실측)과 네 가지 라벨 조합의
+ * 코사인 유사도 행렬을 라벨 조합 버튼으로 바꿔가며 본다.
+ * 영어 라벨은 대각선이 진하게 나오고, 한국어 라벨은 사진 대부분이 한 라벨로 쏠리는 것(정렬 공간이
+ * 영어 중심 데이터로 학습되었다)이 이 컴포넌트가 보여 주는 핵심이다.
+ * 수치는 노트북 1-4 실측값이다. 영어 짧은 라벨과 장면 라벨은 앞에 "a photo of a "가 붙는다.
+ * 표의 칸은 스크립트가 만들므로 스타일은 :global()로 건다.
+ */
+const imgNames = ['성산 일출봉', '성산 주차장', '영실 등산로', '만장굴', '우도 해안'];
+const sets = [
+  {
+    id: 'en_coarse',
+    label: '영어 (짧은)',
+    desc: '"a photo of a ..." 뒤에 짧은 영어 라벨을 붙였다. 5장 중 4장이 맞다. 성산 일출봉 사진만 "coastal island"(0.274)를 "sunrise peak"(0.266)보다 조금 높게 봤다. 바다와 봉우리가 함께 찍힌 사진이라 두 라벨이 모두 그럴듯하다.',
+    labels: ['sunrise peak', 'parking lot', 'hiking trail', 'lava tube cave', 'coastal island'],
+    sim: [[0.266, 0.222, 0.226, 0.184, 0.274], [0.208, 0.269, 0.235, 0.192, 0.265], [0.211, 0.195, 0.28, 0.227, 0.227], [0.201, 0.235, 0.217, 0.281, 0.203], [0.161, 0.198, 0.221, 0.158, 0.29]],
+    correct: 4,
+  },
+  {
+    id: 'en_scenario',
+    label: '영어 (장면 묘사)',
+    desc: '장면을 묘사하는 영어 라벨이다(표의 라벨 앞에 "a photo of a "가 생략되어 있다). 5장 모두 맞고, 정답 칸과 다른 칸의 차이도 평균적으로 가장 크다.',
+    labels: ['sunrise over a volcanic crater by the sea', 'parking lot full of tour buses', 'wooden staircase on a forest hiking trail', 'dark lava tube cave interior', 'green sea cliffs and a small island'],
+    sim: [[0.303, 0.175, 0.126, 0.172, 0.268], [0.207, 0.323, 0.07, 0.169, 0.256], [0.243, 0.171, 0.257, 0.209, 0.201], [0.18, 0.168, 0.226, 0.286, 0.185], [0.216, 0.191, 0.083, 0.12, 0.259]],
+    correct: 5,
+  },
+  {
+    id: 'ko',
+    label: '한국어',
+    desc: '"... 사진" 형식의 한국어 라벨. 5장 중 1장만 맞고, 그 1장도 우연에 가깝다. 다섯 라벨의 벡터가 서로 거의 구별되지 않아 사진마다 값 차이가 0.015~0.031뿐이다. 그래서 사진 4장이 모두 첫 라벨 "성산일출봉 사진"으로 쏠렸다.',
+    labels: ['성산일출봉 사진', '주차장 사진', '등산로 사진', '용암동굴 사진', '해안 섬 사진'],
+    sim: [[0.241, 0.219, 0.21, 0.215, 0.218], [0.221, 0.204, 0.202, 0.202, 0.193], [0.206, 0.195, 0.19, 0.196, 0.188], [0.226, 0.205, 0.213, 0.208, 0.203], [0.21, 0.215, 0.2, 0.214, 0.203]],
+    correct: 1,
+  },
+  {
+    id: 'ko_english_mix',
+    label: '한국어 + 영어 섞기',
+    desc: '한국어 라벨에 영어를 괄호로 붙였다. 5장 중 4장이 맞고, 틀린 사진(성산 일출봉 -> 해안 섬)까지 영어 짧은 라벨과 같다. 결과를 움직인 것이 영어 조각이라는 뜻이다.',
+    labels: ['성산일출봉 (Seongsan Ilchulbong) sunrise peak photo', '주차장 (parking lot) photo', '등산로 (hiking trail) photo', '용암동굴 (lava tube cave) photo', '해안 섬 (coastal island) photo'],
+    sim: [[0.266, 0.209, 0.207, 0.227, 0.27], [0.178, 0.247, 0.238, 0.23, 0.241], [0.213, 0.191, 0.278, 0.253, 0.225], [0.194, 0.206, 0.2, 0.264, 0.199], [0.162, 0.203, 0.229, 0.217, 0.283]],
+    correct: 4,
+  },
+];
+const INITIAL_INDEX = 1;
+---
+<clip-heatmap class="ch-wrap not-content" data-sets={JSON.stringify(sets)} data-imgs={JSON.stringify(imgNames)} data-initial={INITIAL_INDEX}>
+  <p class="ch-hint">라벨 조합을 바꿔가며 히트맵을 보세요. 행: 사진, 열: 후보 라벨. 가장 진한 칸이 모델이 고른 라벨이고, 대각선이 진하면 정답을 골라낸 것이다. 테두리 초록은 정답, 빨강은 오답. (모델: CLIP ViT-B/32, 제주 공개 사진 5장 실측)</p>
+  <div class="ch-tabs" role="tablist" aria-label="라벨 조합">
+    {sets.map((s, i) => (
+      <button type="button" class="ch-tab" data-i={i} role="tab" aria-selected={i === INITIAL_INDEX}>{s.label}</button>
+    ))}
+  </div>
+  <p class="ch-desc" aria-live="polite"></p>
+  <div class="ch-table-scroll">
+    <table class="ch-table">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="ch-verdict"></p>
+</clip-heatmap>
+
+<script>
+  class ClipHeatmap extends HTMLElement {
+    connectedCallback() {
+      const sets = JSON.parse(this.dataset.sets || '[]');
+      const imgs = JSON.parse(this.dataset.imgs || '[]');
+      const initial = parseInt(this.dataset.initial || '0', 10);
+      const tabs = Array.from(this.querySelectorAll<HTMLButtonElement>('.ch-tab'));
+      const desc = this.querySelector('.ch-desc') as HTMLElement;
+      const verdict = this.querySelector('.ch-verdict') as HTMLElement;
+      const thead = this.querySelector('.ch-table thead') as HTMLElement;
+      const tbody = this.querySelector('.ch-table tbody') as HTMLElement;
+
+      const render = (idx: number) => {
+        const s = sets[idx];
+        if (!s) return;
+        tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.i === String(idx))));
+        desc.textContent = s.desc;
+        verdict.textContent = '대각선 정답: ' + s.correct + '/5';
+        thead.innerHTML = '';
+        const hr = document.createElement('tr');
+        hr.appendChild(document.createElement('th'));
+        s.labels.forEach((l: string) => {
+          const th = document.createElement('th');
+          th.textContent = l;
+          hr.appendChild(th);
+        });
+        thead.appendChild(hr);
+        tbody.innerHTML = '';
+        s.sim.forEach((row: number[], i: number) => {
+          const tr = document.createElement('tr');
+          const th = document.createElement('th');
+          th.textContent = imgs[i];
+          tr.appendChild(th);
+          const best = Math.max(...row);
+          row.forEach((v, j) => {
+            const td = document.createElement('td');
+            const intensity = Math.round(Math.max(0, Math.min(1, (v - 0.10) / 0.25)) * 78);
+            td.style.background = 'color-mix(in srgb, var(--sl-color-accent) ' + intensity + '%, var(--sl-color-bg))';
+            td.textContent = v.toFixed(3);
+            td.classList.add('ch-cell');
+            if (v === best) td.classList.add('ch-best');
+            if (v === best && i === j) td.classList.add('ch-hit');
+            if (v === best && i !== j) td.classList.add('ch-miss');
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      };
+
+      tabs.forEach((t) => t.addEventListener('click', () => render(parseInt(t.dataset.i || '0', 10))));
+      render(initial);
+    }
+  }
+  customElements.define('clip-heatmap', ClipHeatmap);
+</script>
+
+<style>
+  .ch-wrap { display: block; margin: 1rem 0; }
+  .ch-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .ch-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }
+  .ch-tab {
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-text);
+    border-radius: 999px;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .ch-tab[aria-selected='true'] {
+    background: var(--sl-color-accent);
+    color: var(--sl-color-bg);
+    border-color: var(--sl-color-accent);
+    font-weight: 700;
+  }
+  .ch-desc { font-size: 0.82rem; line-height: 1.5; margin: 0 0 0.6rem; }
+  .ch-table-scroll { overflow-x: auto; }
+  .ch-table { border-collapse: collapse; font-size: 0.76rem; min-width: 34rem; }
+  .ch-table :global(th), .ch-table :global(td) { border: 1px solid var(--sl-color-gray-6); padding: 0.28rem 0.5rem; text-align: center; }
+  .ch-table :global(thead th) { font-weight: 600; color: var(--sl-color-gray-2); max-width: 9rem; }
+  .ch-table :global(tbody th) { font-weight: 600; text-align: left; white-space: nowrap; color: var(--sl-color-gray-2); }
+  .ch-table :global(.ch-cell) { font-variant-numeric: tabular-nums; color: var(--sl-color-text); }
+  .ch-table :global(.ch-best) { outline: 2px solid var(--sl-color-accent); outline-offset: -2px; font-weight: 700; }
+  .ch-table :global(.ch-hit) { outline-color: var(--sl-color-green, #2f9e44); }
+  .ch-table :global(.ch-miss) { outline-color: var(--sl-color-red, #e03131); }
+  .ch-verdict { font-size: 0.82rem; font-weight: 700; margin: 0.6rem 0 0; }
+</style>
