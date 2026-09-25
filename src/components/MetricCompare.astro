@@ -1,0 +1,150 @@
+---
+/**
+ * 지표가 무엇을 보고 무엇을 놓치는지 보여 주는 카드 컴포넌트.
+ * 한 문항을 정확도 / F1 / judge / 사람 판정이 각각 어떻게 채점하는지 대조한다.
+ * 정확도 밑줄은 "너무 엄격함"(정답 오답으로밖에 못 봄), judge는 "너무 관대함"
+ * (형식이 그럴듯하면 오답을 통과)이 드러나도록 한다. 동작 안내는 스크립트 주석뿐.
+ */
+const cases = [
+  {
+    id: 'c1',
+    query: '문의: 성산일출봉 입장료가 얼마예요?  (정답: 요금)',
+    gold: '요금',
+    prediction: '요금',
+    note: '모든 지표가 "맞음"으로 본다. 갈등이 없다.',
+  },
+  {
+    id: 'c2',
+    query: '문의: 제주공항에서 렌터카를 어디서 반납하나요?  (정답: 주차)',
+    gold: '주차',
+    prediction: '기타',
+    note: '모델이 틀렸다. 정확도는 한 글자로 "오답"으로 찍고 넘어간다. 왜 틀렸는지, 고객에겐 얼마나 치명적인지 아무것도 말하지 않는다.',
+  },
+  {
+    id: 'c3',
+    query: '문의: 함덕해수욕장에 샤워실이 있나요?  (정답: 시설)',
+    gold: '시설',
+    prediction: '시설 (형식만 그럴듯, 판단 근거 빈약)',
+    note: '라벨이 맞아서 정확도·F1은 "맞음"으로 통과시킨다. 하지만 리뷰 문장에 근거가 없으면 judge도 의심한다. 사람은 여기서 판단 근거를 따진다.',
+  },
+  {
+    id: 'c4',
+    query: '문의: 전화번호가 보이지 않아요. 직접 상담원을 연결해 주세요. (정답: 기타)',
+    gold: '기타',
+    prediction: '요금',
+    note: 'judge가 형식만 보고 "요금 상담으로 분류됨"을 그럴듯한 문장으로 포장하면 통과된다. 근거 검증이 없어서다. 사람은 발끈할 수 있는 실수다.',
+  },
+];
+---
+<div class="mx-wrap" data-cases={JSON.stringify(cases)}>
+  <p class="mx-hint">아래 예시 카드를 눌러 보세요. 같은 문항을 새 지표가 각각 어떻게 판정하는지 대조됩니다.</p>
+  <div class="mx-row">
+    {cases.map((c) => (
+      <button type="button" class="mx-card" data-id={c.id} aria-pressed="false">
+        <span class="mx-idx">예시 {c.id.slice(1)}</span>
+        <span class="mx-q">{c.query}</span>
+      </button>
+    ))}
+  </div>
+  <table class="mx-table">
+    <thead>
+      <tr>
+        <th>채점자</th>
+        <th>보는 것</th>
+        <th>판정</th>
+        <th>놓치는 것</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-metric="accuracy"><th>정확도</th><td>단일 라벨 일치</td><td class="cell-v">-</td><td>왜 틀렸는지, 얼마나 치명적인지</td></tr>
+      <tr data-metric="f1"><th>F1</th><td>양성 부류의 정밀·재현 균형</td><td class="cell-v">-</td><td>라벨 밖의 정보(근거, 톤, 비용) 전부</td></tr>
+      <tr data-metric="judge"><th>LLM judge</th><td>출력과 루브릭의 형태·내용 일치</td><td class="cell-v">-</td><td>중간 근거가 그럴듯하면 오답 통과</td></tr>
+      <tr data-metric="human"><th>사람</th><td>근거, 맥락, 실제 비용</td><td class="cell-v">-</td><td>속도·일관성 (대규모 채점엔 비쌈)</td></tr>
+    </tbody>
+  </table>
+  <p class="mx-note"></p>
+</div>
+
+<script>
+  class MetricCompare extends HTMLElement {
+    connectedCallback() {
+      const wrap = this;
+      const cases = JSON.parse(wrap.dataset.cases || '[]');
+      const cards = Array.from(wrap.querySelectorAll<HTMLElement>('.mx-card'));
+      const note = wrap.querySelector<HTMLElement>('.mx-note');
+      const cells = Array.from(wrap.querySelectorAll<HTMLElement>('.cell-v'));
+
+      const metricText: Record<string, string> = {
+        accuracy: '정답을 오답으로밖에 못 본다. "거의 맞음"을 표현할 길이 없다.',
+        f1: '부류별 치우침은 잡지만, 문항마다 무엇이 어땠는지는 말하지 않는다.',
+        judge: '형식이 그럴듯하면 오답을 통과시킨다. 중간 근거를 검증하지 않는다.',
+        human: '근거와 맥락을 따지지만 느리고 비싸서 큰 규모엔 못 쓴다.',
+      };
+      const perCase: Record<string, string[]> = {
+        c1: ['정답', '정답', '정답', '정답'],
+        c2: ['오답', '오답', '오답', '오답'],
+        c3: ['정답', '정답', '의심', '근거 확인 요청'],
+        c4: ['오답', '오답', '정답(자의)', '오답'],
+      };
+
+      const render = (id: string) => {
+        const c = cases.find((x) => x.id === id);
+        if (!c) return;
+        const verdicts = perCase[id];
+        cells.forEach((cell, i) => {
+          const ok = verdicts[i] === '정답';
+          cell.textContent = verdicts[i];
+          cell.classList.toggle('cell-bad', verdicts[i] === '오답');
+          cell.classList.toggle('cell-good', ok);
+          cell.classList.toggle('cell-warn', !ok && verdicts[i] !== '오답');
+        });
+        cards.forEach((card) => card.setAttribute('aria-pressed', String(card.dataset.id === id)));
+        if (note) note.textContent = c.note + '  (' + metricText[idToMetric(id)] + ')';
+      };
+      const idToMetric = (id: string) => {
+        if (id === 'c3') return 'judge';
+        if (id === 'c4') return 'judge';
+        return 'accuracy';
+      };
+
+      cards.forEach((card) => {
+        card.addEventListener('click', () => render(card.dataset.id || ''));
+      });
+      render('c1');
+    }
+  }
+  customElements.define('metric-compare', MetricCompare);
+</script>
+
+<style>
+  .mx-wrap { margin: 1rem 0; }
+  .mx-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .mx-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .mx-card {
+    flex: 1 1 12rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-text);
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .mx-card:hover { border-color: var(--sl-color-accent); }
+  .mx-card[aria-pressed='true'] {
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
+  }
+  .mx-idx { display: block; font-weight: 700; color: var(--sl-color-accent-high); margin-bottom: 0.2rem; }
+  .mx-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .mx-table th, .mx-table td { border: 1px solid var(--sl-color-gray-5); padding: 0.45rem 0.6rem; text-align: left; }
+  .mx-table thead th { background: var(--sl-color-bg-nav); }
+  .cell-v { font-weight: 700; white-space: nowrap; }
+  .cell-good { color: var(--sl-color-green, #2f9e44); }
+  .cell-bad { color: var(--sl-color-red, #e03131); }
+  .cell-warn { color: var(--sl-color-yellow, #f08c00); }
+  .mx-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin-top: 0.6rem; }
+</style>

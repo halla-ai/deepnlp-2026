@@ -1,0 +1,141 @@
+---
+/**
+ * pass@k 곡선 인터랙티브 컴포넌트 (이번 주차의 중심 그림).
+ * 학습 전과 학습 후 두 이론 곡선을 k 슬라이더로 탐색한다.
+ * pass@1 상승은 "새 능력"의 증거, pass@k 천장 불변은 "탐색 효율만 개선"의 증거다.
+ * 곡선은 이론식 1-(1-p)^k이며, 수치는 설명용 예시다.
+ */
+---
+<div class="pk-wrap">
+  <p class="pk-hint">슬라이더로 k(문항당 시도 횟수)를 바꿔 보세요. 두 곡선의 간격과 천장이 달라지는 것을 읽을 수 있습니다.</p>
+  <div class="pk-control">
+    <label for="pk-slider">k = <span id="pk-k-val">1</span></label>
+    <input id="pk-slider" type="range" min="1" max="20" value="1" step="1" aria-label="pass@k의 k 값 선택" />
+  </div>
+  <svg id="pk-svg" viewBox="0 0 420 240" role="img" aria-label="k를 1에서 20까지 늘릴 때 학습 전과 학습 후의 pass@k 이론 곡선 비교. 학습 전 천장 0.30, 학습 후 천장 0.38" style="width: 100%; height: auto;">
+    <rect x="0" y="0" width="420" height="240" fill="var(--sl-color-bg-nav)" rx="8" />
+    <g stroke="var(--sl-color-gray-6)" stroke-width="1">
+      <line x1="50" y1="200" x2="400" y2="200" />
+      <line x1="50" y1="155" x2="400" y2="155" />
+      <line x1="50" y1="110" x2="400" y2="110" />
+      <line x1="50" y1="65" x2="400" y2="65" />
+      <line x1="50" y1="20" x2="400" y2="20" />
+    </g>
+    <g fill="var(--sl-color-gray-3)" font-size="9" text-anchor="end">
+      <text x="46" y="203">0</text>
+      <text x="46" y="158">0.25</text>
+      <text x="46" y="113">0.5</text>
+      <text x="46" y="68">0.75</text>
+      <text x="46" y="23">1.0</text>
+    </g>
+    <g fill="var(--sl-color-gray-3)" font-size="9" text-anchor="middle">
+      <text x="50" y="215">1</text>
+      <text x="137" y="215">5</text>
+      <text x="225" y="215">10</text>
+      <text x="312" y="215">15</text>
+      <text x="400" y="215">20</text>
+    </g>
+    <line id="pk-ceil-b" x1="50" y1="110" x2="400" y2="110" stroke="var(--sl-color-red, #e03131)" stroke-width="1" stroke-dasharray="4 3" opacity="0.55" />
+    <line id="pk-ceil-a" x1="50" y1="110" x2="400" y2="110" stroke="var(--sl-color-green, #2f9e44)" stroke-width="1" stroke-dasharray="4 3" opacity="0.55" />
+    <path id="pk-path-b" d="" fill="none" stroke="var(--sl-color-red, #e03131)" stroke-width="2.5" />
+    <path id="pk-path-a" d="" fill="none" stroke="var(--sl-color-green, #2f9e44)" stroke-width="2.5" />
+    <circle id="pk-dot-b" r="4.5" fill="var(--sl-color-red, #e03131)" />
+    <circle id="pk-dot-a" r="4.5" fill="var(--sl-color-green, #2f9e44)" />
+    <g font-size="10" fill="var(--sl-color-gray-2)">
+      <rect x="255" y="28" width="10" height="10" fill="var(--sl-color-red, #e03131)" rx="2" />
+      <text x="271" y="37">학습 전 (천장 0.30)</text>
+      <rect x="255" y="44" width="10" height="10" fill="var(--sl-color-green, #2f9e44)" rx="2" />
+      <text x="271" y="53">학습 후 (천장 0.38)</text>
+      <text x="271" y="68" fill="var(--sl-color-gray-3)">(이론식: 1-(1-p)^k, 수치는 설명용 예시)</text>
+    </g>
+  </svg>
+  <div class="pk-readout">
+    <p class="pk-line"><span class="pk-swatch before"></span> 학습 전 pass@<span class="pk-k">1</span> = <strong id="pk-b-val">0.10</strong></p>
+    <p class="pk-line"><span class="pk-swatch after"></span> 학습 후 pass@<span class="pk-k">1</span> = <strong id="pk-a-val">0.13</strong></p>
+  </div>
+  <p class="pk-note"></p>
+</div>
+
+<script>
+  const B_P = 0.10;
+  const A_P = 0.13;
+  const BEFORE_CEIL = 0.30;
+  const AFTER_CEIL = 0.38;
+
+  class PassAtKCurve extends HTMLElement {
+    connectedCallback() {
+      const wrap = this;
+      const slider = wrap.querySelector('#pk-slider') as HTMLInputElement;
+      const pathB = wrap.querySelector('#pk-path-b') as unknown as SVGPathElement;
+      const pathA = wrap.querySelector('#pk-path-a') as unknown as SVGPathElement;
+      const dotB = wrap.querySelector('#pk-dot-b') as unknown as SVGCircleElement;
+      const dotA = wrap.querySelector('#pk-dot-a') as unknown as SVGCircleElement;
+      const kVal = wrap.querySelector('#pk-k-val') as HTMLElement;
+      const bVal = wrap.querySelector('#pk-b-val') as HTMLElement;
+      const aVal = wrap.querySelector('#pk-a-val') as HTMLElement;
+      const ceilB = wrap.querySelector('#pk-ceil-b') as unknown as SVGLineElement;
+      const ceilA = wrap.querySelector('#pk-ceil-a') as unknown as SVGLineElement;
+      const note = wrap.querySelector('.pk-note') as HTMLElement;
+
+      const H = 240, PAD_T = 20, PAD_B = 40;
+      const yScale = (v: number) => (1 - v) * (H - PAD_T - PAD_B) + PAD_T;
+      const xScale = (k: number) => 50 + ((k - 1) / 19) * (400 - 50);
+
+      const buildPath = (p: number, ceil: number) => {
+        let d = '';
+        for (let k = 1; k <= 20; k++) {
+          const v = Math.min(ceil, 1 - Math.pow(1 - p, k));
+          d += (k === 1 ? 'M' : 'L') + xScale(k).toFixed(1) + ' ' + yScale(v).toFixed(1) + ' ';
+        }
+        return d;
+      };
+
+      pathB.setAttribute('d', buildPath(B_P, BEFORE_CEIL));
+      pathA.setAttribute('d', buildPath(A_P, AFTER_CEIL));
+      ceilB.setAttribute('y1', yScale(BEFORE_CEIL).toFixed(1));
+      ceilB.setAttribute('y2', yScale(BEFORE_CEIL).toFixed(1));
+      ceilA.setAttribute('y1', yScale(AFTER_CEIL).toFixed(1));
+      ceilA.setAttribute('y2', yScale(AFTER_CEIL).toFixed(1));
+
+      const update = () => {
+        const k = parseInt(slider.value, 10);
+        const vb = Math.min(BEFORE_CEIL, 1 - Math.pow(1 - B_P, k));
+        const va = Math.min(AFTER_CEIL, 1 - Math.pow(1 - A_P, k));
+        kVal.textContent = String(k);
+        bVal.textContent = vb.toFixed(2);
+        aVal.textContent = va.toFixed(2);
+        dotB.setAttribute('cx', xScale(k).toFixed(1));
+        dotB.setAttribute('cy', yScale(vb).toFixed(1));
+        dotA.setAttribute('cx', xScale(k).toFixed(1));
+        dotA.setAttribute('cy', yScale(va).toFixed(1));
+        if (k === 1) {
+          note.textContent = 'k=1: 학습 후가 0.13으로 앞선다. pass@1만 보면 "학습이 조금 효과가 있었다"로 읽힌다.';
+        } else if (k <= 5) {
+          note.textContent = 'k가 늘자 격차가 벌어진다. 학습 후 곡선이 먼저 자기 천장(0.38)에 닿는다. 이는 새 추론 능력이 생겨 닿을 수 있는 상한 자체가 높아졌다는 뜻이다.';
+        } else if (k <= 10) {
+          note.textContent = 'k=10쯤에 학습 전 곡선도 자기 천장(0.30)에 닿는다. k를 더 늘려도 0.30을 넘지 못한다. 기존 능력을 아무리 반복해도 갈 수 없는 상한이다.';
+        } else {
+          note.textContent = 'k=20: 학습 전 0.30, 학습 후 0.38. pass@1은 0.10 vs 0.13으로 비슷해 보였지만, k를 늘려 보니 상한 자체가 다르다. pass@1만 보면 이 차이를 놓친다.';
+        }
+      };
+
+      slider.addEventListener('input', update);
+      update();
+    }
+  }
+  customElements.define('pass-at-k-curve', PassAtKCurve);
+</script>
+
+<style>
+  .pk-wrap { margin: 1rem 0; }
+  .pk-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .pk-control { display: flex; align-items: center; gap: 0.6rem; margin: 0.5rem 0 0.75rem; }
+  .pk-control label { font-size: 0.85rem; }
+  .pk-control input[type='range'] { flex: 1; max-width: 18rem; accent-color: var(--sl-color-accent); }
+  .pk-readout { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; font-size: 0.85rem; }
+  .pk-line { margin: 0; }
+  .pk-swatch { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; vertical-align: middle; margin-right: 0.3rem; }
+  .pk-swatch.before { background: var(--sl-color-red, #e03131); }
+  .pk-swatch.after { background: var(--sl-color-green, #2f9e44); }
+  .pk-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin: 0.6rem 0 0; }
+</style>
