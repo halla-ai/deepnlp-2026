@@ -21,7 +21,7 @@ const sets = [
   {
     id: 'en_scenario',
     label: '영어 (장면 묘사)',
-    desc: '장면을 묘사하는 영어 라벨이다. 5장 모두 맞고, 정답 칸과 다른 칸의 차이도 평균적으로 가장 크다.',
+    desc: '장면을 묘사하는 영어 라벨이다(표의 라벨 앞에 "a photo of a "가 생략되어 있다). 5장 모두 맞고, 정답 칸과 다른 칸의 차이도 평균적으로 가장 크다.',
     labels: ['sunrise over a volcanic crater by the sea', 'parking lot full of tour buses', 'wooden staircase on a forest hiking trail', 'dark lava tube cave interior', 'green sea cliffs and a small island'],
     sim: [[0.303, 0.175, 0.126, 0.172, 0.268], [0.207, 0.323, 0.07, 0.169, 0.256], [0.243, 0.171, 0.257, 0.209, 0.201], [0.18, 0.168, 0.226, 0.286, 0.185], [0.216, 0.191, 0.083, 0.12, 0.259]],
     correct: 5,
@@ -103,7 +103,6 @@ const INITIAL_INDEX = 1;
             td.textContent = v.toFixed(3);
             td.classList.add('ch-cell');
             if (v === best) td.classList.add('ch-best');
-            if (i === j) td.classList.add('ch-diag');
             if (v === best && i === j) td.classList.add('ch-hit');
             if (v === best && i !== j) td.classList.add('ch-miss');
             tr.appendChild(td);
