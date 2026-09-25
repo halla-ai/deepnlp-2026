@@ -66,7 +66,7 @@ const rows = [
 ];
 ---
 <metric-compare class="mx-wrap not-content" data-cases={JSON.stringify(cases)}>
-  <p class="mx-hint">예시 카드를 눌러 보세요. 같은 문항을 네 채점자가 각각 어떻게 판정하는지 표가 바뀝니다.</p>
+  <p class="mx-hint">예시 카드를 눌러 보세요. 같은 문항을 네 채점자가 각각 어떻게 판정하는지 표가 바뀝니다. (모델 출력과 판정은 설명용 예시)</p>
   <div class="mx-row">
     {cases.map((c, i) => (
       <button type="button" class="mx-card" data-id={c.id} aria-pressed={String(i === 0)}>
