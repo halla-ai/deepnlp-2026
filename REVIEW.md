@@ -32,7 +32,7 @@ Report at most 5 nits per review; summarize the rest as a count.
 - Generated paths: `dist/`, `.astro/`, `node_modules/`, `pnpm-lock.yaml`.
 - Anything CI already enforces: assignment folder checks (`check-assignment.yml`). The site build (`deploy.yml`) runs only after merge to `main`, so it is not enforced on a PR; a course-material PR must state that `make build` passes.
 
-## Feedback into CLAUDE.md
+## Feedback into AGENTS.md
 
 When the same finding appears twice, the correction goes into `AGENTS.md` in the same PR.
 
