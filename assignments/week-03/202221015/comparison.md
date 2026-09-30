@@ -40,4 +40,3 @@
 - AI 지원: 코드 작성, 오류 수정, 결과 정리에 생성형 AI 보조 사용. 실행 수치는 저장된 노트북 출력에서 얻었으며 학습자 이해도는 별도로 확인할 사항.
 
 출처: [공식 과제 1 안내](https://github.com/halla-ai/deepnlp-2026/blob/main/assignments/week-03/README.md), [공식 실습 골격](https://github.com/halla-ai/deepnlp-2026/blob/main/notebooks/week-03.ipynb), [NSMC 원본](https://github.com/e9t/nsmc).
-
