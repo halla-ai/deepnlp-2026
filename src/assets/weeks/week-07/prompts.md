@@ -18,11 +18,11 @@ CLI 결과의 `_min.webp`는 미리보기본이므로 쓰지 않고 원본 `.png
 | 파일 | 용도 | 비고 |
 |---|---|---|
 | week-07-hero.png | 히어로 - 긴 문서의 앞, 가운데, 뒤 | 1차 통과 |
-| needle-setup.png | 위치별 회수율 측정 설계 (깊이 다섯 곳, 길이 L) | 1차 통과 |
+| needle-setup.png | 위치별 회수율 측정 설계 (깊이 다섯 곳, 길이 L) | 1차본은 숨긴 문장 하나만 그려 실측 조건(비슷한 문장 열 개)과 달랐다는 검토 지적으로 방해 문장 아홉 개를 넣어 재생성 |
 | prefill-decode.png | 추론의 두 단계, FoLM 표 5.1 | 1차 통과 |
 | long-context-routes.png | 긴 문맥을 여는 다섯 갈래, FoLM 2.3.1~2.3.5 | 절 번호와 항목을 FoLM 목차와 대조. 1차 통과 |
 | rope-rotation.png | RoPE 회전과 상대 위치 | 1차본은 위치 1, 2, 3의 각도가 θ, 2θ, 3θ에 비례하지 않게(약 20, 60, 120도) 그려져 30도 등간격을 명시해 재생성. 재생성본 제목의 하이픈이 조금 길게 그려졌다 |
-| position-interpolation.png | 외삽과 위치 보간, FoLM 식 2.99~2.100 | 1차 통과 |
+| position-interpolation.png | 외삽과 위치 보간, FoLM 식 2.99~2.100 | 1차본은 점선 자의 0에서 나온 화살표가 초록 자의 약 1/4 지점에 떨어져 x · m_l / m과 맞지 않았다는 검토 지적으로 0 -> 0, m -> m_l 부채꼴을 명시해 재생성 |
 | lost-in-middle-u.png | Lost in the Middle U자 곡선 개념도 (수치 없음) | 1차 통과 |
 | rag-vs-long.png | 검색 결합과 초장문맥 비교 (대면) | 1차 통과 |
 | concept-map-1-7.png | 1~7주차 개념 위계 (대면 종합 리뷰) | 1차 통과 |
@@ -42,11 +42,11 @@ Bottom right corner: a small navy note 앞과 뒤는 잘 보이고, 가운데는
 ### needle-setup
 
 ```
-Title at top in Korean, using a short ASCII hyphen with spaces: 위치별 회수율 측정 - 문서 속에 한 문장을 숨긴다
-Left two thirds: five long horizontal grey bars stacked vertically, all the same length, each representing the same document. In each bar one small violet card labelled 번호 4721 is inserted at a different place: at the very left end in bar 1, at one quarter in bar 2, at the middle in bar 3, at three quarters in bar 4, at the very right end in bar 5. To the left of the bars, labels top to bottom: 깊이 0%, 깊이 25%, 깊이 50%, 깊이 75%, 깊이 100%.
+Title at top in Korean, using a short ASCII hyphen with spaces: 위치별 회수율 측정 - 비슷한 문장 사이에 한 문장을 숨긴다
+Left two thirds: five long horizontal light grey bars stacked vertically, all the same length, each representing the same document. Inside every bar there are nine small grey cards spread evenly along the bar, each grey card labelled 다른 안내센터. In addition, each bar has exactly one violet card labelled 애월 7468 at a different place: at the very left end in bar 1, at one quarter in bar 2, at the middle in bar 3, at three quarters in bar 4, at the very right end in bar 5. To the left of the bars, labels top to bottom: 깊이 0%, 깊이 25%, 깊이 50%, 깊이 75%, 깊이 100%.
 Above the bars, a horizontal double arrow spanning the bar length labelled 문서 길이 L.
-Right third: a green box labelled 질문: 임시 출입 번호는? and below it a check box labelled 답에 4721이 있으면 회수 성공.
-Bottom caption: L을 늘려 가며 같은 측정을 반복
+Right third: a green box labelled 질문: 애월 안내센터의 번호는? and below it a check box labelled 답에 7468이 있으면 회수 성공.
+Bottom caption: 비슷한 문장 열 개 중 정확히 하나를 골라야 한다
 ```
 
 ### prefill-decode
@@ -84,8 +84,8 @@ Bottom strip: two small dials side by side, one spinning fast labelled 빠른 �
 ```
 Title at top in Korean, using a short ASCII hyphen with spaces: 학습 길이 밖으로 - 외삽과 위치 보간
 Top row labelled 외삽: a long horizontal ruler. The left part from 0 to m_l is green and labelled 학습 때 본 위치. The right part from m_l to m is shaded light red and labelled 본 적 없는 위치. Tick labels under the ruler: 0, m_l, m.
-Bottom row labelled 위치 보간: a ruler of the same green length from 0 to m_l only. Many thin arrows come down from a longer dashed ruler above it (0 to m) and squeeze into the green ruler, showing positions compressed. Label beside the arrows: 위치 x를 x · m_l / m 로 줄인다
-Right side note box: 새 위치가 모두 학습한 범위 안에 들어온다, 짧은 추가 학습으로 적응
+Bottom row labelled 위치 보간: a long dashed ruler on top from 0 to m (tick labels 0 and m), and directly below it a shorter solid green ruler from 0 to m_l (tick labels 0 and m_l), both starting at exactly the same left x position. Nine straight thin arrows connect evenly spaced ticks of the dashed ruler to evenly spaced ticks of the green ruler, like a fan that narrows to the right: the leftmost arrow goes straight down from 0 to 0, the rightmost arrow goes from m on the dashed ruler down-left to m_l on the green ruler, and the arrows in between are evenly spread. Label beside the fan: 위치 x를 x · m_l / m 로 줄인다
+Right side note box with two short lines: 새 위치가 모두 학습한 범위 안에 들어온다 / 짧은 추가 학습으로 적응
 ```
 
 ### lost-in-middle-u
@@ -133,7 +133,7 @@ Above the top layer, a dashed empty box labelled 다음: 검색 결합 (9주)
 ## 인터랙티브 컴포넌트
 
 - `KvCacheCalc.astro`: Qwen3-0.6B-Base 설정(층 28, KV 헤드 8, 헤드 차원 128, 최대 위치 32,768, 파라미터 596,049,920개)으로 KV 캐시와 가중치 크기를 비교한다. GQA 8 대 MHA 가정 16, bf16 대 fp32를 고를 수 있다
-- `RopeDial.astro`: 같은 설정에서 차원 쌍 k = 1, 48, 56의 회전 각도를 다이얼로 보인다. 초록 호는 위치 0~32,767에서 지나간 각도 범위다. 위치 보간 x4를 켜면 위치를 1/4로 줄인다
+- `RopeDial.astro`: 같은 설정에서 차원 쌍 k = 1, 48, 56의 회전 각도를 다이얼로 보인다. 초록 호는 위치 0~32,768(최대 위치, 경계 포함)에서 지나간 각도 범위다. 위치 보간 x4를 켜면 위치를 1/4로 줄인다
 
 ## 검수 기준
 
