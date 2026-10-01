@@ -11,6 +11,8 @@ description: 실습에 쓰는 공개 데이터
 | [제주데이터허브](https://www.jejudatahub.net) | 제주 민간 개방 포털 |
 | [제주 관광 빅데이터 서비스 플랫폼](https://data.ijto.or.kr) | 관광 분야 특화 |
 | [공공데이터포털](https://www.data.go.kr) | 제주 행정정보 |
+| [위키백과](https://ko.wikipedia.org) 「제주특별자치도」 고정 판 | 7주차 장문맥 실습 문서. 판 번호를 고정해 내려받는다. CC BY-SA 4.0 |
+| [위키미디어 공용](https://commons.wikimedia.org) | 6주차 멀티모달 실습의 제주 사진. 사진별 저자와 라이선스는 6주차 노트에 있다 |
 
 ## 알아둘 것
 
