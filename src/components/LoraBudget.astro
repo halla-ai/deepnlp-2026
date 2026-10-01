@@ -21,7 +21,7 @@ const CFG = { layers: 28, total: 596049920, linear: 440401920 };
 const RANKS = [4, 8, 16, 32, 64];
 ---
 <lora-budget class="lb-wrap not-content" data-mods={JSON.stringify(MODULES)} data-cfg={JSON.stringify(CFG)} data-ranks={JSON.stringify(RANKS)}>
-  <p class="lb-hint">LoRA를 붙일 모듈과 랭크를 골라 보세요. 실습 모델 Qwen3-0.6B-Base(28층) 기준으로 계산한다.</p>
+  <p class="lb-hint">LoRA를 붙일 모듈과 랭크를 고른다. 실습 모델 Qwen3-0.6B-Base(28층) 기준으로 계산한다.</p>
   <fieldset class="lb-mods">
     <legend>붙일 모듈 (한 층 안, 입력 -> 출력)</legend>
     {MODULES.map((m) => (

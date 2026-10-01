@@ -16,12 +16,12 @@ Flat vector infographic slide for a university NLP lecture, clean white grid bac
 
 | 파일 | 용도 | 비고 |
 |---|---|---|
-| week-08-hero.png | 히어로 - 1~7주 체크포인트와 8주 중간 점검 | 1차 통과 |
+| week-08-hero.png | 히어로 - 1~7주 체크포인트와 8주 중간 점검 | 1차본 메모 끝에 마침표가 그려져 재생성 |
 | peft-family.png | 미세조정 여섯 가지가 학습하는 것 (3주차 기법) | 카드 문구를 3주차 노트와 대조. 1차 통과 |
-| lora-targets.png | Qwen3-0.6B 한 층의 선형 층 일곱 개와 모양 | 모양을 config.json(hidden 1024, 쿼리 헤드 16, KV 헤드 8, 헤드 차원 128, intermediate 3072)과 대조. 1차 통과 |
+| lora-targets.png | Qwen3-0.6B 한 층의 선형 층 일곱 개와 모양 | 모양을 config.json(hidden 1024, 쿼리 헤드 16, KV 헤드 8, 헤드 차원 128, intermediate 3072)과 대조. 메모 끝 마침표 때문에 재생성했으나 재생성본에도 남아, 1차본을 쓰고 마침표 한 점만 배경색으로 지웠다(격자선 복원) |
 | self-check-loop.png | 자가 점검 순환 | 1차 통과 |
 | partial-credit.png | 구현 문항 중간 단계 부분점수 40 / 40 / 20 | 수업계획서 성적 판정 기준과 대조. 1차 통과 |
-| concept-map-1-15.png | 15주의 지도와 지금 위치 | 1차 통과 |
+| concept-map-1-15.png | 15주의 지도와 지금 위치 | 1차본은 제어를 10~11주로 묶고 진행 중인 마디(적응, 제어)를 완료로 칠했다는 검토 지적으로 수업계획서 주차-개념 대응표(11주 과정 감독·신용 할당 별도)에 맞춰 재생성 |
 
 ## 이미지 프롬프트 (장면 부분)
 
@@ -30,7 +30,7 @@ Flat vector infographic slide for a university NLP lecture, clean white grid bac
 ```
 Title at top in Korean: 중간 점검 - 지나온 길을 다시 그린다
 A winding trail drawn from the bottom left toward the top right, like a hiking map. Seven round green checkpoints along the solid trail, labelled in order 1주, 2주, 3주, 4주, 5주, 6주, 7주. After the seventh checkpoint, a larger violet flag marker labelled 8주 중간 점검. After the flag the trail continues as a dashed line toward the top right with no more labels.
-Bottom left corner: a small compass icon. Bottom right: a small navy note 빠진 마디를 찾는다
+Bottom left corner: a small compass icon. Bottom right: a small navy note box. The note reads exactly 빠진 마디를 찾는다 and ends without any punctuation mark.
 ```
 
 ### peft-family
@@ -53,7 +53,7 @@ Grey cards 1, violet card 3, green cards 2, 4, 5, 6. Bottom caption: 3주차에�
 Title at top in Korean: LoRA를 어디에 붙일까 - Qwen3-0.6B 한 층
 A vertical diagram of one transformer layer, bottom to top: an input arrow labelled 입력 (1024), then a block titled 어텐션 containing four side-by-side rounded boxes labelled q_proj 1024→2048, k_proj 1024→1024, v_proj 1024→1024, o_proj 2048→1024, then a block titled 피드포워드 containing three boxes labelled gate_proj 1024→3072, up_proj 1024→3072, down_proj 3072→1024, then an output arrow labelled 출력 (1024).
 The q_proj and v_proj boxes have a small green side-path badge labelled LoRA. The other boxes are plain grey.
-Right side note: 이 층이 28번 반복된다
+Right side: a short note. The note reads exactly 이 층이 28번 반복된다 and ends without any punctuation mark.
 ```
 
 ### self-check-loop
@@ -87,11 +87,12 @@ Bottom note box: 1단계만 성립해도 점수가 있다 · 표현이 달라도
 
 ```
 Title at top in Korean: 15주의 지도와 지금 위치
-A horizontal row of six large rounded stage boxes connected by arrows, left to right:
-아키텍처 (1~2주), 적응 (3 · 8주), 제어 (4~5 · 10~11주), 확장 (6~7주), 검색 결합 (9주), 시스템화 (12 · 14주)
-The first four boxes are filled green. The last two boxes are outlined only with a dashed border.
+A horizontal row of seven rounded stage boxes connected by arrows, left to right, each with a bold name and the weeks under it:
+아키텍처 (1~2주), 적응 (3 · 8주), 제어 (4~5 · 10주), 확장 (6~7주), 검색 결합 (9주), 과정 감독 · 신용 할당 (11주), 시스템화 (12 · 14주)
+Box fills: 아키텍처 and 확장 are fully filled green. 적응 and 제어 are filled green only on their left half, with the right half white, because part of their weeks is still ahead. 검색 결합, 과정 감독 · 신용 할당, and 시스템화 are white with a dashed outline only.
 A violet pin marker stands between 확장 and 검색 결합, labelled 지금: 8주 중간 점검.
 Below the row, one wide light box labelled 종합: 13주 최신 동향 · 15주 최종 발표
+Bottom right small legend with two items: a green square labelled 지난 주차, a dashed white square labelled 남은 주차
 ```
 ## 이미지 자산 (matplotlib)
 
@@ -99,7 +100,7 @@ Below the row, one wide light box labelled 종합: 13주 최신 동향 · 15주 
 
 | 파일 | 용도 | 값 |
 |---|---|---|
-| lora-params.png | Qwen3-0.6B-Base의 모듈별, 설정별 LoRA 학습 파라미터 | 노트북 3에서 peft로 센 값. q·v r=8 1,146,880, 일곱 모듈 5,046,272, DoRA q·v 1,232,896, r=32 q·v는 공식 32 x (3,072 + 2,048) x 28 = 4,587,520 |
+| lora-params.png | Qwen3-0.6B-Base의 모듈별, 설정별 LoRA 학습 파라미터 | r = 8 값은 노트북 3에서 peft로 센 값. q·v r=8 1,146,880, 일곱 모듈 5,046,272, DoRA q·v 1,232,896, r=32 q·v는 공식 32 x (3,072 + 2,048) x 28 = 4,587,520 |
 | peft-memory.png | 학습 메모리 어림 (3주차 16바이트 규칙) | 노트북 3-1. 전체 미세조정 8.88, LoRA 2.24, QLoRA 0.51 GiB(임베딩을 2바이트로 둠) |
 
 ## 인터랙티브 컴포넌트
