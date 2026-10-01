@@ -60,6 +60,8 @@ const INITIAL = 3;
         const max = Math.max(kv, w);
         q<HTMLElement>('.kv-len-val').textContent = n.toLocaleString('ko-KR');
         q<HTMLElement>('.kv-batch-val').textContent = String(bs);
+        len.setAttribute('aria-valuetext', n.toLocaleString('ko-KR') + '토큰');
+        batch.setAttribute('aria-valuetext', bs + '요청');
         q<HTMLElement>('.kv-formula').textContent =
           `2 (K와 V) x ${cfg.layers}층 x ${heads}헤드 x ${cfg.headDim}차원 x ${bytes}바이트 = 토큰당 ${(perTok / 1024).toFixed(0)} KiB, ` +
           `x ${n.toLocaleString('ko-KR')}토큰 x ${bs}요청 = ${gib(kv)}`;

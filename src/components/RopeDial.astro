@@ -72,6 +72,7 @@ const R = 52;
       const render = () => {
         const p = positions[parseInt(pos.value, 10)];
         const eff = pi.checked ? p / 4 : p;
+        pos.setAttribute('aria-valuetext', '위치 ' + p.toLocaleString('ko-KR'));
         (this.querySelector('.rd-pos-val') as HTMLElement).textContent =
           p.toLocaleString('ko-KR') + (pi.checked ? ` (넣는 위치 ${eff.toLocaleString('ko-KR')})` : '');
         let outside = 0;

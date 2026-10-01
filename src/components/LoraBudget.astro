@@ -66,6 +66,7 @@ const RANKS = [4, 8, 16, 32, 64];
         const loraMem = cfg.total * 4 + train * 16;
         const qloraMem = cfg.linear * 0.5 + (cfg.total - cfg.linear) * 2 + train * 16;
         q<HTMLElement>('.lb-r-val').textContent = String(r);
+        rIn.setAttribute('aria-valuetext', 'r = ' + r);
         q<HTMLElement>('.lb-count').textContent = chosen.length === 0
           ? '모듈을 하나 이상 고르세요.'
           : `학습 파라미터 ${fmt(train)}개 = 전체 ${fmt(cfg.total)}개의 ${(100 * train / cfg.total).toFixed(3)}%` +
