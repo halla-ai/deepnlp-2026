@@ -3,6 +3,7 @@ title: "특강: Jev와 LLM - 결정 모델과 생성 모델"
 description: 답이 정해진 의미 판단을 토큰 생성 없이 처리하는 결정 모델과, 글을 만들어 내는 생성 모델의 차이
 ---
 
+import { Image } from 'astro:assets';
 import jevVsLlmHero from '../../../assets/topics/jev-vs-llm/jev-vs-llm-hero.png';
 import tokenStreamVsParallel from '../../../assets/topics/jev-vs-llm/token-stream-vs-parallel.png';
 import questionTypes from '../../../assets/topics/jev-vs-llm/question-types.png';
@@ -31,7 +32,7 @@ import costLatencyBars from '../../../assets/topics/jev-vs-llm/cost-latency-bars
   - 형식이 틀리는 오류와, 판단이 틀리는 오류
   - 모델이 주는 신호와, 그 신호로 무엇을 할지 정하는 코드
 
-<img src={jevVsLlmHero.src} alt="같은 질문 하나가 왼쪽 LLM과 오른쪽 Jev로 갈라져 들어가, LLM은 중괄호와 분류와 주차 같은 토큰을 하나씩 이어 만들어 내고 Jev는 주차 0.62, 요금 0.28, 시설 0.10의 확률 막대를 한 번에 내놓는 비교 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={jevVsLlmHero} width={1600} alt="같은 질문 하나가 왼쪽 LLM과 오른쪽 Jev로 갈라져 들어가, LLM은 중괄호와 분류와 주차 같은 토큰을 하나씩 이어 만들어 내고 Jev는 주차 0.62, 요금 0.28, 시설 0.10의 확률 막대를 한 번에 내놓는 비교 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ## 같은 질문, 두 가지 계산
 
@@ -57,7 +58,7 @@ import costLatencyBars from '../../../assets/topics/jev-vs-llm/cost-latency-bars
 - 모델은 글을 만들지 않는다. 주어진 세 후보 각각에 **확률을 매겨서 한 번에 돌려준다**
 - 만들어 내는 토큰이 0개다. 그래서 파싱할 문자열도 없고, 목록에 없는 답이 나올 자리도 없다
 
-<img src={tokenStreamVsParallel.src} alt="위쪽 보라색 줄은 LLM이 중괄호, 분류, 콜론, 주차, 쉼표, 긴급, 닫는 중괄호 순으로 토큰을 하나씩 이어 만들어 내는 사슬이고, 아래쪽 초록 줄은 Jev가 한 번의 계산으로 분류 주차, 긴급 0.88, 심각도 1.6, 환불요청 0.31 네 답을 동시에 내놓는 비교 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={tokenStreamVsParallel} width={1600} alt="위쪽 보라색 줄은 LLM이 중괄호, 분류, 콜론, 주차, 쉼표, 긴급, 닫는 중괄호 순으로 토큰을 하나씩 이어 만들어 내는 사슬이고, 아래쪽 초록 줄은 Jev가 한 번의 계산으로 분류 주차, 긴급 0.88, 심각도 1.6, 환불요청 0.31 네 답을 동시에 내놓는 비교 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 한 줄로 요약한 차이
 
@@ -100,7 +101,7 @@ import costLatencyBars from '../../../assets/topics/jev-vs-llm/cost-latency-bars
 
 - Jev에게는 아무 질문이나 못 한다. 세 가지 틀 중 하나에 맞춰 물어야 한다
 
-<img src={questionTypes.src} alt="Choice 고르기, Score 등급 매기기, Noul 참인가 세 유형을 나란히 놓은 카드 세 장. Choice는 주차 시설 요금 중 하나를 고르는 칩, Score는 0단계에서 2단계 사이 눈금 위의 한 점, Noul은 0.88까지 찬 막대 하나로 표현된 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={questionTypes} width={1600} alt="Choice 고르기, Score 등급 매기기, Noul 참인가 세 유형을 나란히 놓은 카드 세 장. Choice는 주차 시설 요금 중 하나를 고르는 칩, Score는 0단계에서 2단계 사이 눈금 위의 한 점, Noul은 0.88까지 찬 막대 하나로 표현된 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ Choice - 목록에서 하나 고르기
 
@@ -207,7 +208,7 @@ with TypeSafeClient() as client:
 - Jev에 넣는 입력을 **상태**(state)라 부른다. 문의 본문, 고객 이력, 관련 규정처럼 판단에 필요한 재료를 모아 놓은 덩어리다
 - 질문은 여러 개를 한꺼번에 던진다. 모든 질문은 **같은 상태를 보고 각자 따로, 그리고 병렬로** 평가된다
 
-<img src={fanOutParallel.src} alt="왼쪽 파란 상자에 제주 성산일출봉 주차 관련 문의 본문이 들어 있고, 가운데 초록 Jev 상자를 거쳐 오른쪽으로 분류 주차 0.62, 긴급 0.88, 심각도 1.6, 환불요청 0.31 네 갈래가 부채꼴로 펼쳐지는 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={fanOutParallel} width={1600} alt="왼쪽 파란 상자에 제주 성산일출봉 주차 관련 문의 본문이 들어 있고, 가운데 초록 Jev 상자를 거쳐 오른쪽으로 분류 주차 0.62, 긴급 0.88, 심각도 1.6, 환불요청 0.31 네 갈래가 부채꼴로 펼쳐지는 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ```python
 response = client.system_one(
@@ -275,7 +276,7 @@ confidence = (3 x 0.62 - 1) / 2 = (1.86 - 1) / 2 = 0.43
 confidence = (3 x 0.94 - 1) / 2 = (2.82 - 1) / 2 = 0.91
 ```
 
-<img src={confidenceBars.src} alt="왼쪽 갈린 경우 패널은 주차 0.62, 요금 0.28, 시설 0.10 막대와 confidence 0.43 계산식, 오른쪽 뚜렷한 경우 패널은 요금 0.94, 주차 0.04, 시설 0.02 막대와 confidence 0.91 계산식을 나란히 보여 주는 비교 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={confidenceBars} width={1600} alt="왼쪽 갈린 경우 패널은 주차 0.62, 요금 0.28, 시설 0.10 막대와 confidence 0.43 계산식, 오른쪽 뚜렷한 경우 패널은 요금 0.94, 주차 0.04, 시설 0.02 막대와 confidence 0.91 계산식을 나란히 보여 주는 비교 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 선택지가 셋이 아닐 때
 
@@ -313,7 +314,7 @@ else:
     사람_검토함으로(ticket_id)
 ```
 
-<img src={confidenceRouting.src} alt="확신도 상자에서 마름모 판단 노드를 거쳐 0.85 초과는 자동 처리, 0.60에서 0.85는 사용자에게 확인, 0.60 미만은 사람에게 넘김 세 갈래로 나뉘고 아래에 if elif else 세 줄짜리 코드 블록이 있는 라우팅 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={confidenceRouting} width={1600} alt="확신도 상자에서 마름모 판단 노드를 거쳐 0.85 초과는 자동 처리, 0.60에서 0.85는 사용자에게 확인, 0.60 미만은 사람에게 넘김 세 갈래로 나뉘고 아래에 if elif else 세 줄짜리 코드 블록이 있는 라우팅 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 임계값은 어디서 오나
 
@@ -338,7 +339,7 @@ else:
 - 결정 모델을 소개하는 글에는 "환각이 불가능하다"는 말이 자주 나온다. 절반만 맞는 말이다
 - 오류를 두 종류로 갈라야 한다
 
-<img src={validVsCorrect.src} alt="왼쪽에 주차 시설 요금 세 후보만 든 답 목록 상자가 있고, 오른쪽 위 스키마 오류 패널은 환불이라는 목록 밖 답이 빨간 금지 표시에 막히는 그림, 오른쪽 아래 판단 오류 패널은 환불 문의인데 주차로 분류돼 엉뚱한 부서로 넘어가는 그림. 아래에 유효한 답은 맞는 답과 다르다는 문구가 크게 적혀 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={validVsCorrect} width={1600} alt="왼쪽에 주차 시설 요금 세 후보만 든 답 목록 상자가 있고, 오른쪽 위 스키마 오류 패널은 환불이라는 목록 밖 답이 빨간 금지 표시에 막히는 그림, 오른쪽 아래 판단 오류 패널은 환불 문의인데 주차로 분류돼 엉뚱한 부서로 넘어가는 그림. 아래에 유효한 답은 맞는 답과 다르다는 문구가 크게 적혀 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 스키마 오류 - 정말로 일어나지 않는다
 
@@ -388,7 +389,7 @@ LLM의 환각은 두 가지가 섞여 있다. 없는 사실을 지어내는 것(
 | 대형 LLM A | 67.9% | 0.0304 달러 | 10.1초 |
 | 대형 LLM B | 73.1% | 0.1761 달러 | 37.8초 |
 
-<img src={costLatencyBars.src} alt="Jev와 대형 LLM 두 종의 정확도 막대는 67.8퍼센트 67.9퍼센트 73.1퍼센트로 비슷한 길이인데, 한 건당 비용 막대는 0.0004달러 0.0304달러 0.1761달러로, 걸린 시간 막대는 0.4초 10.1초 37.8초로 크게 벌어지는 비교 막대그래프. 아래에 벤더 공개 수치라는 경고 띠가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={costLatencyBars} width={1600} alt="Jev와 대형 LLM 두 종의 정확도 막대는 67.8퍼센트 67.9퍼센트 73.1퍼센트로 비슷한 길이인데, 한 건당 비용 막대는 0.0004달러 0.0304달러 0.1761달러로, 걸린 시간 막대는 0.4초 10.1초 37.8초로 크게 벌어지는 비교 막대그래프. 아래에 벤더 공개 수치라는 경고 띠가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 표에서 읽을 것
 
@@ -408,7 +409,7 @@ LLM의 환각은 두 가지가 섞여 있다. 없는 사실을 지어내는 것(
 
 □ 셋 중 하나를 고른다
 
-<img src={useCaseMap.src} alt="세로축 결정 빈도와 가로축 답의 범위로 이뤄진 지도에, 왼쪽 열린 작업 영역은 글쓰기 계획 설명 추론으로 LLM, 오른쪽 위 Jev의 자리 영역은 분류 우선순위 재순위 가드레일 모델 라우팅, 오른쪽 아래 규칙이 분명함 영역은 if 문으로 충분하다고 표시된 2차원 배치도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={useCaseMap} width={1600} alt="세로축 결정 빈도와 가로축 답의 범위로 이뤄진 지도에, 왼쪽 열린 작업 영역은 글쓰기 계획 설명 추론으로 LLM, 오른쪽 위 Jev의 자리 영역은 분류 우선순위 재순위 가드레일 모델 라우팅, 오른쪽 아래 규칙이 분명함 영역은 if 문으로 충분하다고 표시된 2차원 배치도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 | 상황 | 쓸 것 | 이유 |
 |---|---|---|
@@ -444,7 +445,7 @@ LLM의 환각은 두 가지가 섞여 있다. 없는 사실을 지어내는 것(
 - 여기까지 보면 둘 중 하나를 고르는 이야기 같지만, 실제 시스템에서 둘은 **경쟁하지 않는다**
 - 에이전트 한 바퀴를 생각해 보자. LLM이 무엇을 할지 정하고, 도구가 실행되고, 결과를 다시 본다. 그 고리 곳곳에 **작은 갈림길**이 있다
 
-<img src={agentLoop.src} alt="문맥과 상태에서 시작해 Jev 모델 고르기, 가운데 보라색 LLM 실제 작업, 도구 호출, Jev 도구 승인, 도구 실행, Jev 결과 검증으로 이어지는 일곱 단계 순환 다이어그램. 생각은 LLM이 갈림길은 Jev가 맡는다는 문구가 아래에 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={agentLoop} width={1600} alt="문맥과 상태에서 시작해 Jev 모델 고르기, 가운데 보라색 LLM 실제 작업, 도구 호출, Jev 도구 승인, 도구 실행, Jev 결과 검증으로 이어지는 일곱 단계 순환 다이어그램. 생각은 LLM이 갈림길은 Jev가 맡는다는 문구가 아래에 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 | 단계 | 하는 일 | 누가 |
 |---|---|---|

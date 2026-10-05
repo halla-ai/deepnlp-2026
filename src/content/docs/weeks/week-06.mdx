@@ -4,6 +4,7 @@ description: 멀티모달 표현의 결합
 week: 6
 ---
 
+import { Image } from 'astro:assets';
 import weekHero from '../../../assets/weeks/week-06/week-06-hero.png';
 import cosineBasics from '../../../assets/weeks/week-06/cosine-basics.png';
 import contrastiveMatrix from '../../../assets/weeks/week-06/contrastive-matrix.png';
@@ -32,7 +33,7 @@ import ClipHeatmap from '../../../components/ClipHeatmap.astro';
   - **이중 인코더**(dual encoder, CLIP): 사진과 문장을 각자 벡터로 만들어 비교만 한다. 빠르지만 문장을 생성하지는 못한다
   - **인코더 + 언어모형**(VLM, SmolVLM): 사진을 시각 토큰으로 바꿔 언어모형의 문맥에 붙이고 문장으로 답하게 한다. 유연하지만 사진이 문맥의 대부분을 차지한다
 
-<img src={weekHero.src} alt="왼쪽의 제주 해안 사진 카드와 오른쪽의 영어 문장 카드가 각자 인코더를 지나 가운데의 공유 벡터 공간에서 두 화살표로 만나는 일러스트. 두 화살표 사이의 각이 작으면 비슷하다는 표시가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={weekHero} width={1600} alt="왼쪽의 제주 해안 사진 카드와 오른쪽의 영어 문장 카드가 각자 인코더를 지나 가운데의 공유 벡터 공간에서 두 화살표로 만나는 일러스트. 두 화살표 사이의 각이 작으면 비슷하다는 표시가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 이번 주가 답하는 질문
 
@@ -78,7 +79,7 @@ cos(a, c) = 0.6 x (-0.8) + 0.8 x 0.6 = 0    직각, 관련 없음
 
 - 코사인 유사도는 -1에서 1 사이다. 1에 가까울수록 같은 방향이다. CLIP은 이 계산을 512차원에서 한다. 차원만 많을 뿐 원리는 같다
 
-<img src={cosineBasics.src} alt="2차원 평면에 길이 1인 원과 세 벡터 a(0.6, 0.8), b(0.8, 0.6), c(-0.8, 0.6)을 그린 그림. a와 b 사이 각은 작아 코사인 0.96, a와 c는 직각이라 코사인 0이라고 표시되어 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={cosineBasics} width={1600} alt="2차원 평면에 길이 1인 원과 세 벡터 a(0.6, 0.8), b(0.8, 0.6), c(-0.8, 0.6)을 그린 그림. a와 b 사이 각은 작아 코사인 0.96, a와 c는 직각이라 코사인 0이라고 표시되어 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 왜 "비교"와 "생성"이 갈리는가
 
@@ -109,7 +110,7 @@ cos(a, c) = 0.6 x (-0.8) + 0.8 x 0.6 = 0    직각, 관련 없음
 - CLIP의 배치는 32,768쌍이었다. 사진 한 장이 한 단계에서 짝이 아닌 문장 32,767개와 비교되는 셈이다. 비교 대상이 많을수록 "비슷하지만 틀린" 문장과 구별하는 힘이 커진다
 - 유사도를 소프트맥스에 넣기 전에 곱하는 수가 **logit_scale**이다. 온도의 역수에 해당하는 배율로 학습되며, 논문은 이 배율이 100을 넘지 않도록 잘라 두었다(학습이 불안정해지는 것을 막으려고). 실습 모델의 값이 정확히 100.0인 것은 학습 중에 이 상한에 닿았기 때문으로 읽을 수 있다
 
-<img src={contrastiveMatrix.src} alt="배치 크기 4의 대조 학습 그림. 행에 사진 4장, 열에 문장 4개가 놓인 4x4 유사도 표에서 대각선 4칸은 초록(짝이 맞는 쌍, 가깝게), 나머지 12칸은 회색(짝이 아닌 쌍, 멀게)이다. 행 방향과 열 방향 소프트맥스를 함께 쓰는 대칭 교차엔트로피라는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={contrastiveMatrix} width={1600} alt="배치 크기 4의 대조 학습 그림. 행에 사진 4장, 열에 문장 4개가 놓인 4x4 유사도 표에서 대각선 4칸은 초록(짝이 맞는 쌍, 가깝게), 나머지 12칸은 회색(짝이 아닌 쌍, 멀게)이다. 행 방향과 열 방향 소프트맥스를 함께 쓰는 대칭 교차엔트로피라는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 제로샷 분류 - 분류기를 학습하지 않고 고르기
 
@@ -121,7 +122,7 @@ cos(a, c) = 0.6 x (-0.8) + 0.8 x 0.6 = 0    직각, 관련 없음
   - 코사인 유사도에 logit_scale(100)을 곱하고 소프트맥스를 씌워 확률로 바꾼다
 - 문장 틀이 왜 필요한가. 학습 데이터에서 사진에 붙은 글은 단어 하나보다 문장인 경우가 많다. 논문은 `A photo of a {label}.`이라는 틀만으로 ImageNet 정확도가 1.3% 올랐고, 서로 다른 틀 80개로 만든 텍스트 벡터를 평균(앙상블)하면 3.5%가 더 올라 합쳐서 5% 가까이 좋아졌다고 보고했다. 라벨 설계가 4주차 프롬프트 설계의 멀티모달판이다
 
-<img src={zeroShotSteps.src} alt="제로샷 분류 네 단계 그림. 라벨 다섯 개가 문장 틀 a photo of a 라벨에 끼워져 텍스트 인코더를 거쳐 벡터가 되고, 사진은 이미지 인코더를 거쳐 벡터가 된다. 둘의 코사인 유사도에 100을 곱해 소프트맥스를 씌우고 가장 큰 라벨을 고른다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={zeroShotSteps} width={1600} alt="제로샷 분류 네 단계 그림. 라벨 다섯 개가 문장 틀 a photo of a 라벨에 끼워져 텍스트 인코더를 거쳐 벡터가 되고, 사진은 이미지 인코더를 거쳐 벡터가 된다. 둘의 코사인 유사도에 100을 곱해 소프트맥스를 씌우고 가장 큰 라벨을 고른다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - logit_scale 100이 하는 일을 실측으로 보자. 성산 일출봉 사진에 짧은 영어 라벨 다섯 개를 줬다
 
@@ -149,7 +150,7 @@ a photo of a coastal island    cos 0.274  -> logit 27.4  -> 확률 0.683
 - 한국어 라벨의 1/5는 "한 장은 맞혔다"가 아니다. 다섯 한국어 라벨의 벡터가 서로 거의 구별되지 않아서, 사진마다 다섯 값의 차이가 0.015~0.031뿐이다(영어 짧은 라벨은 0.077~0.132). 그러니 어느 사진이든 같은 라벨이 근소하게 앞서고, 첫 사진이 우연히 그 라벨의 정답이었을 뿐이다
 - 한국어에 영어를 괄호로 붙이면 4/5로 돌아오고, 틀리는 사진까지 영어 라벨과 똑같다. 결과를 움직인 것은 **영어 조각**이다
 
-<img src={koreanLabelCollapse.src} alt="영어 라벨과 한국어 라벨 비교 그림. 왼쪽은 사진 다섯 장이 영어 라벨 다섯 개와 각각 짝지어진다. 오른쪽은 사진 다섯 장 중 네 장의 화살표가 모두 한국어 라벨 성산일출봉 사진 하나로 몰려 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={koreanLabelCollapse} width={1600} alt="영어 라벨과 한국어 라벨 비교 그림. 왼쪽은 사진 다섯 장이 영어 라벨 다섯 개와 각각 짝지어진다. 오른쪽은 사진 다섯 장 중 네 장의 화살표가 모두 한국어 라벨 성산일출봉 사진 하나로 몰려 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 한국어 라벨은 왜 무너지는가 - 토큰과 데이터
 
@@ -180,7 +181,7 @@ a photo of a coastal island    cos 0.274  -> logit 27.4  -> 확률 0.683
 
 - 넷 모두 모델은 **"모르겠다" 없이** 답을 낸다. CLIP은 차이가 0.001이어도 가장 큰 값을 고르고, VLM은 사진이 약해도 문장을 만든다. 5주차에서 본 대로 그럴듯함과 정확함은 다르다. 멀티모달이라고 이 구조가 사라지지 않는다
 
-<img src={alignmentFailures.src} alt="정렬이 깨질 때의 네 가지 오류 카드. 한 곳으로 쏠림, 근소한 차이로 오답, 입력이 약할 때 뭉개짐, 없는 것을 지어냄이 각각 아이콘과 짧은 예와 함께 배치되어 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={alignmentFailures} width={1600} alt="정렬이 깨질 때의 네 가지 오류 카드. 한 곳으로 쏠림, 근소한 차이로 오답, 입력이 약할 때 뭉개짐, 없는 것을 지어냄이 각각 아이콘과 짧은 예와 함께 배치되어 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 사진과 글이 만나는 세 자리 - CLIP, Flamingo, LLaVA
 
@@ -204,7 +205,7 @@ a photo of a coastal island    cos 0.274  -> logit 27.4  -> 확률 0.683
   - 학습은 두 단계다. 1단계는 CC3M에서 거른 59.5만 쌍으로 **W만** 학습해 사진 특징을 단어 공간에 맞춘다. 2단계는 15.8만 개의 지시 따르기 데이터로 W와 언어모형을 함께 미세조정한다. 비전 인코더는 끝까지 얼려 둔다
 - 이번 주 실습의 **SmolVLM은 LLaVA 쪽 방식**이다. 시각 특징을 줄이고 투영해 언어모형 입력 토큰 자리에 넣는다. 그래서 "사진 1장이 몇 토큰인가"가 곧 비용 문제가 된다
 
-<img src={fusionThreeWays.src} alt="사진과 글이 만나는 세 자리 비교 그림. 왼쪽 CLIP은 두 인코더가 마지막 내적에서만 만난다. 가운데 Flamingo는 동결된 비전 인코더 뒤 Perceiver Resampler가 시각 토큰 64개를 만들고, 동결된 언어모형 층 사이의 게이트 교차 어텐션 층이 이를 참고한다. 오른쪽 LLaVA는 비전 인코더의 특징을 투영 층으로 옮긴 시각 토큰을 글 토큰 앞에 붙여 언어모형에 넣는다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={fusionThreeWays} width={1600} alt="사진과 글이 만나는 세 자리 비교 그림. 왼쪽 CLIP은 두 인코더가 마지막 내적에서만 만난다. 가운데 Flamingo는 동결된 비전 인코더 뒤 Perceiver Resampler가 시각 토큰 64개를 만들고, 동결된 언어모형 층 사이의 게이트 교차 어텐션 층이 이를 참고한다. 오른쪽 LLaVA는 비전 인코더의 특징을 투영 층으로 옮긴 시각 토큰을 글 토큰 앞에 붙여 언어모형에 넣는다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ SmolVLM - 사진을 토큰으로 바꿔 답하게 하기
 
@@ -224,7 +225,7 @@ a photo of a coastal island    cos 0.274  -> logit 27.4  -> 확률 0.683
   - 13장 x 64 = **832토큰**
 - 분할을 끄면 전체 사진 1장만 넣으므로 **64토큰**이다
 
-<img src={smolvlmTiles.src} alt="SmolVLM이 사진을 시각 토큰으로 바꾸는 과정 그림. 960x640 사진이 긴 변 2048로 커진 뒤 512 타일 4x3=12장으로 잘리고, 전체 사진 축소본 1장이 더해진다. 타일 1장은 패치 1024개가 픽셀 셔플로 64토큰이 되어 13 x 64 = 832토큰이다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={smolvlmTiles} width={1600} alt="SmolVLM이 사진을 시각 토큰으로 바꾸는 과정 그림. 960x640 사진이 긴 변 2048로 커진 뒤 512 타일 4x3=12장으로 잘리고, 전체 사진 축소본 1장이 더해진다. 타일 1장은 패치 1024개가 픽셀 셔플로 64토큰이 되어 13 x 64 = 832토큰이다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 여기서 중요한 사실이 나온다. **이 모델에서 시각 토큰 수는 해상도가 아니라 가로세로 비율이 정한다.** 긴 변을 항상 2048로 맞추기 때문이다. 노트북 1-10의 실측이다
 
@@ -246,7 +247,7 @@ a photo of a coastal island    cos 0.274  -> logit 27.4  -> 확률 0.683
 
 - 열 배 이상 차이 난다. 비전 인코더가 512 타일 13장을 읽고, 언어모형이 877토큰의 문맥을 처리하는 비용이다. 그래서 실습 노트북은 **분할을 끄고** 답을 생성한다. 분할을 켜면 세부를 더 보지만, CPU에서는 답 하나에 수십 초가 걸린다
 
-<img src={visualTokenBudget.src} alt="실측 그래프. 왼쪽 막대는 사진 크기와 비율별 시각 토큰 수로, 3:2 비율은 크기와 상관없이 832, 1:1은 1088, 4:1은 320, 분할을 끄면 모두 64다. 오른쪽 막대는 첫 토큰까지 시간으로 분할 켬 40.3초, 분할 끔 2.9초다(작성 환경 CPU, 1회 측정)" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={visualTokenBudget} width={1600} alt="실측 그래프. 왼쪽 막대는 사진 크기와 비율별 시각 토큰 수로, 3:2 비율은 크기와 상관없이 832, 1:1은 1088, 4:1은 320, 분할을 끄면 모두 64다. 오른쪽 막대는 첫 토큰까지 시간으로 분할 켬 40.3초, 분할 끔 2.9초다(작성 환경 CPU, 1회 측정)" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 실측 대조 - 텍스트 전용 모델과 멀티모달 모델
 
@@ -263,7 +264,7 @@ a photo of a coastal island    cos 0.274  -> logit 27.4  -> 확률 0.683
 - 텍스트 전용 모델의 답은 문장이 자연스럽고 형식도 갖췄다. 그러나 **사진을 본 적이 없으므로 강, 낚시하는 사람들, 기타 치는 남자는 전부 지어낸 것이다.** 5주차의 false acceptance와 같은 뿌리다. 다음 토큰 확률 기계는 "그럴듯한 것"을 낼 뿐 "참인 것"을 보장하지 않는다
 - SmolVLM의 답은 사진의 실제 요소(언덕, 물, 하늘)를 말한다. 사진이 문맥에 들어 있으니 지어낼 여지가 구조적으로 줄어든다. 다만 한국어 질문에는 개수를 답하지 못했다. 이 문제는 뒤에서 본다
 
-<img src={textOnlyVsVlm.src} alt="같은 질문을 받은 두 모델 비교 일러스트. 왼쪽 텍스트 전용 모델은 사진 없이 흰 셔츠를 입고 기타 치는 남자를 상상하는 말풍선을 띄운다. 오른쪽 멀티모달 모델은 해질녘 바다 위 평평한 분화구 실루엣 사진을 보고 A seascape featuring a hill on the horizon이라고 답한다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={textOnlyVsVlm} width={1600} alt="같은 질문을 받은 두 모델 비교 일러스트. 왼쪽 텍스트 전용 모델은 사진 없이 흰 셔츠를 입고 기타 치는 남자를 상상하는 말풍선을 띄운다. 오른쪽 멀티모달 모델은 해질녘 바다 위 평평한 분화구 실루엣 사진을 보고 A seascape featuring a hill on the horizon이라고 답한다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 사진을 바꾸면 답이 따라 움직인다
 
@@ -329,7 +330,7 @@ a photo of a coastal island    cos 0.274  -> logit 27.4  -> 확률 0.683
 
 - 세 층 모두 "모델이 나쁘다"가 아니라 **"어느 층에서 어떻게 깨지는가"**를 찾는 것이다. 깨진 층을 못 박아야 고칠 방법이 정해진다. 입력 표현이 문제면 분할 설정이나 사진 비율을, 정렬 공간이 문제면 라벨 언어를, 생성 언어가 문제면 질문 언어나 모델 선택을 바꾼다
 
-<img src={threeLayerAnalysis.src} alt="멀티모달 모델을 세 층으로 나눠 분석하는 그림. 아래부터 입력 표현(사진이 시각 토큰 832개), 정렬 공간(한국어 라벨이 한 곳으로 쏠림), 생성 언어(한국어 질문에 영어 답)가 쌓여 있고, 각 층 옆에 고칠 손잡이(분할 설정, 라벨 언어, 질문 언어와 모델 선택)가 붙어 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={threeLayerAnalysis} width={1600} alt="멀티모달 모델을 세 층으로 나눠 분석하는 그림. 아래부터 입력 표현(사진이 시각 토큰 832개), 정렬 공간(한국어 라벨이 한 곳으로 쏠림), 생성 언어(한국어 질문에 영어 답)가 쌓여 있고, 각 층 옆에 고칠 손잡이(분할 설정, 라벨 언어, 질문 언어와 모델 선택)가 붙어 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 층별 분석 연습 - 실측 기록을 근거로 쓰는 훈련
 

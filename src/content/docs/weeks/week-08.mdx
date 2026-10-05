@@ -4,6 +4,7 @@ description: 중간고사 및 PEFT 심화
 week: 8
 ---
 
+import { Image } from 'astro:assets';
 import weekHero from '../../../assets/weeks/week-08/week-08-hero.png';
 import conceptMap115 from '../../../assets/weeks/week-08/concept-map-1-15.png';
 import peftFamily from '../../../assets/weeks/week-08/peft-family.png';
@@ -26,7 +27,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
   - **기출 유형 자가 점검**: 1~7주차 핵심 계산을 먼저 예측하고 노트북으로 확인한다
 - 대면 시간은 중간고사다
 
-<img src={weekHero.src} alt="왼쪽 아래에서 오른쪽 위로 이어지는 산길 지도. 1주부터 7주까지 초록 체크포인트가 길을 따라 놓여 있고, 7주 다음에 보라색 깃발 8주 중간 점검이 서 있다. 깃발 뒤로 길이 점선으로 이어진다. 빠진 마디를 찾는다는 메모가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={weekHero} width={1600} alt="왼쪽 아래에서 오른쪽 위로 이어지는 산길 지도. 1주부터 7주까지 초록 체크포인트가 길을 따라 놓여 있고, 7주 다음에 보라색 깃발 8주 중간 점검이 서 있다. 깃발 뒤로 길이 점선으로 이어진다. 빠진 마디를 찾는다는 메모가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 이번 주가 답하는 질문
 
@@ -62,7 +63,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
 | 구현 | 표준 라이브러리에서 바로 쓸 수 있는가 |
 | 검증 범위 | 논문이 어떤 과제와 모델에서 검증했는가 |
 
-<img src={peftFamily.src} alt="미세조정 여섯 가지가 무엇을 학습하는지 비교한 카드 그림. 전체 미세조정은 가중치 W 전부, LoRA는 옆길 B·A만 학습, QLoRA는 4비트로 얼린 W와 옆길 B·A, DoRA는 크기 m과 방향(LoRA), VB-LoRA는 공용 벡터 은행에서 골라 섞기, WaveFT는 웨이블릿 계수 일부. 3주차에서 본 기법을 같은 잣대로라는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={peftFamily} width={1600} alt="미세조정 여섯 가지가 무엇을 학습하는지 비교한 카드 그림. 전체 미세조정은 가중치 W 전부, LoRA는 옆길 B·A만 학습, QLoRA는 4비트로 얼린 W와 옆길 B·A, DoRA는 크기 m과 방향(LoRA), VB-LoRA는 공용 벡터 은행에서 골라 섞기, WaveFT는 웨이블릿 계수 일부. 3주차에서 본 기법을 같은 잣대로라는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 3주차의 결론을 한 줄씩 되짚는다
   - LoRA와 DoRA는 학습 뒤 원래 가중치에 합칠 수 있어 추론 비용이 늘지 않는다
@@ -73,7 +74,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
 
 - 3주차 모델은 query, value가 모두 768 x 768이었다. Qwen3-0.6B-Base는 모양이 제각각이다. 쿼리 헤드 16개 x 128 = 2048, KV 헤드 8개 x 128 = 1024라서 q_proj와 v_proj의 출력이 다르다(7주차의 GQA)
 
-<img src={loraTargets.src} alt="Qwen3-0.6B 한 층의 구조 그림. 아래 어텐션 블록에 q_proj 1024에서 2048, k_proj 1024에서 1024, v_proj 1024에서 1024, o_proj 2048에서 1024가 있고 q_proj와 v_proj에 LoRA 표시가 붙어 있다. 위 피드포워드 블록에 gate_proj 1024에서 3072, up_proj 1024에서 3072, down_proj 3072에서 1024가 있다. 이 층이 28번 반복된다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={loraTargets} width={1600} alt="Qwen3-0.6B 한 층의 구조 그림. 아래 어텐션 블록에 q_proj 1024에서 2048, k_proj 1024에서 1024, v_proj 1024에서 1024, o_proj 2048에서 1024가 있고 q_proj와 v_proj에 LoRA 표시가 붙어 있다. 위 피드포워드 블록에 gate_proj 1024에서 3072, up_proj 1024에서 3072, down_proj 3072에서 1024가 있다. 이 층이 28번 반복된다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 | 모듈 | 입력 -> 출력 | r = 8 LoRA (한 층) |
 |---|---|---|
@@ -117,7 +118,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
 - q_proj, v_proj에 r = 8 DoRA를 붙이면 LoRA보다 (2048 + 1024) x 28 = **86,016개**가 더 붙는다. 노트북 3의 실측(1,232,896 - 1,146,880 = 86,016)과 같다
 - 학습 파라미터는 7% 남짓 늘지만, 학습 뒤 합칠 수 있으므로 추론 비용은 LoRA와 같다
 
-<img src={loraParams.src} alt="Qwen3-0.6B-Base에 r = 8 LoRA를 붙일 때의 학습 파라미터 그래프 두 개. 왼쪽은 모듈별 28층 합으로 q_proj 688,128, k_proj 458,752, v_proj 458,752, o_proj 688,128, gate_proj, up_proj, down_proj 각 917,504이고 q_proj와 v_proj가 초록이다. 오른쪽은 설정별 합계로 LoRA r=8 q·v 1,146,880(0.19%), DoRA r=8 q·v 1,232,896(0.21%), LoRA r=32 q·v 4,587,520(0.77%), LoRA r=8 일곱 모듈 5,046,272(0.85%)" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={loraParams} width={1600} alt="Qwen3-0.6B-Base에 r = 8 LoRA를 붙일 때의 학습 파라미터 그래프 두 개. 왼쪽은 모듈별 28층 합으로 q_proj 688,128, k_proj 458,752, v_proj 458,752, o_proj 688,128, gate_proj, up_proj, down_proj 각 917,504이고 q_proj와 v_proj가 초록이다. 오른쪽은 설정별 합계로 LoRA r=8 q·v 1,146,880(0.19%), DoRA r=8 q·v 1,232,896(0.21%), LoRA r=32 q·v 4,587,520(0.77%), LoRA r=8 일곱 모듈 5,046,272(0.85%)" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 학습 메모리 - 3주차 규칙을 다시 적용하면
 
@@ -134,7 +135,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
 - LoRA는 전체 미세조정의 약 4분의 1이다. 학습 파라미터는 0.19%인데 메모리는 4분의 1에 그치는 이유는 **얼린 가중치**(2.22 GiB)가 그대로 남기 때문이다. 3주차 막대그림의 "회색"이다
 - QLoRA는 다시 그 4분의 1 아래로 내려간다. 다만 3주차 표처럼 8분의 1까지는 줄지 않았다. 아래에서 이유를 본다
 
-<img src={peftMemory.src} alt="학습 메모리 어림 가로 막대그래프. 전체 미세조정 8.88 GiB, LoRA 2.24 GiB(얼린 가중치 2.22 + 어댑터 0.02), QLoRA 0.51 GiB(선형 층 0.21 + 임베딩 등 0.29 + 어댑터 0.02). 임베딩 155,582,464개(전체의 26.1%)는 4비트로 바꾸지 않아 QLoRA 어림의 57%를 차지한다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={peftMemory} width={1600} alt="학습 메모리 어림 가로 막대그래프. 전체 미세조정 8.88 GiB, LoRA 2.24 GiB(얼린 가중치 2.22 + 어댑터 0.02), QLoRA 0.51 GiB(선형 층 0.21 + 임베딩 등 0.29 + 어댑터 0.02). 임베딩 155,582,464개(전체의 26.1%)는 4비트로 바꾸지 않아 QLoRA 어림의 57%를 차지한다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 3주차 표와 무엇이 달라졌나 - 임베딩
 
@@ -153,7 +154,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
 - 1~7주차 핵심 계산 일곱 문항을 **먼저 손으로 예측하고** 노트북을 실행해 확인한다. 노트북에는 바꿀 곳(TODO)이 없다
 - 문항은 시험 유형을 연습하려고 만든 예시이며 실제 시험 문항이 아니다
 
-<img src={selfCheckLoop.src} alt="자가 점검 순환 그림. 손으로 예측, 셀 실행, 예측과 비교, 틀린 곳은 해당 주차로의 네 단계가 시계 방향으로 이어지고 가운데에 1~7주차라고 적혀 있다. 맞힌 것보다 틀린 이유가 더 중요하다는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={selfCheckLoop} width={1600} alt="자가 점검 순환 그림. 손으로 예측, 셀 실행, 예측과 비교, 틀린 곳은 해당 주차로의 네 단계가 시계 방향으로 이어지고 가운데에 1~7주차라고 적혀 있다. 맞힌 것보다 틀린 이유가 더 중요하다는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 | 문항 | 주차 | 손으로 할 것 |
 |---|---|---|
@@ -179,7 +180,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
 - **표현이 달라도 정답이다.** 용어를 다르게 써도, 한글과 영문을 섞어 써도, 설명 경로가 달라도 개념을 옳게 짚었으면 정답이다
 - **중간 단계 부분점수.** 구현 문항은 세 단계로 나눠 본다. 1단계만 성립해도 점수가 나간다. 코드가 돌지 않았어도 무엇을 하려 했는지 서술하면 부분 점수를 받는다
 
-<img src={partialCredit.src} alt="구현 문항 채점의 중간 단계 부분점수 막대. 1 접근 설계 40%(왜 이 방법인가, 비교 대상은), 2 동작 40%(의도대로 실행되고 결과가 나오는가), 3 성능·비교 20%(기준선과 비교하고 해석했는가). 아래에 1단계만 성립해도 점수가 있다, 표현이 달라도 개념이 맞으면 정답이라는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={partialCredit} width={1600} alt="구현 문항 채점의 중간 단계 부분점수 막대. 1 접근 설계 40%(왜 이 방법인가, 비교 대상은), 2 동작 40%(의도대로 실행되고 결과가 나오는가), 3 성능·비교 20%(기준선과 비교하고 해석했는가). 아래에 1단계만 성립해도 점수가 있다, 표현이 달라도 개념이 맞으면 정답이라는 설명이 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 준비 점검표
 
@@ -188,7 +189,7 @@ import LoraBudget from '../../../components/LoraBudget.astro';
 - 이번 주 자가 점검 노트북의 일곱 문항을 예측으로 맞혔는가. 틀린 문항의 주차를 다시 읽었는가
 - 숫자를 쓸 때 근거(어느 설정, 어느 실측)를 함께 쓰는 습관이 있는가. 5주차 Q4 근거 기준이다
 
-<img src={conceptMap115.src} alt="15주의 지도 그림. 아키텍처(1~2주), 적응(3·8주), 제어(4~5·10주), 확장(6~7주), 검색 결합(9주), 과정 감독·신용 할당(11주), 시스템화(12·14주)가 화살표로 이어진다. 아키텍처와 확장은 초록으로 채워져 있고, 적응과 제어는 남은 주차가 있어 왼쪽 절반만 채워져 있으며, 나머지 셋은 점선 테두리다. 확장과 검색 결합 사이에 지금: 8주 중간 점검 표시가 있고, 아래에 종합: 13주 최신 동향·15주 최종 발표 띠가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={conceptMap115} width={1600} alt="15주의 지도 그림. 아키텍처(1~2주), 적응(3·8주), 제어(4~5·10주), 확장(6~7주), 검색 결합(9주), 과정 감독·신용 할당(11주), 시스템화(12·14주)가 화살표로 이어진다. 아키텍처와 확장은 초록으로 채워져 있고, 적응과 제어는 남은 주차가 있어 왼쪽 절반만 채워져 있으며, 나머지 셋은 점선 테두리다. 확장과 검색 결합 사이에 지금: 8주 중간 점검 표시가 있고, 아래에 종합: 13주 최신 동향·15주 최종 발표 띠가 있다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ## 학습활동
 

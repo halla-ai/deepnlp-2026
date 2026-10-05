@@ -4,6 +4,7 @@ description: 차세대 NLP 아키텍처의 이해와 과목 뼈대 공유
 week: 1
 ---
 
+import { Image } from 'astro:assets';
 import weekHero from '../../../assets/weeks/week-01/week-01-hero.png';
 import attentionCostCurve from '../../../assets/weeks/week-01/attention-cost-curve.png';
 import attentionFullVsSsm from '../../../assets/weeks/week-01/attention-full-vs-ssm.png';
@@ -23,7 +24,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 - 오늘 AI의 심장이라 불리는 **Transformer**가 왜 생겼고, 어디가 아픈지(한계)를 쉬운 예로 이해한다
 - 그 아픈 곳을 고치려고 나온 새 아키텍처(상태공간모델)가 무엇인지 맛본다
 
-<img src={weekHero.src} alt="새 메시지가 올 때마다 이전 모든 메시지와 연결선이 그물처럼 늘어나는 쪽과, 요약 노트 하나만 다음으로 넘기는 쪽의 비교 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={weekHero} width={1600} alt="새 메시지가 올 때마다 이전 모든 메시지와 연결선이 그물처럼 늘어나는 쪽과, 요약 노트 하나만 다음으로 넘기는 쪽의 비교 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ## 온라인 (2시수)
 
@@ -41,7 +42,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 - 빈칸 채우기 문제를 떠올리면 된다. "제주도의 특산물은 ___" 이라는 문장이 있을 때, 사람은 머릿속에서 자연스럽게 후보를 떠올린다. 감귤이 가장 먼저, 그다음 흑돼지나 전복 정도가 떠오른다
 - 언어모델도 똑같이 후보마다 점수를 매긴다. 아래 표는 **설명용 예시 숫자**다 (실제 모델의 값이 아니다)
 
-<img src={nextWordGame.src} alt="빈칸이 뚫린 문장 띠 앞에서, 크기가 다른 퍼즐 조각(가장 큰 감귤, 작은 전복과 흑돼지, 아주 작은 구름) 중 무엇이 들어갈지 고르는 학생 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={nextWordGame} width={1600} alt="빈칸이 뚫린 문장 띠 앞에서, 크기가 다른 퍼즐 조각(가장 큰 감귤, 작은 전복과 흑돼지, 아주 작은 구름) 중 무엇이 들어갈지 고르는 학생 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 | 다음 단어 후보 | 확률 (설명용 예시) | 뜻 |
 |---|---|---|
@@ -65,7 +66,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 
 - 컴퓨터에게 언어를 가르치는 일은 오래됐다. 방식이 바뀔 때마다 앞 방식의 약점 하나를 고쳤고, 그러면서 새 약점이 생겼다. 이 흐름을 알면 "왜 지금 이런 구조인가"가 보인다
 
-<img src={nlpHistory.src} alt="단어 세기, n-gram, RNN과 LSTM, Transformer, 대규모 언어모델로 이어지는 발전 흐름과, 각 단계 아래에 순서를 모름, 멀리 못 봄, 잊고 느림, 제곱 비용이라는 남은 문제를 연결한 흐름도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={nlpHistory} width={1600} alt="단어 세기, n-gram, RNN과 LSTM, Transformer, 대규모 언어모델로 이어지는 발전 흐름과, 각 단계 아래에 순서를 모름, 멀리 못 봄, 잊고 느림, 제곱 비용이라는 남은 문제를 연결한 흐름도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - **단어 세기**: 글에 어떤 단어가 몇 번 나왔는지만 센다. 스팸 메일 거르기 같은 일에는 쓸 만했다. 하지만 "개가 사람을 물었다"와 "사람이 개를 물었다"는 나온 단어가 똑같아서 **구별하지 못한다**. 순서 정보가 사라지기 때문이다
 - **n-gram**: 바로 앞 단어 몇 개(n-1개)만 보고 다음 단어를 맞힌다. "제주도의 특산물은" 다음을 맞힐 때 앞 두세 단어만 참고하는 식이다. 순서는 조금 알게 됐지만, 창문이 좁아서 **멀리 떨어진 단어와의 관계를 못 본다**
@@ -81,7 +82,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 - 더 정확히는, 눈맞춤은 나 혼자 하는 것이 아니라 **모두가 모두와** 한다. 친구가 30명이면 30 x 30 = 900쌍, 300명이면 300 x 300 = 90,000쌍이다
 - 숫자로 확인한다. 토큰(단어 조각)이 100개면 어텐션은 100 x 100 = **10,000쌍**을 계산한다. 토큰이 1,000개면 1,000 x 1,000 = **1,000,000쌍**이다. 토큰이 10배 늘었는데 계산은 **100배**가 늘었다
 
-<img src={attentionCostCurve.src} alt="시퀀스 길이가 늘수록 어텐션 계산량은 제곱 곡선으로, 상태공간모델은 직선으로 늘어나는 비교 그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={attentionCostCurve} width={1600} alt="시퀀스 길이가 늘수록 어텐션 계산량은 제곱 곡선으로, 상태공간모델은 직선으로 늘어나는 비교 그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 이처럼 어텐션의 계산량과 메모리는 시퀀스 길이의 **제곱(O(n^2))** 으로 늘어난다. 짧은 문장에서는 문제없지만, 책 한 권 분량의 긴 문맥을 넣으면 비용이 급격히 치솟는다
 - "제곱으로 늘어난다"는 말이 실감이 나야 한다. 입력이 10배면 어텐션 부분의 비용은 100배, 입력이 100배면 10,000배다. 회사가 문서를 통째로 AI에 넣고 싶을 때 바로 여기서 돈과 시간이 새어 나간다
@@ -113,7 +114,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 - 이 네 점수를 softmax에 넣으면 **0.33, 0.31, 0.19, 0.17**이 나온다. "혼저"는 자기 자신과 짝꿍 인사말 "옵서예"를 가장 많이 쳐다보고, 장소 단어는 덜 쳐다본다
 - 네 줄을 모두 계산하면 아래 4 x 4 표가 된다. 칸 수는 4 x 4 = 16이다
 
-<img src={attentionToyHeatmap.src} alt="혼저, 옵서예, 제주, 바다 네 토큰이 서로를 얼마나 쳐다보는지 나타낸 4 곱하기 4 어텐션 가중치 표. 혼저 줄은 0.33, 0.31, 0.19, 0.17이고 각 줄의 합은 1" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={attentionToyHeatmap} width={1600} alt="혼저, 옵서예, 제주, 바다 네 토큰이 서로를 얼마나 쳐다보는지 나타낸 4 곱하기 4 어텐션 가중치 표. 혼저 줄은 0.33, 0.31, 0.19, 0.17이고 각 줄의 합은 1" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 표를 읽는 법: 가로줄 하나가 "그 단어가 이해를 위해 누구를 얼마나 참고했나"다. 인사말끼리(왼쪽 위), 장소끼리(오른쪽 아래) 진한 칸이 모여 있다. 실제 모델에서는 이 숫자 묶음을 학습으로 만들고, 숫자 묶음의 길이(차원)도 수백 개가 넘는다
 
@@ -131,7 +132,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 | 4,096 | 16,777,216 | 64.00 MiB |
 | 8,192 | 67,108,864 | 256.00 MiB |
 
-<img src={attentionMemoryBar.src} alt="토큰 수가 128, 512, 1024, 2048, 4096, 8192로 늘 때 어텐션 표 한 장의 메모리가 0.06, 1, 4, 16, 64, 256 MiB로 늘어나는 막대그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={attentionMemoryBar} width={1600} alt="토큰 수가 128, 512, 1024, 2048, 4096, 8192로 늘 때 어텐션 표 한 장의 메모리가 0.06, 1, 4, 16, 64, 256 MiB로 늘어나는 막대그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 토큰이 2배가 될 때마다 메모리는 **4배**다. 표 한 장은 작아 보여도 모델에는 층과 헤드(한 층 안의 여러 어텐션)가 여러 개 있다
 - 12층, 층마다 12헤드인 모델에 문장 1개를 넣는다고 가정하면 표는 12 x 12 = 144장이다. n = 4,096이면 64MiB x 144 = **약 9GiB**, n = 8,192면 **약 36GiB**다. 표를 모두 저장한다면 이만큼이 필요하다는 뜻이며, 이 저장을 피하는 기법을 2주차 대면에서 다룬다
@@ -165,7 +166,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 - 상태공간모델(State Space Model, SSM)은 이 방식이다. 지금까지 읽은 내용을 **상태(state)라는 작은 요약본**에 압축해 들고 가면서, 새 토큰이 올 때마다 요약본만 갱신한다
 - 토큰이 늘어도 요약본 크기는 그대로다. 그래서 계산량이 토큰 수에 **비례하여(선형, O(n))** 늘어난다. 제곱이 아니다
 
-<img src={attentionFullVsSsm.src} alt="모든 토큰이 서로 연결되는 풀 어텐션과, 앞 내용을 상태 하나에 압축해 넘기는 상태공간모델의 정보 흐름 비교 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={attentionFullVsSsm} width={1600} alt="모든 토큰이 서로 연결되는 풀 어텐션과, 앞 내용을 상태 하나에 압축해 넘기는 상태공간모델의 정보 흐름 비교 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 □ 요약본 갱신을 숫자로 따라가기 (설명용 예시)
 
@@ -188,7 +189,7 @@ import ssmToySteps from '../../../assets/weeks/week-01/ssm-toy-steps.png';
 - 위의 예로 "선택"을 흉내 내 보자. 규칙을 "입력이 0이면 a = 1, b = 0으로 요약본을 그대로 두고, 아니면 a = 0.5, b = 1"로 바꾼다. 그러면 요약본은 2 → **2** → 0.5 x 2 + 4 = **5** → 0.5 x 5 + 1 = **3.5**가 된다. 쓸모없는 토큰에서 기억을 잃지 않았다
 - 실제 Mamba는 이 a, b 같은 값을 사람이 정한 규칙이 아니라 **입력을 보고 계산하도록 학습**한다. 원리는 위의 흉내와 같다. "지금 들어온 것이 중요하면 적고, 아니면 흘려보낸다"
 
-<img src={ssmToySteps.src} alt="입력 2, 0, 4, 1이 들어올 때 고정 규칙의 요약본은 2, 1, 4.5, 3.25로, 입력이 0이면 요약본을 유지하는 선택 규칙은 2, 2, 5, 3.5로 변하는 비교 선 그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={ssmToySteps} width={1600} alt="입력 2, 0, 4, 1이 들어올 때 고정 규칙의 요약본은 2, 1, 4.5, 3.25로, 입력이 0이면 요약본을 유지하는 선택 규칙은 2, 2, 5, 3.5로 변하는 비교 선 그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - **RWKV**(arXiv:2305.13048): RNN처럼 순서대로 처리해 추론이 가볍고 선형이면서도, 학습은 Transformer처럼 병렬로 할 수 있게 설계했다. 이름은 핵심 요소 네 가지(Receptance, Weight, Key, Value)의 머리글자이고, 논문 제목이 "Transformer 시대를 위한 RNN의 재발명"이다. 엄밀히는 상태공간모델이 아니라 선형 어텐션 계열의 RNN이지만, 요약본을 들고 앞으로 나간다는 점이 같아 함께 본다
 - RWKV가 노린 것은 두 마리 토끼다. 학습할 때는 문장 전체를 한꺼번에 계산해 빠르게 배우고, 글을 만들 때는 요약본 하나만 들고 한 토큰씩 가볍게 나아간다. 생성할 때 메모장이 길어지지 않는다는 점이 어텐션과 가장 크게 다르다

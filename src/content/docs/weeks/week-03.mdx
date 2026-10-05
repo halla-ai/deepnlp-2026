@@ -4,6 +4,7 @@ description: 효율적 미세조정의 원리와 변형
 week: 3
 ---
 
+import { Image } from 'astro:assets';
 import weekHero from '../../../assets/weeks/week-03/week-03-hero.png';
 import loraArchitecture from '../../../assets/weeks/week-03/lora-architecture.png';
 import paramCountBar from '../../../assets/weeks/week-03/param-count-bar.png';
@@ -27,7 +28,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 - 답은 아니오다. 큰 모델은 **얼려 두고**, 아주 작은 부품 몇 개만 붙여서 그것만 학습해도 목표 성능에 근접하는 경우가 많다. 이것이 PEFT(Parameter-Efficient Fine-Tuning, 파라미터 효율적 미세조정)다
 - 비유: 공장의 거대한 기계를 통째로 개조하는 대신, 기계는 그대로 두고 **작은 모듈 하나를 끼워** 동작을 바꾸는 것이다
 
-<img src={weekHero.src} alt="얼음에 갇힌 거대한 기계 옆에 작은 모듈 하나를 끼우는 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={weekHero} width={1600} alt="얼음에 갇힌 거대한 기계 옆에 작은 모듈 하나를 끼우는 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 이번 주 실습은 **과제 1**의 출발점이다. 과제 1은 PEFT 기법 하나를 돌려보고 비교표에서 내 결과의 위치를 해석하는 것이다
 
@@ -62,7 +63,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 - LoRA: 가중치 112,922,882개는 얼려도 메모리에는 올려야 하므로 x 4바이트 = 451,691,528바이트. 학습하는 739,586개만 그래디언트와 Adam 기록이 붙는다. 739,586 x 12 = 8,875,032바이트. 새로 붙인 어댑터 147,456개의 가중치 자체도 x 4바이트 = 589,824바이트. 합하면 461,156,384바이트, 약 **0.43GiB**
 - 약 3.9배 줄었다. 이 계산에는 중간 계산값(활성값)과 16비트 계산 같은 실제 설정이 빠져 있으므로 **어림**으로만 쓴다
 
-<img src={memoryBar.src} alt="전체 미세조정은 가중치, 그래디언트, Adam 기록을 합쳐 1.68 GiB, LoRA는 거의 가중치만 남아 0.43 GiB인 학습 메모리 어림 비교 막대그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={memoryBar} width={1600} alt="전체 미세조정은 가중치, 그래디언트, Adam 기록을 합쳐 1.68 GiB, LoRA는 거의 가중치만 남아 0.43 GiB인 학습 메모리 어림 비교 막대그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 그림에서 눈여겨볼 점: LoRA 막대는 거의 **회색**(얼린 가중치)뿐이다. 학습할 것은 크게 줄였지만, 원래 모델을 올려 두는 비용은 그대로 남는다. 이 남은 회색을 줄이려는 것이 뒤에 나오는 QLoRA다
 
@@ -78,7 +79,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 - "랭크가 낮다"는 말을 가장 작은 예로 보자. 세로 숫자 [1, 2, 3]과 가로 숫자 [1, 0, 2]를 곱하면 3 x 3 표가 나온다
 - 칸마다 "세로 숫자 x 가로 숫자"다. 첫째 줄은 1 x [1, 0, 2] = [1, 0, 2], 둘째 줄은 2 x [1, 0, 2] = [2, 0, 4], 셋째 줄은 3 x [1, 0, 2] = [3, 0, 6]
 
-<img src={rankOuterProduct.src} alt="세로 숫자 1, 2, 3과 가로 숫자 1, 0, 2를 곱해 3 곱하기 3 표 1 0 2, 2 0 4, 3 0 6을 만드는 랭크 1 행렬 그림. 숫자 9개를 재료 6개로 만든다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={rankOuterProduct} width={1600} alt="세로 숫자 1, 2, 3과 가로 숫자 1, 0, 2를 곱해 3 곱하기 3 표 1 0 2, 2 0 4, 3 0 6을 만드는 랭크 1 행렬 그림. 숫자 9개를 재료 6개로 만든다" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 표에는 숫자가 9개지만 **재료는 6개**(3 + 3)뿐이다. 모든 줄이 [1, 0, 2]의 배수라서, 사실상 "한 가지 패턴"만 담고 있다. 이것이 **랭크 1**이다
 - 랭크 r은 "몇 가지 패턴을 섞어 만든 표인가"라고 생각하면 된다. LoRA는 가중치의 변화량이 **몇 가지 패턴만으로 충분히 표현된다**고 가정하고, 그 패턴의 재료(A와 B)만 학습한다
@@ -93,7 +94,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 | 16 | 24,576 | 4.17% |
 | 64 | 98,304 | 16.67% |
 
-<img src={rankParamsBar.src} alt="768 곱하기 768 가중치 한 장에서 랭크 1, 2, 4, 8, 16, 64일 때 LoRA 파라미터가 1,536에서 98,304까지 늘어나지만 통째로 학습하는 589,824보다 훨씬 작음을 보여주는 막대그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={rankParamsBar} width={1600} alt="768 곱하기 768 가중치 한 장에서 랭크 1, 2, 4, 8, 16, 64일 때 LoRA 파라미터가 1,536에서 98,304까지 늘어나지만 통째로 학습하는 589,824보다 훨씬 작음을 보여주는 막대그래프" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 랭크가 2배면 파라미터도 정확히 2배다. 랭크 64까지 올려도 통째로 학습하는 양의 6분의 1이다
 
@@ -107,7 +108,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 - α/r 의 역할을 숫자로 보자. r = 4, α = 8이면 α/r = 2다. 실습 노트북의 TODO는 **r만 바꾸고 α는 8로 둔다**. 그래서 r을 8로 올리면 α/r = 8/8 = 1이 되어, 옆길의 목소리가 절반으로 작아진다
 - 즉 r = 8 결과에는 "랭크가 커진 효과"와 "옆길 목소리가 작아진 효과"가 **함께 섞여 있다**. 결과를 해석할 때 이 점을 적어 둔다. 랭크의 효과만 떼어 보고 싶다면 r을 8로 올릴 때 α도 16으로 올려 α/r = 2를 유지하면 된다
 
-<img src={loraArchitecture.src} alt="동결된 큰 가중치 W의 길과, 작은 행렬 A와 B로 이뤄진 옆길이 합쳐지는 LoRA 구조 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={loraArchitecture} width={1600} alt="동결된 큰 가중치 W의 길과, 작은 행렬 A와 B로 이뤄진 옆길이 합쳐지는 LoRA 구조 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 학습이 끝나면 옆길(B·A)을 원래 길(W)에 **합산**할 수 있다. 그래서 추론(실제 사용) 때는 그냥 모델 하나처럼 돌아가 **추가 비용이 없다**. 이것이 LoRA가 널리 쓰이는 이유 하나다
 - 실습 실측값(KoELECTRA base, query·value에 r=4 적용):
@@ -119,7 +120,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 | └ 어댑터(A·B) | 147,456 |
 | └ 분류 헤드(새로 초기화된 부품) | 592,130 |
 
-<img src={paramCountBar.src} alt="전체 미세조정 112,922,882개와 LoRA 739,586개의 학습 파라미터 수를 비교하는 막대그래프(로그 눈금)" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={paramCountBar} width={1600} alt="전체 미세조정 112,922,882개와 LoRA 739,586개의 학습 파라미터 수를 비교하는 막대그래프(로그 눈금)" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 어댑터 자체는 15만 개 남짓이다. 1.1억 개 중 0.13%다. 분류 헤드(마지막 판정 부품)는 원래 가중치가 없어 새로 길들여야 하므로 함께 열어 둔다. 그래도 합쳐서 전체의 1%가 안 된다
 
@@ -135,7 +136,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 - QLoRA(arXiv:2305.14314)는 한 발 더 나간다. 베이스 모델의 가중치를 **4비트로 압축(양자화)** 해서 메모리에 올리고, 그 위에 LoRA를 학습한다
 - 비유: 원본 사진 앨범을 통째로 들고 다니는 대신 **축약 인쇄본**을 들고 다니면서, 메모는 정확하게 하는 것이다
 
-<img src={quantizationAlbum.src} alt="책상이 휠 만큼 두껍고 무거운 사진 앨범 옆에서, 같은 사진을 작게 인쇄한 얇은 책자를 손에 들고 색색의 메모 탭을 붙이는 학생 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={quantizationAlbum} width={1600} alt="책상이 휠 만큼 두껍고 무거운 사진 앨범 옆에서, 같은 사진을 작게 인쇄한 얇은 책자를 손에 들고 색색의 메모 탭을 붙이는 학생 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 ○ 양자화 - 숫자를 몇 비트로 적느냐
 
@@ -147,7 +148,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 | 실습 모델 112,922,882개 | 451.7MB | 225.8MB | 56.5MB |
 | 가상의 70억 개 모델 | 28GB | 14GB | 3.5GB |
 
-<img src={quantBytes.src} alt="실습 모델과 가상의 70억 개 모델에서 32비트, 16비트, 4비트로 가중치를 저장할 때의 메모리 비교 막대그래프. 70억 개 모델은 28GB, 14GB, 3.5GB" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={quantBytes} width={1600} alt="실습 모델과 가상의 70억 개 모델에서 32비트, 16비트, 4비트로 가중치를 저장할 때의 메모리 비교 막대그래프. 70억 개 모델은 28GB, 14GB, 3.5GB" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 70억 개 모델을 32비트로 올리려면 28GB가 필요하다. 4비트면 3.5GB다. 앞의 메모리 막대에서 **LoRA에 남은 회색**(얼린 가중치)을 32비트 기준 8분의 1로 줄이는 것이 QLoRA의 효과다
 - 실제 4비트 저장에는 눈금을 되살리는 보조 숫자가 조금 더 붙어서, 표보다 약간 크다
@@ -173,7 +174,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 
 - 세 기법 모두 LoRA의 "작은 옆길만 학습" 골격 위에 있다. 갈림길은 **무엇을 더 쪼개거나, 무엇을 함께 쓰는가**다
 
-<img src={loraVariants.src} alt="DoRA(크기와 방향 분해), VB-LoRA(벡터 은행 공유), WaveFT(웨이블릿 영역 희소 업데이트)의 차이를 보여주는 비교 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={loraVariants} width={1600} alt="DoRA(크기와 방향 분해), VB-LoRA(벡터 은행 공유), WaveFT(웨이블릿 영역 희소 업데이트)의 차이를 보여주는 비교 다이어그램" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 | 기법 | 바꾸는 것 | 쉬운 설명 | 출처 |
 |---|---|---|---|
@@ -187,7 +188,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 - 다시 곱하면 원래대로다. 5 x (0.6, 0.8) = (3, 4)
 - DoRA는 가중치를 이렇게 나눠서 **방향은 LoRA로, 크기는 따로 학습 가능한 숫자로** 고친다. 한 손잡이로 길이와 방향을 동시에 돌리는 대신, 손잡이를 둘로 나눈 셈이다
 
-<img src={doraVector.src} alt="원래 벡터 (3, 4)와 크기 1짜리 방향 (0.6, 0.8), 크기만 5에서 6으로 늘린 벡터, 방향만 조금 돌린 벡터를 함께 그린 DoRA 설명 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={doraVector} width={1600} alt="원래 벡터 (3, 4)와 크기 1짜리 방향 (0.6, 0.8), 크기만 5에서 6으로 늘린 벡터, 방향만 조금 돌린 벡터를 함께 그린 DoRA 설명 그림" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 논문은 이렇게 나누면 전체 미세조정이 가중치를 바꾸는 패턴에 더 가까워진다고 보고했다. 학습 후 병합이 가능해 추론 비용은 늘지 않는다
 
@@ -196,7 +197,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 - 일반 LoRA는 어댑터를 붙인 곳마다 자기 A, B를 따로 가진다. 실습 설정(12층 x query·value 2곳)이면 재료 세트가 24벌이다
 - VB-LoRA는 모든 층이 함께 쓰는 **벡터 은행**(공용 창고)을 하나 두고, 각 층은 거기서 필요한 벡터 몇 개를 **골라 섞어** 자기 어댑터를 만든다
 
-<img src={vbLora.src} alt="모든 층이 함께 쓰는 벡터 은행에서 1층, 2층, 12층 어댑터가 필요한 벡터를 조달하고, 그 결과를 동결된 모델에 더하는 VB-LoRA 구조도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={vbLora} width={1600} alt="모든 층이 함께 쓰는 벡터 은행에서 1층, 2층, 12층 어댑터가 필요한 벡터를 조달하고, 그 결과를 동결된 모델에 더하는 VB-LoRA 구조도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 층마다 재료를 사지 않으니 전체 파라미터가 극단적으로 줄어든다. 대신 창고를 어떻게 나눠 쓰는지가 성능을 좌우한다
 
@@ -213,7 +214,7 @@ import peftDecision from '../../../assets/weeks/week-03/peft-decision.png';
 
 □ 어떤 미세조정을 고를까 - 판단 순서
 
-<img src={peftDecision.src} alt="과제와 예산 정하기에서 시작해, 모델이 메모리에 들어가지 않으면 QLoRA, 전체 학습 여유가 있으면 전체 미세조정, 아니면 LoRA로 시작하고, 성능이 부족하면 랭크 조정과 변형 기법을 검토하는 판단 흐름도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+<Image src={peftDecision} width={1600} alt="과제와 예산 정하기에서 시작해, 모델이 메모리에 들어가지 않으면 QLoRA, 전체 학습 여유가 있으면 전체 미세조정, 아니면 LoRA로 시작하고, 성능이 부족하면 랭크 조정과 변형 기법을 검토하는 판단 흐름도" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
 - 1단계, 예산부터 적는다. "메모리 몇 GB, 학습 시간 몇 시간"을 숫자로 먼저 쓴다. 기법 이름보다 조건이 먼저다
 - 2단계, 모델이 들어가나: 파라미터 수 x 4바이트(32비트), 안 되면 x 2바이트(16비트)로 가중치 크기를 계산해 예산과 비교한다. 둘 다 안 들어가면 **QLoRA**(x 0.5바이트)로 간다. 그래도 안 되면 더 작은 모델을 고른다
