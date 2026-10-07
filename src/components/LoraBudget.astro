@@ -1,0 +1,111 @@
+---
+/**
+ * 8주차 인터랙티브: LoRA 예산 계산기.
+ * Qwen3-0.6B-Base 한 층의 선형 층 일곱 개(모양은 config.json)에서 LoRA를 붙일 곳과 랭크 r을 고르면
+ * 학습 파라미터 = 28층 x 합(r x (입력 + 출력)), DoRA면 붙인 층마다 출력 차원만큼 크기 벡터를 더한다.
+ * 메모리는 3주차 16바이트 규칙의 어림이다(활성값, 양자화 보조 숫자 제외).
+ *   전체 미세조정 = 전체 x 16, LoRA = 전체 x 4 + 학습 x 16,
+ *   QLoRA = 선형 층 x 0.5 + (임베딩 등 나머지) x 2 + 학습 x 16  (4비트 변환은 선형 층만 바꾼다)
+ * 값은 노트북 3에서 peft로 센 수와 같다(q·v r=8 LoRA 1,146,880개, 일곱 모듈 5,046,272개, DoRA q·v 1,232,896개).
+ */
+const MODULES = [
+  { id: 'q_proj', inF: 1024, outF: 2048, on: true },
+  { id: 'k_proj', inF: 1024, outF: 1024, on: false },
+  { id: 'v_proj', inF: 1024, outF: 1024, on: true },
+  { id: 'o_proj', inF: 2048, outF: 1024, on: false },
+  { id: 'gate_proj', inF: 1024, outF: 3072, on: false },
+  { id: 'up_proj', inF: 1024, outF: 3072, on: false },
+  { id: 'down_proj', inF: 3072, outF: 1024, on: false },
+];
+const CFG = { layers: 28, total: 596049920, linear: 440401920 };
+const RANKS = [4, 8, 16, 32, 64];
+---
+<lora-budget class="lb-wrap not-content" data-mods={JSON.stringify(MODULES)} data-cfg={JSON.stringify(CFG)} data-ranks={JSON.stringify(RANKS)}>
+  <p class="lb-hint">LoRA를 붙일 모듈과 랭크를 고른다. 실습 모델 Qwen3-0.6B-Base(28층) 기준으로 계산한다.</p>
+  <fieldset class="lb-mods">
+    <legend>붙일 모듈 (한 층 안, 입력 -> 출력)</legend>
+    {MODULES.map((m) => (
+      <label><input type="checkbox" value={m.id} checked={m.on} /> {m.id} <span class="lb-shape">{m.inF} -> {m.outF}</span></label>
+    ))}
+  </fieldset>
+  <div class="lb-row">
+    <label><span>랭크 r = <strong class="lb-r-val"></strong></span>
+      <input class="lb-r" type="range" min="0" max={RANKS.length - 1} step="1" value="1" aria-label="LoRA 랭크 선택" />
+    </label>
+    <label class="lb-check"><input class="lb-dora" type="checkbox" /> DoRA (크기 벡터 추가)</label>
+  </div>
+  <p class="lb-count"></p>
+  <div class="lb-bars">
+    <div class="lb-bar-row"><span class="lb-name">전체 미세조정</span><span class="lb-track"><span class="lb-bar lb-full"></span></span><span class="lb-num lb-n-full"></span></div>
+    <div class="lb-bar-row"><span class="lb-name">LoRA</span><span class="lb-track"><span class="lb-bar lb-lora"></span></span><span class="lb-num lb-n-lora"></span></div>
+    <div class="lb-bar-row"><span class="lb-name">QLoRA</span><span class="lb-track"><span class="lb-bar lb-qlora"></span></span><span class="lb-num lb-n-qlora"></span></div>
+  </div>
+  <p class="lb-note" aria-live="polite"></p>
+</lora-budget>
+
+<script>
+  class LoraBudget extends HTMLElement {
+    connectedCallback() {
+      const mods = JSON.parse(this.dataset.mods || '[]');
+      const cfg = JSON.parse(this.dataset.cfg || '{}');
+      const ranks: number[] = JSON.parse(this.dataset.ranks || '[]');
+      const q = <T extends Element>(s: string) => this.querySelector(s) as T;
+      const boxes = Array.from(this.querySelectorAll<HTMLInputElement>('.lb-mods input'));
+      const rIn = q<HTMLInputElement>('.lb-r');
+      const dora = q<HTMLInputElement>('.lb-dora');
+      const GiB = 2 ** 30;
+      const fmt = (n: number) => n.toLocaleString('ko-KR');
+
+      const render = () => {
+        const r = ranks[parseInt(rIn.value, 10)];
+        const chosen = mods.filter((m: any) => boxes.find((b) => b.value === m.id)?.checked);
+        const lora = cfg.layers * chosen.reduce((s: number, m: any) => s + r * (m.inF + m.outF), 0);
+        const mag = dora.checked ? cfg.layers * chosen.reduce((s: number, m: any) => s + m.outF, 0) : 0;
+        const train = lora + mag;
+        const full = cfg.total * 16;
+        const loraMem = cfg.total * 4 + train * 16;
+        const qloraMem = cfg.linear * 0.5 + (cfg.total - cfg.linear) * 2 + train * 16;
+        q<HTMLElement>('.lb-r-val').textContent = String(r);
+        rIn.setAttribute('aria-valuetext', 'r = ' + r);
+        q<HTMLElement>('.lb-count').textContent = chosen.length === 0
+          ? '모듈을 하나 이상 고르세요.'
+          : `학습 파라미터 ${fmt(train)}개 = 전체 ${fmt(cfg.total)}개의 ${(100 * train / cfg.total).toFixed(3)}%` +
+            (mag ? ` (LoRA ${fmt(lora)} + DoRA 크기 벡터 ${fmt(mag)})` : '');
+        const set = (cls: string, v: number) => {
+          q<HTMLElement>('.lb-' + cls).style.width = (100 * v / full) + '%';
+          q<HTMLElement>('.lb-n-' + cls).textContent = (v / GiB).toFixed(2) + ' GiB';
+        };
+        set('full', full); set('lora', loraMem); set('qlora', qloraMem);
+        q<HTMLElement>('.lb-note').textContent =
+          `LoRA는 학습 파라미터를 줄여도 얼린 가중치 ${(cfg.total * 4 / GiB).toFixed(2)} GiB(32비트)가 그대로 남는다. ` +
+          `QLoRA는 선형 층만 4비트로 바꾸므로, 이 모델처럼 임베딩이 큰(전체의 26%) 모델에서는 임베딩이 남은 메모리의 큰 몫을 차지한다. 활성값은 빠진 어림이다.`;
+      };
+
+      this.querySelectorAll('input').forEach((el) => el.addEventListener('input', render));
+      render();
+    }
+  }
+  customElements.define('lora-budget', LoraBudget);
+</script>
+
+<style>
+  .lb-wrap { display: block; margin: 1rem 0; }
+  .lb-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .lb-mods { border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.4rem 0.8rem 0.6rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.25rem 1rem; font-size: 0.82rem; }
+  .lb-mods legend { font-size: 0.78rem; color: var(--sl-color-gray-3); padding: 0 0.3rem; }
+  .lb-shape { color: var(--sl-color-gray-3); font-size: 0.76rem; }
+  .lb-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.5rem; margin: 0.7rem 0; }
+  .lb-row > label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; min-width: 14rem; }
+  .lb-row .lb-check { flex-direction: row; align-items: center; gap: 0.4rem; min-width: 0; }
+  .lb-row input[type='range'] { accent-color: var(--sl-color-accent); }
+  .lb-count { font-size: 0.85rem; font-weight: 600; margin: 0 0 0.6rem; }
+  .lb-bars { display: grid; gap: 0.45rem; }
+  .lb-bar-row { display: grid; grid-template-columns: 6.5rem 1fr 5.5rem; align-items: center; gap: 0.6rem; font-size: 0.82rem; }
+  .lb-track { display: block; height: 1rem; background: var(--sl-color-gray-6); border-radius: 999px; overflow: hidden; }
+  .lb-bar { display: block; height: 100%; border-radius: 999px; transition: width 0.2s; }
+  .lb-full { background: #9aa0b4; }
+  .lb-lora { background: #3fae6a; }
+  .lb-qlora { background: #8b6fd6; }
+  .lb-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .lb-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin: 0.7rem 0 0; }
+</style>

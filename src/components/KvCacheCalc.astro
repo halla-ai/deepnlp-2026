@@ -1,0 +1,105 @@
+---
+/**
+ * 7주차 인터랙티브 1: KV 캐시 계산기.
+ * 실습 모델 Qwen3-0.6B-Base의 실제 설정(층 28, KV 헤드 8, 헤드 차원 128, 최대 위치 32,768)으로
+ * KV 캐시 = 2(K와 V) x 층 x KV 헤드 x 헤드 차원 x 바이트 x 토큰 수 x 동시 요청 수 를 계산한다.
+ * 가중치 크기는 모델 파일의 파라미터 수 596,049,920개 x 바이트다.
+ * "MHA였다면"은 KV 헤드를 쿼리 헤드 수(16)로 늘린 가정이다. 실제 모델은 GQA(8)다.
+ */
+const CFG = { layers: 28, kvHeads: 8, qHeads: 16, headDim: 128, maxPos: 32768, params: 596049920 };
+const LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768];
+const INITIAL = 3;
+---
+<kv-cache-calc class="kv-wrap not-content" data-cfg={JSON.stringify(CFG)} data-lengths={JSON.stringify(LENGTHS)}>
+  <p class="kv-hint">문맥 길이와 동시 요청 수를 바꿔 보세요. 모델 설정은 실습 모델 Qwen3-0.6B-Base의 실제 값이다.</p>
+  <div class="kv-controls">
+    <label><span>문맥 길이 = <strong class="kv-len-val"></strong> 토큰</span>
+      <input class="kv-len" type="range" min="0" max={LENGTHS.length - 1} step="1" value={INITIAL} aria-label="문맥 길이 선택" />
+    </label>
+    <label><span>동시 요청 수 = <strong class="kv-batch-val"></strong></span>
+      <input class="kv-batch" type="range" min="0" max="4" step="1" value="0" aria-label="동시 요청 수 선택" />
+    </label>
+    <fieldset class="kv-radios">
+      <legend>KV 헤드</legend>
+      <label><input type="radio" name="kv-heads" value="8" checked /> GQA 8개 (실제)</label>
+      <label><input type="radio" name="kv-heads" value="16" /> MHA였다면 16개</label>
+    </fieldset>
+    <fieldset class="kv-radios">
+      <legend>정밀도</legend>
+      <label><input type="radio" name="kv-bytes" value="2" checked /> bf16 (2바이트)</label>
+      <label><input type="radio" name="kv-bytes" value="4" /> fp32 (4바이트)</label>
+    </fieldset>
+  </div>
+  <p class="kv-formula"></p>
+  <div class="kv-bars">
+    <div class="kv-row"><span class="kv-name">가중치</span><span class="kv-track"><span class="kv-bar kv-bar-w"></span></span><span class="kv-num kv-num-w"></span></div>
+    <div class="kv-row"><span class="kv-name">KV 캐시</span><span class="kv-track"><span class="kv-bar kv-bar-kv"></span></span><span class="kv-num kv-num-kv"></span></div>
+  </div>
+  <p class="kv-note" aria-live="polite"></p>
+</kv-cache-calc>
+
+<script>
+  class KvCacheCalc extends HTMLElement {
+    connectedCallback() {
+      const cfg = JSON.parse(this.dataset.cfg || '{}');
+      const lengths: number[] = JSON.parse(this.dataset.lengths || '[]');
+      const batches = [1, 2, 4, 8, 16];
+      const q = <T extends Element>(s: string) => this.querySelector(s) as T;
+      const len = q<HTMLInputElement>('.kv-len');
+      const batch = q<HTMLInputElement>('.kv-batch');
+      const gib = (b: number) => (b / 2 ** 30).toFixed(2) + ' GiB';
+
+      const render = () => {
+        const n = lengths[parseInt(len.value, 10)];
+        const bs = batches[parseInt(batch.value, 10)];
+        const heads = parseInt((q<HTMLInputElement>('input[name="kv-heads"]:checked')).value, 10);
+        const bytes = parseInt((q<HTMLInputElement>('input[name="kv-bytes"]:checked')).value, 10);
+        const perTok = 2 * cfg.layers * heads * cfg.headDim * bytes;
+        const kv = perTok * n * bs;
+        const w = cfg.params * bytes;
+        const max = Math.max(kv, w);
+        q<HTMLElement>('.kv-len-val').textContent = n.toLocaleString('ko-KR');
+        q<HTMLElement>('.kv-batch-val').textContent = String(bs);
+        len.setAttribute('aria-valuetext', n.toLocaleString('ko-KR') + '토큰');
+        batch.setAttribute('aria-valuetext', bs + '요청');
+        q<HTMLElement>('.kv-formula').textContent =
+          `2 (K와 V) x ${cfg.layers}층 x ${heads}헤드 x ${cfg.headDim}차원 x ${bytes}바이트 = 토큰당 ${(perTok / 1024).toFixed(0)} KiB, ` +
+          `x ${n.toLocaleString('ko-KR')}토큰 x ${bs}요청 = ${gib(kv)}`;
+        q<HTMLElement>('.kv-bar-w').style.width = (100 * w / max) + '%';
+        q<HTMLElement>('.kv-bar-kv').style.width = (100 * kv / max) + '%';
+        q<HTMLElement>('.kv-num-w').textContent = gib(w);
+        q<HTMLElement>('.kv-num-kv').textContent = gib(kv);
+        const ratio = kv / w;
+        let note = ratio >= 1
+          ? `KV 캐시가 가중치의 ${ratio.toFixed(1)}배다. 긴 문맥에서는 모델보다 캐시가 메모리를 더 차지한다.`
+          : `KV 캐시는 가중치의 ${(ratio * 100).toFixed(0)}%다.`;
+        if (heads === 16) note += ' KV 헤드를 16개로 두면 캐시가 정확히 2배가 된다. GQA는 쿼리 헤드 2개가 KV 헤드 1개를 함께 쓰게 해 이만큼을 아낀다.';
+        if (n === cfg.maxPos) note += ' 32,768은 이 모델 설정의 최대 위치(max_position_embeddings)다.';
+        q<HTMLElement>('.kv-note').textContent = note;
+      };
+
+      this.querySelectorAll('input').forEach((el) => el.addEventListener('input', render));
+      render();
+    }
+  }
+  customElements.define('kv-cache-calc', KvCacheCalc);
+</script>
+
+<style>
+  .kv-wrap { display: block; margin: 1rem 0; }
+  .kv-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .kv-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.6rem 1.2rem; margin-bottom: 0.75rem; }
+  .kv-controls > label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; }
+  .kv-controls input[type='range'] { accent-color: var(--sl-color-accent); }
+  .kv-radios { border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.3rem 0.7rem 0.5rem; font-size: 0.82rem; display: flex; flex-wrap: wrap; gap: 0.2rem 0.9rem; }
+  .kv-radios legend { font-size: 0.78rem; color: var(--sl-color-gray-3); padding: 0 0.3rem; }
+  .kv-formula { font-family: var(--sl-font-mono); font-size: 0.78rem; background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.5rem 0.7rem; margin: 0 0 0.75rem; overflow-wrap: anywhere; }
+  .kv-bars { display: grid; gap: 0.45rem; }
+  .kv-row { display: grid; grid-template-columns: 4.5rem 1fr 6rem; align-items: center; gap: 0.6rem; font-size: 0.82rem; }
+  .kv-track { display: block; height: 1rem; background: var(--sl-color-gray-6); border-radius: 999px; overflow: hidden; }
+  .kv-bar { display: block; height: 100%; border-radius: 999px; transition: width 0.2s; }
+  .kv-bar-w { background: #8b6fd6; }
+  .kv-bar-kv { background: #3fae6a; }
+  .kv-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .kv-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin: 0.7rem 0 0; }
+</style>

@@ -48,9 +48,9 @@ const INITIAL = 0;
 ---
 <clip-flow class="cf-wrap not-content" data-steps={JSON.stringify(steps)} data-initial={INITIAL}>
   <p class="cf-hint">아래 단계 버튼을 눌러 흐름을 따라가 보세요. (모델은 CLIP ViT-B/32, 수치는 6주차 노트북 실측값)</p>
-  <div class="cf-tabs" role="tablist" aria-label="아키텍처 단계">
+  <div class="cf-tabs" role="group" aria-label="아키텍처 단계">
     {steps.map((s) => (
-      <button type="button" class="cf-tab" data-step={s.id} role="tab" aria-selected={s.id === INITIAL}>{s.label}</button>
+      <button type="button" class="cf-tab" data-step={s.id} aria-pressed={String(s.id === INITIAL)}>{s.label}</button>
     ))}
   </div>
   <div class="cf-stage">
@@ -85,7 +85,7 @@ const INITIAL = 0;
       const render = (id: number) => {
         const s = steps[id];
         if (!s) return;
-        tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.step === String(id))));
+        tabs.forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.step === String(id))));
         title.textContent = s.title;
         detail.textContent = s.detail;
         note.textContent = s.note;
@@ -117,7 +117,7 @@ const INITIAL = 0;
     font-size: 0.82rem;
     cursor: pointer;
   }
-  .cf-tab[aria-selected='true'] {
+  .cf-tab[aria-pressed='true'] {
     background: var(--sl-color-accent);
     color: var(--sl-color-bg);
     border-color: var(--sl-color-accent);

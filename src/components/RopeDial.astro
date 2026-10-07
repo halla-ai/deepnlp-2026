@@ -1,0 +1,126 @@
+---
+/**
+ * 7주차 인터랙티브 2: RoPE 각도 다이얼.
+ * 실습 모델 Qwen3-0.6B-Base 설정(기저 b = 1,000,000, 헤드 차원 128, 최대 위치 32,768)으로
+ * 차원 쌍 k의 회전 각도 = 위치 x b^(-2(k-1)/128) 를 계산해 세 쌍(k = 1, 48, 56)을 다이얼로 보여 준다.
+ * 초록 호는 위치 0~32,768(최대 위치)에서 그 쌍이 지나간 각도 범위다. 위치 보간은 [0, m]을 [0, m_l]로 옮기므로 경계를 포함한다. 바늘이 호 밖이면 학습 길이 안에서 본 적 없는 각도다.
+ * "위치 보간 x4"를 켜면 위치를 1/4로 줄여 넣는다(FoLM 식 2.100). 세 쌍 모두 131,072 이하에서 한 바퀴를 넘지 않거나(48, 56)
+ * 이미 모든 각도를 본(1) 쌍이라, 각도를 감아 돌리지 않고 비교해도 된다.
+ */
+const CFG = { base: 1e6, headDim: 128, maxPos: 32768 };
+const PAIRS = [1, 48, 56];
+const POSITIONS = [100, 1000, 8000, 16000, 32000, 48000, 65536, 98304, 131072];
+const INITIAL = 4;
+const R = 52;
+---
+<rope-dial class="rd-wrap not-content" data-cfg={JSON.stringify(CFG)} data-pairs={JSON.stringify(PAIRS)} data-positions={JSON.stringify(POSITIONS)}>
+  <p class="rd-hint">위치를 옮겨 보세요. 초록 호는 학습 길이(최대 위치 32,768) 안에서 그 차원 쌍이 지나간 각도 범위이고, 바늘은 지금 위치의 각도다. 바늘이 호 밖으로 나가면 빨간색이 된다. (Qwen3-0.6B-Base 설정으로 계산한 값)</p>
+  <div class="rd-controls">
+    <label><span>위치 = <strong class="rd-pos-val"></strong></span>
+      <input class="rd-pos" type="range" min="0" max={POSITIONS.length - 1} step="1" value={INITIAL} aria-label="토큰 위치 선택" />
+    </label>
+    <label class="rd-check"><input class="rd-pi" type="checkbox" /> 위치 보간 x4 (위치를 1/4로 줄여 넣기)</label>
+  </div>
+  <div class="rd-dials">
+    {PAIRS.map((k) => (
+      <figure class="rd-dial" data-k={k}>
+        <svg viewBox="-64 -64 128 128" width="150" height="150" role="img" aria-label={`차원 쌍 ${k}의 회전 각도`}>
+          <circle r={R} class="rd-ring" />
+          <path class="rd-seen" d="" />
+          <line class="rd-hand" x1="0" y1="0" x2={R} y2="0" />
+          <circle r="3" class="rd-hub" />
+        </svg>
+        <figcaption>
+          <strong>차원 쌍 k = {k}</strong>
+          <span class="rd-period"></span>
+          <span class="rd-angle"></span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+  <p class="rd-note" aria-live="polite"></p>
+</rope-dial>
+
+<script>
+  class RopeDial extends HTMLElement {
+    connectedCallback() {
+      const cfg = JSON.parse(this.dataset.cfg || '{}');
+      const positions: number[] = JSON.parse(this.dataset.positions || '[]');
+      const R = 52;
+      const pos = this.querySelector('.rd-pos') as HTMLInputElement;
+      const pi = this.querySelector('.rd-pi') as HTMLInputElement;
+      const dials = Array.from(this.querySelectorAll<HTMLElement>('.rd-dial'));
+      const theta = (k: number) => Math.pow(cfg.base, (-2 * (k - 1)) / cfg.headDim);
+      // SVG y축은 아래로 향하므로 각도를 반시계로 그리려면 y에 -를 붙인다
+      const pt = (a: number) => `${(R * Math.cos(a)).toFixed(2)} ${(-R * Math.sin(a)).toFixed(2)}`;
+      const arc = (a: number) => {
+        if (a >= 2 * Math.PI - 1e-6) return `M ${R} 0 A ${R} ${R} 0 1 0 ${-R} 0 A ${R} ${R} 0 1 0 ${R} 0`;
+        return `M ${R} 0 A ${R} ${R} 0 ${a > Math.PI ? 1 : 0} 0 ${pt(a)}`;
+      };
+      const deg = (a: number) => (a * 180 / Math.PI).toFixed(1) + '도';
+
+      dials.forEach((el) => {
+        const k = parseInt(el.dataset.k || '1', 10);
+        const t = theta(k);
+        const period = 2 * Math.PI / t;
+        const seen = Math.min(2 * Math.PI, cfg.maxPos * t);
+        (el.querySelector('.rd-seen') as SVGPathElement).setAttribute('d', arc(seen));
+        (el.querySelector('.rd-period') as HTMLElement).textContent =
+          `주기 ${period >= 1000 ? Math.round(period).toLocaleString('ko-KR') : period.toFixed(2)}토큰, 학습 길이 안에서 ${seen >= 2 * Math.PI - 1e-6 ? '모든 각도' : deg(seen) + '까지'}`;
+      });
+
+      const render = () => {
+        const p = positions[parseInt(pos.value, 10)];
+        const eff = pi.checked ? p / 4 : p;
+        pos.setAttribute('aria-valuetext', '위치 ' + p.toLocaleString('ko-KR'));
+        (this.querySelector('.rd-pos-val') as HTMLElement).textContent =
+          p.toLocaleString('ko-KR') + (pi.checked ? ` (넣는 위치 ${eff.toLocaleString('ko-KR')})` : '');
+        let outside = 0;
+        dials.forEach((el) => {
+          const k = parseInt(el.dataset.k || '1', 10);
+          const t = theta(k);
+          const seen = Math.min(2 * Math.PI, cfg.maxPos * t);
+          const raw = eff * t;
+          const shown = raw % (2 * Math.PI);
+          const novel = seen < 2 * Math.PI && raw > seen + 1e-9;
+          if (novel) outside++;
+          const hand = el.querySelector('.rd-hand') as SVGLineElement;
+          hand.setAttribute('x2', (R * Math.cos(shown)).toFixed(2));
+          hand.setAttribute('y2', (-R * Math.sin(shown)).toFixed(2));
+          hand.classList.toggle('novel', novel);
+          (el.querySelector('.rd-angle') as HTMLElement).textContent =
+            `지금 각도 ${deg(shown)}${novel ? ' - 처음 보는 각도' : ''}`;
+        });
+        let msg = '';
+        if (eff <= cfg.maxPos) msg = '세 쌍 모두 학습 길이 안에서 본 각도다.';
+        else msg = `학습 길이 32,768을 넘었다. 느린 쌍 ${outside}개가 처음 보는 각도에 있다. 빠른 쌍(k = 1)은 학습 중에 이미 모든 각도를 봤다.`;
+        if (pi.checked) msg += ' 위치 보간은 위치를 1/4로 줄여 131,072까지를 학습 범위 안에 넣는다. 대신 이웃한 위치의 각도 차도 1/4로 줄어서 짧은 추가 학습이 필요하다.';
+        (this.querySelector('.rd-note') as HTMLElement).textContent = msg;
+      };
+
+      pos.addEventListener('input', render);
+      pi.addEventListener('change', render);
+      render();
+    }
+  }
+  customElements.define('rope-dial', RopeDial);
+</script>
+
+<style>
+  .rd-wrap { display: block; margin: 1rem 0; }
+  .rd-hint { font-size: 0.85rem; color: var(--sl-color-gray-3); margin: 0 0 0.6rem; }
+  .rd-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.5rem; margin-bottom: 0.75rem; }
+  .rd-controls > label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; min-width: 15rem; }
+  .rd-controls .rd-check { flex-direction: row; align-items: center; gap: 0.4rem; min-width: 0; }
+  .rd-controls input[type='range'] { accent-color: var(--sl-color-accent); }
+  .rd-dials { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 0.6rem; }
+  .rd-dial { margin: 0; border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.6rem; background: var(--sl-color-bg-nav); display: flex; flex-direction: column; align-items: center; }
+  .rd-dial figcaption { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; font-size: 0.78rem; text-align: center; margin-top: 0.3rem; }
+  .rd-period, .rd-angle { color: var(--sl-color-gray-3); }
+  .rd-ring { fill: none; stroke: var(--sl-color-gray-5); stroke-width: 2; }
+  .rd-seen { fill: none; stroke: #3fae6a; stroke-width: 7; stroke-linecap: round; opacity: 0.75; }
+  .rd-hand { stroke: #8b6fd6; stroke-width: 3.5; stroke-linecap: round; }
+  .rd-hand.novel { stroke: #e03131; }
+  .rd-hub { fill: var(--sl-color-text); }
+  .rd-note { font-size: 0.82rem; color: var(--sl-color-gray-3); margin: 0.7rem 0 0; }
+</style>
