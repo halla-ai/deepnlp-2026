@@ -1,0 +1,39 @@
+---
+// Authored examples and ideal-mechanism parameters, never internal model evidence.
+---
+<responsible-lab class="not-content">
+  <p><strong>설명과 결과 관찰기</strong></p>
+  <p>작성 예시를 선택하고 서술 일치와 정답 일치를 따로 확인</p>
+  <label>작성 예시 <select data-example><option value="0">A: 설명 2, 답 2</option><option value="1">B: 설명 3, 답 2</option><option value="2">C: 설명 2, 답 3</option><option value="3">D: 설명 3, 답 3</option></select></label>
+  <p data-result aria-live="polite"></p>
+  <label>노이즈 multiplier <select data-scale><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="0.5">0.5</option></select></label>
+  <p data-privacy aria-live="polite"></p>
+  <p class="limit">내부 충실성 미측정. 노이즈 난수 표본을 내보내는 서비스가 아니라 민감도 1, 기준 epsilon 1에서의 이상적 매개변수 계산.</p>
+  <noscript>A: 불일치 없음, 답 정확, 내부 충실성 미측정. multiplier 1: scale 1, 유효 epsilon 1.</noscript>
+</responsible-lab>
+<script>
+  class ResponsibleLab extends HTMLElement {
+    connectedCallback() {
+      const example = this.querySelector<HTMLSelectElement>('[data-example]')!;
+      const scale = this.querySelector<HTMLSelectElement>('[data-scale]')!;
+      const render = () => {
+        const examples = [[2,2],[3,2],[2,3],[3,3]];
+        const [reason, answer] = examples[Number(example.value)];
+        this.querySelector('[data-result]')!.textContent = `서술-결과 불일치: ${reason !== answer ? '있음' : '없음'}. 최종 답: ${answer === 2 ? '정확' : '부정확'}. 내부 충실성: 미측정. ${reason === answer && answer !== 2 ? '같은 오답을 공유해도 불일치 검사 통과.' : reason !== answer && answer === 2 ? '정답이어도 설명과 답이 어긋나는 사례.' : '프록시와 정답 검사의 다른 평가 대상 확인.'}`;
+        const b = Number(scale.value);
+        this.querySelector('[data-privacy]')!.textContent = `scale b = ${b}, 이상적 메커니즘 유효 epsilon = ${(1 / b).toFixed(3)}. 이론적 평균 절대 오차 E|noise| = ${b}. 노이즈를 줄이면 프라이버시 제약도 완화.`;
+      };
+      example.addEventListener('change', render);
+      scale.addEventListener('change', render);
+      render();
+    }
+  }
+  if (!customElements.get('responsible-lab')) customElements.define('responsible-lab', ResponsibleLab);
+</script>
+<style>
+  responsible-lab { display:block; padding:1rem; margin:1.5rem 0; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; }
+  label { display:grid; gap:.4rem; margin-top:1rem; max-width:28rem; }
+  select { padding:.5rem; color:var(--sl-color-text); background:var(--sl-color-bg); border:1px solid var(--sl-color-gray-4); max-width:100%; }
+  select:focus-visible { outline:2px solid var(--sl-color-accent); outline-offset:2px; }
+  .limit { font-size:.85rem; }
+</style>

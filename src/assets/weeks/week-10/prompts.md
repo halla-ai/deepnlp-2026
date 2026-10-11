@@ -12,3 +12,5 @@
 - reward-broadcast.svg: outcome supervision, 표본 표준편차 기준 응답 advantage 반복
 - aggregation-credit.svg: 길이 2·8 응답의 집계 가중치, 토큰별 인과 신용과 구분
 - 근거: https://arxiv.org/abs/2203.02155, https://arxiv.org/abs/2305.18290, https://arxiv.org/html/2402.03300v3#S4.SS1.SSS2, https://arxiv.org/html/2503.14476v1#S3.SS3, https://arxiv.org/abs/2501.12948
+
+- objective-numbers.svg: 동일 상정 관광 질문에서 SFT token CE, Bradley-Terry 선호확률, DPO 로그비 목적함수의 감독 대상과 계산값 비교. 교수 제공값의 산술 도식이며 모델 실측 아님

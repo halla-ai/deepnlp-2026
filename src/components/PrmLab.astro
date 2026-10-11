@@ -1,0 +1,70 @@
+---
+// Supplied teaching scores only. No trained PRM or correctness verifier.
+---
+<prm-lab class="not-content">
+  <p><strong>Best-of-N 관찰기</strong>: 교수 제공 점수의 집계와 선택 비교</p>
+  <div class="controls">
+    <label>후보 수 N <select data-count><option value="2">2 (A, B)</option><option value="3">3 (A, B, C)</option><option value="4" selected>4 (A, B, C, D)</option></select></label>
+    <label>선택 기준 <select data-method><option value="outcome">응답 점수</option><option value="mean">단계 평균</option><option value="min">단계 최솟값</option><option value="product">단계 곱</option></select></label>
+    <label>단계 점수 <select data-preset><option value="base">기본 제공값</option><option value="error">오판 예시: D를 모두 0.99로 평가</option></select></label>
+  </div>
+  <p data-summary aria-live="polite"></p>
+  <div class="table-wrap"><table><caption>교수 작성 후보와 제공 점수. ground truth와 점수 분리</caption><thead><tr><th scope="col">후보</th><th scope="col">응답 점수</th><th scope="col">단계 점수</th><th scope="col">선택 점수</th><th scope="col">최종 답 대조</th><th scope="col">과정 검토</th></tr></thead><tbody></tbody></table></div>
+  <p data-note aria-live="polite"></p>
+  <p>높은 점수는 정답의 증명 아님. 후보들은 동일한 공개 행정정보 질문에 대해 교수가 작성한 예시, 모델 출력이나 실제 PRM 평가 아님.</p>
+  <noscript>기본 N=4: 응답 점수는 A, 단계 평균은 D, 최솟값과 곱은 B 선택. A는 잘못된 과정과 맞는 최종 답, D는 틀린 최종 답.</noscript>
+</prm-lab>
+<script>
+  class PrmLab extends HTMLElement {
+    connectedCallback() {
+      const countInput = this.querySelector<HTMLSelectElement>('[data-count]')!;
+      const methodInput = this.querySelector<HTMLSelectElement>('[data-method]')!;
+      const presetInput = this.querySelector<HTMLSelectElement>('[data-preset]')!;
+      const render = () => {
+        const rows = [
+          { id:'A', outcome:0.95, steps:[0.9,0.1,0.9], answer:'일치', process:'2단계 오류' },
+          { id:'B', outcome:0.85, steps:[0.8,0.8,0.8], answer:'일치', process:'전체 타당' },
+          { id:'C', outcome:0.2, steps:[0.95,0.95,0.05], answer:'불일치', process:'앞 2단계 타당, 결론 오류' },
+          { id:'D', outcome:0.6, steps:presetInput.value === 'error' ? [0.99,0.99,0.99] : [0.99,0.99,0.5], answer:'불일치', process:'결론 오류' },
+        ].slice(0, Number(countInput.value));
+        const method = methodInput.value;
+        const scores = rows.map(row => method === 'outcome' ? row.outcome : method === 'mean' ? row.steps.reduce((a,b)=>a+b,0)/row.steps.length : method === 'min' ? Math.min(...row.steps) : row.steps.reduce((a,b)=>a*b,1));
+        const winner = scores.indexOf(Math.max(...scores));
+        const body = this.querySelector('tbody')!;
+        body.replaceChildren();
+        rows.forEach((row, i) => {
+          const tr = document.createElement('tr');
+          if (i === winner) tr.dataset.selected = 'true';
+          [row.id + (i === winner ? ' (선택)' : ''), row.outcome.toFixed(2), row.steps.map(x=>x.toFixed(2)).join(', '), scores[i].toFixed(6), row.answer, row.process].forEach((value, j) => {
+            const cell = document.createElement(j === 0 ? 'th' : 'td');
+            if (j === 0) cell.setAttribute('scope','row');
+            cell.textContent = value;
+            tr.append(cell);
+          });
+          body.append(tr);
+        });
+        this.querySelector('[data-summary]')!.textContent = `N=${rows.length}, 선택 ${rows[winner].id}, 점수 ${scores[winner].toFixed(6)}, 최종 답 ${rows[winner].answer}. 동점이면 앞선 후보 선택.`;
+        this.querySelector('[data-note]')!.textContent = presetInput.value === 'error' && rows.length === 4
+          ? 'D의 사실·ground truth는 그대로인데 단계 점수만 변경. 잘못된 평가 신호로는 최솟값과 곱도 D를 선택.'
+          : '응답 점수 A=0.95는 교수 제공값이며 정답 라벨이 아님. 평균은 한 단계의 낮은 점수를 다른 높은 점수로 덮을 수 있음.';
+      };
+      this.querySelectorAll('select').forEach(select => select.addEventListener('change',render));
+      render();
+    }
+  }
+  if (!customElements.get('prm-lab')) customElements.define('prm-lab',PrmLab);
+</script>
+<style>
+  prm-lab { display:block; padding:1rem; margin:1.5rem 0; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; }
+  .controls { display:flex; flex-wrap:wrap; gap:1rem; }
+  label { display:grid; gap:.4rem; font-size:.9rem; max-width:100%; }
+  select { padding:.4rem; color:var(--sl-color-text); background:var(--sl-color-bg); border:1px solid var(--sl-color-gray-4); border-radius:.3rem; max-width:100%; }
+  select:focus-visible { outline:2px solid var(--sl-color-text-accent); outline-offset:3px; }
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  caption { text-align:left; padding:.6rem 0; }
+  th, td { padding:.5rem; border-bottom:1px solid var(--sl-color-gray-5); text-align:left; }
+  prm-lab :global(tr[data-selected="true"]) { background:var(--sl-color-gray-6); }
+  prm-lab :global(tbody th), prm-lab :global(tbody td) { padding:.5rem; border-bottom:1px solid var(--sl-color-gray-5); text-align:left; }
+  @media (max-width:40rem) { .controls { flex-direction:column; } table { min-width:38rem; } }
+</style>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="title desc">
+<title id="title">신용 할당: 네 설계 항목과 결과 해석</title>
+<desc id="desc">세 종류의 중요도: 미래 영향 / 정답 조건부 우도 / 결과 민감도. 측정 대상이 다름.</desc>
+<rect width="1200" height="540" fill="#f7f6f2" />
+<g font-family="sans-serif" fill="#20262e">
+<text x="48" y="60" font-size="30" font-weight="700">신용 할당: 네 설계 항목과 결과 해석</text>
+<rect x="48" y="100" width="350" height="138" rx="12" fill="#e3edf2" stroke="#93aab7" />
+<text x="68" y="144" font-size="24" font-weight="700">방향·크기</text>
+<text x="68" y="191" font-size="18">강화/억제, 크기·정규화·clipping</text>
+<rect x="422" y="100" width="350" height="138" rx="12" fill="#e3edf2" stroke="#93aab7" />
+<text x="442" y="144" font-size="24" font-weight="700">위치·신뢰성</text>
+<text x="442" y="191" font-size="18">배분 위치, 점수 출처·오판</text>
+<rect x="796" y="100" width="350" height="138" rx="12" fill="#e3edf2" stroke="#93aab7" />
+<text x="816" y="144" font-size="24" font-weight="700">학습 효과</text>
+<text x="816" y="191" font-size="18">학습 후 baseline과 비교</text>
+<rect x="48" y="282" width="1100" height="72" rx="10" fill="#e4eee3" />
+<text x="70" y="325" font-size="23" font-weight="700">설계 항목 4개</text>
+<text x="350" y="325" font-size="22">방향 / 크기 / 위치 / 신뢰성</text>
+<rect x="48" y="372" width="1100" height="72" rx="10" fill="#f1e5d6" />
+<text x="70" y="415" font-size="23" font-weight="700">결과 해석 항목</text>
+<text x="350" y="415" font-size="22">학습 효과. 이 실습에서는 미측정</text>
+<text x="48" y="503" font-size="17">세 종류의 중요도: 미래 영향 / 정답 조건부 우도 / 결과 민감도. 측정 대상이 다름.</text>
+</g></svg>

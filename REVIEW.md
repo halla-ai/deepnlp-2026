@@ -10,8 +10,8 @@ Run these passes and tag every finding with its pass:
 
 - Bugs: broken pages, figures, or notebook cells; numbers in lecture text that do not match what the notebook or figure actually computes; interactive components whose labels or behavior contradict the text, or whose scripts never run.
 - Security: secrets, tokens, or student personal data (names, contacts) in the diff. Student folders carry the student ID only.
-- Compliance: the change matches the linked issue and the notebook and content rules in `AGENTS.md`:
-  - a notebook runs top to bottom with its TODO untouched, has exactly one TODO cell, and never asks students to write code from scratch
+- Compliance: the change matches the linked issue, the lecture section/teaching contract, and the notebook and content rules in `AGENTS.md`:
+  - a notebook runs top to bottom untouched and follows the week-specific TODO or observation-only contract in AGENTS.md and the linked issue; no student implementation from scratch
   - Colab free tier only, no GPU dependency
   - no commercial product or subscription-service names in course content
   - no invented papers, figures, or citations

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img">
+<title>TF-IDF: 단어 세 개로 검산하는 검색 점수</title>
+<rect width="1200" height="640" fill="#f3f5f7"/>
+<text x="40" y="55" font-family="sans-serif" font-size="30" fill="#172b3a">TF-IDF: 단어 세 개로 검산하는 검색 점수</text>
+<text x="40" y="88" font-family="sans-serif" font-size="18" fill="#335d6b">계산용 문자열 A/B/C, 실제 제주 문서의 측정값이 아닌 교육용 예제</text>
+<rect x="40" y="125" width="490" height="265" rx="12" fill="#ffffff" stroke="#397b8b" stroke-width="2"/>
+<text x="60" y="160" font-family="sans-serif" font-size="24" fill="#172b3a">빈도 행렬</text>
+<text x="240" y="205" font-family="sans-serif" font-size="20" fill="#172b3a">제주</text>
+<text x="330" y="205" font-family="sans-serif" font-size="20" fill="#172b3a">기후</text>
+<text x="420" y="205" font-family="sans-serif" font-size="20" fill="#172b3a">관광</text>
+<text x="65" y="255" font-family="sans-serif" font-size="22" fill="#172b3a">A</text>
+<text x="250" y="255" font-family="sans-serif" font-size="22" fill="#172b3a">1</text>
+<text x="340" y="255" font-family="sans-serif" font-size="22" fill="#172b3a">2</text>
+<text x="430" y="255" font-family="sans-serif" font-size="22" fill="#172b3a">0</text>
+<text x="65" y="305" font-family="sans-serif" font-size="22" fill="#172b3a">B</text>
+<text x="250" y="305" font-family="sans-serif" font-size="22" fill="#172b3a">1</text>
+<text x="340" y="305" font-family="sans-serif" font-size="22" fill="#172b3a">0</text>
+<text x="430" y="305" font-family="sans-serif" font-size="22" fill="#172b3a">1</text>
+<text x="65" y="355" font-family="sans-serif" font-size="22" fill="#172b3a">C</text>
+<text x="250" y="355" font-family="sans-serif" font-size="22" fill="#172b3a">1</text>
+<text x="340" y="355" font-family="sans-serif" font-size="22" fill="#172b3a">0</text>
+<text x="430" y="355" font-family="sans-serif" font-size="22" fill="#172b3a">0</text>
+<rect x="560" y="125" width="600" height="265" rx="12" fill="#ffffff" stroke="#397b8b" stroke-width="2"/>
+<text x="580" y="162" font-family="sans-serif" font-size="23" fill="#172b3a">idf = ln((1 + N)/(1 + df)) + 1</text>
+<text x="580" y="210" font-family="sans-serif" font-size="22" fill="#172b3a">제주: df = 3 → 1.0000</text>
+<text x="580" y="252" font-family="sans-serif" font-size="22" fill="#172b3a">기후·관광: df = 1 → 1.6931</text>
+<text x="580" y="299" font-family="sans-serif" font-size="22" fill="#172b3a">A = (1, 3.3863, 0)</text>
+<text x="580" y="343" font-family="sans-serif" font-size="22" fill="#172b3a">L2 정규화 → (0.2832, 0.9591, 0)</text>
+<text x="40" y="438" font-family="sans-serif" font-size="23" fill="#172b3a">질문 q = &quot;제주 기후&quot; → 정규화 (0.5085, 0.8610, 0)</text>
+<text x="55" y="485" font-family="sans-serif" font-size="22" fill="#172b3a">A</text>
+<rect x="120" y="463" width="756.4" height="27" fill="#397b8b"/>
+<text x="930" y="485" font-family="sans-serif" font-size="23" fill="#172b3a">0.9698</text>
+<text x="55" y="533" font-family="sans-serif" font-size="22" fill="#172b3a">C</text>
+<rect x="120" y="511" width="396.6" height="27" fill="#75a7b4"/>
+<text x="930" y="533" font-family="sans-serif" font-size="23" fill="#172b3a">0.5085</text>
+<text x="55" y="581" font-family="sans-serif" font-size="22" fill="#172b3a">B</text>
+<rect x="120" y="559" width="201.7" height="27" fill="#a4bbc3"/>
+<text x="930" y="581" font-family="sans-serif" font-size="23" fill="#172b3a">0.2586</text>
+</svg>

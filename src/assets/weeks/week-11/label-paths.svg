@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="title desc">
+<title id="title">과정 신호를 확보하는 세 경로</title>
+<desc id="desc">라벨 단위와 비용 구분. 실제 지출이나 제주 과제 성능을 나타내는 도식 아님.</desc>
+<rect width="1200" height="540" fill="#f7f6f2" />
+<g font-family="sans-serif" fill="#20262e">
+<text x="48" y="60" font-size="30" font-weight="700">과정 신호를 확보하는 세 경로</text>
+<rect x="48" y="100" width="350" height="138" rx="12" fill="#e3edf2" stroke="#93aab7" />
+<text x="68" y="144" font-size="24" font-weight="700">사람 주석</text>
+<text x="68" y="191" font-size="18">약 80만 단계 라벨: PRM800K</text>
+<rect x="422" y="100" width="350" height="138" rx="12" fill="#e3edf2" stroke="#93aab7" />
+<text x="442" y="144" font-size="24" font-weight="700">자동 감독</text>
+<text x="442" y="191" font-size="18">접두 -&gt; 후속 생성 -&gt; 정답 검사</text>
+<rect x="796" y="100" width="350" height="138" rx="12" fill="#e3edf2" stroke="#93aab7" />
+<text x="816" y="144" font-size="24" font-weight="700">암묵 신호</text>
+<text x="816" y="191" font-size="18">outcome 라벨 -&gt; 온라인 PRM</text>
+<rect x="48" y="282" width="1100" height="72" rx="10" fill="#e4eee3" />
+<text x="70" y="325" font-size="23" font-weight="700">줄이는 부담</text>
+<text x="350" y="325" font-size="22">직접 단계 주석의 수집 부담</text>
+<rect x="48" y="372" width="1100" height="72" rx="10" fill="#f1e5d6" />
+<text x="70" y="415" font-size="23" font-weight="700">남는 부담</text>
+<text x="350" y="415" font-size="22">생성·검증·품질·데이터 권리</text>
+<text x="48" y="503" font-size="17">라벨 단위와 비용 구분. 실제 지출이나 제주 과제 성능을 나타내는 도식 아님.</text>
+</g></svg>

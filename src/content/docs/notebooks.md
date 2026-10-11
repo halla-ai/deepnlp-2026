@@ -31,8 +31,8 @@ TODO를 건드리지 않아도 노트북은 처음부터 끝까지 돌아간다.
 | 8 | 중간고사 및 PEFT 심화 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-08.ipynb) (자가 점검, TODO 없음) |
 | 9 | 검색 결합 생성(RAG)의 구조 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-09.ipynb) |
 | 10 | 정렬 기법의 계보 - RLHF에서 GRPO까지 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-10.ipynb) (관찰 전용, TODO 없음) |
-| 11 | 과정 감독과 신용 할당 - PRM과 토큰 수준 credit | 준비 중 |
-| 12 | AI 규제와 책임 있는 AI | 준비 중 |
+| 11 | 과정 감독과 신용 할당 - PRM과 토큰 수준 credit | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-11.ipynb) (관찰 전용, TODO 없음) |
+| 12 | AI 규제와 책임 있는 AI | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-12.ipynb) |
 | 13 | 최신 연구 동향과 미래 전망 | 준비 중 |
 | 14 | 최종 프로젝트 개발 및 운영 전환 | 준비 중 |
 | 15 | 산업 응용 사례 분석 및 최종 발표 | 없음 |

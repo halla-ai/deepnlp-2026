@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img">
+<title>실행 사례: 후보 증가와 답변 근거의 불일치</title>
+<rect width="1200" height="640" fill="#f3f5f7"/>
+<text x="40" y="55" font-family="sans-serif" font-size="30" fill="#172b3a">실행 사례: 후보 증가와 답변 근거의 불일치</text>
+<text x="40" y="88" font-family="sans-serif" font-size="18" fill="#335d6b">고정 판 42464087, 질의 &quot;한라산의 높이&quot;, k = 5, CPU greedy 최대 32토큰</text>
+<rect x="40" y="125" width="540" height="200" rx="12" fill="#ffffff" stroke="#397b8b" stroke-width="2"/>
+<rect x="620" y="125" width="540" height="200" rx="12" fill="#fff7ec" stroke="#397b8b" stroke-width="2"/>
+<text x="60" y="166" font-family="sans-serif" font-size="26" fill="#172b3a">단어 검색</text>
+<text x="60" y="213" font-family="sans-serif" font-size="24" fill="#172b3a">후보 [] → 전달 근거 없음</text>
+<text x="60" y="261" font-family="sans-serif" font-size="22" fill="#172b3a">생성 생략: 검색 근거 없음</text>
+<text x="640" y="166" font-family="sans-serif" font-size="26" fill="#172b3a">문자 검색</text>
+<text x="640" y="213" font-family="sans-serif" font-size="21" fill="#172b3a">D018, D016, D019, D038, D015</text>
+<text x="640" y="261" font-family="sans-serif" font-size="22" fill="#172b3a">선택 D018: 동물 종류·수 설명</text>
+<rect x="40" y="360" width="1120" height="135" rx="12" fill="#ffffff" stroke="#397b8b" stroke-width="2"/>
+<text x="65" y="399" font-family="sans-serif" font-size="22" fill="#172b3a">실제 전달 문장 (발췌)</text>
+<text x="65" y="446" font-family="sans-serif" font-size="25" fill="#172b3a">77종의 포유류, 조류 198종 ... 파충류, 양서류가 각각 8종</text>
+<text x="65" y="472" font-family="sans-serif" font-size="17" fill="#172b3a">발췌의 ...는 중간 생략 표시. 높이를 뒷받침하는 내용 없음.</text>
+<rect x="40" y="520" width="1120" height="85" rx="12" fill="#fff0ef" stroke="#397b8b" stroke-width="2"/>
+<text x="65" y="554" font-family="sans-serif" font-size="26" fill="#8b3131">실제 답변 시작: 1000m</text>
+<text x="65" y="587" font-family="sans-serif" font-size="21" fill="#8b3131">후보는 생겼지만 수치는 문맥에 없음. 인용 [D018]도 높이 근거가 아님.</text>
+</svg>
