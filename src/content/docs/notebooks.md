@@ -5,13 +5,13 @@ description: Colab에서 바로 열리는 주차별 실습 노트북
 
 ## 여는 방법
 
-각 노트북 맨 위의 **Open in Colab** 배지를 누르면 바로 열린다. 설치할 것도, 로그인 외에 준비할 것도 없다.
+각 노트북 맨 위의 **Open in Colab** 배지를 누르면 바로 열린다. 설치 셀은 노트북에 제공. 인터넷과 모델 다운로드 공간 필요. 2주차 AI Hub 원본과 9주차 교수 제공 포털 파일은 별도 준비하며, 미확보 상태는 예시 관찰과 구분해 기록.
 
 ## 노트북은 이런 모양이다
 
 1. **목표 한 줄** - 이 노트북을 끝내면 무엇이 돌아가는지
 2. **그냥 실행하면 되는 셀들** - 먼저 결과가 나오는 것을 확인한다
-3. **`# TODO` 한 곳** - 여기 한 지점만 바꿔 무엇이 달라지는지 본다
+3. **`# TODO` 한 곳** - 여기 한 지점만 바꿔 무엇이 달라지는지 본다. 8·10·11·13주차는 TODO 없이 제공된 실험을 실행·해석한다
 4. **확인 질문** - 결과를 어떻게 읽을지
 5. **제출 안내**
 
@@ -21,7 +21,7 @@ TODO를 건드리지 않아도 노트북은 처음부터 끝까지 돌아간다.
 
 | 주 | 주제 | 노트북 |
 |---|---|---|
-| 1 | 차세대 NLP 아키텍처의 이해와 과목 뼈대 공유 | 준비 중 |
+| 1 | 차세대 NLP 아키텍처의 이해와 과목 뼈대 공유 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-01.ipynb) |
 | 2 | 구현 기반 - 학습 루프와 텐서 연산 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-02.ipynb) |
 | 3 | 효율적 미세조정의 원리와 변형 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-03.ipynb) |
 | 4 | 프롬프트와 문맥학습의 원리 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-04.ipynb) |

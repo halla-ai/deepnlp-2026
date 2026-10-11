@@ -38,6 +38,19 @@ import dsCed from '../../../assets/weeks/week-02/dsv41-ced.png';
 
 <Image src={weekHero} width={1600} alt="학생이 완만한 풀밭 언덕을 작은 걸음으로 내려가며 골짜기 바닥으로 향하고, 뒤에는 발자국이, 옆에는 내리막을 가리키는 나침과 화살표가 있는 일러스트" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
 
+□ 읽기 안내 - 이 노트의 어디와 이어지나
+
+| 읽기 | 이 노트에서 다루는 곳 | 먼저 확인할 질문 |
+|---|---|---|
+| [PyTorch Tensors](https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html) | 텐서의 shape와 행렬 연산 | 숫자가 몇 개의 축과 칸에 담기는가 |
+| [PyTorch Automatic Differentiation](https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html) | 계산 그래프와 `backward()` | 순전파 기록이 어느 기울기로 되돌아오는가 |
+| [PyTorch Optimizing Model Parameters](https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html) | 손실·역전파·갱신의 학습 루프 | 손실 계산과 가중치 변경은 어떤 순서로 연결되는가 |
+| [FlashAttention, Dao 외, 2022, v2](https://arxiv.org/abs/2205.14135v2) | SRAM·HBM, 타일링과 재계산 | 같은 어텐션 수식의 메모리 이동을 어떻게 줄이는가 |
+| [DeepSeek-V4.1-Flash 기술 보고서, 2026, v1](https://arxiv.org/abs/2609.19969v1) | CSA2·계층형 인덱서·FP4·CED·제한 재생 | 저장량·조회량·재계산량 중 무엇을 바꾸는가 |
+| [같은 모델의 고정판 config.json](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/2cba9e42aa026125f3ed06c6d98c1db82f7ca027/config.json) | 40개 층 배치와 SWA 창 크기 | 보고서의 설명과 실제 설정 값이 어떻게 연결되는가 |
+
+- 기본 읽기는 텐서·자동미분·학습 루프. 최신 모델 사례는 비용 구조 비교를 위한 대면 확장 읽기이며 해당 대형 모델을 실행하는 실습이 아닌 자료
+
 ## 온라인 (2시수)
 
 ### 강의: 텐서 연산과 자동미분, 사전학습 모델 로딩
@@ -258,7 +271,8 @@ a @ b.T      # b를 뒤집어 (3, 2)로 만들면 성공, 결과 shape는 (2, 2)
 □ 왜 이 사례를 보는가
 
 - FlashAttention은 **같은 계산을 더 빠르게** 하는 방법이었다. 2026년 9월에 공개된 DeepSeek-V4.1-Flash는 한 걸음 더 나가서, 어텐션이 **무엇을 기억하고, 누구와 나눠 쓰고, 얼마나 촘촘히 적을지**를 크게 다시 설계했다
-- 이 절의 내용은 공개된 기술 보고서("DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression")와 함께 공개된 모델 설정 파일(config.json)에서 가져왔다. 보고서에 없는 숫자는 설정 값으로 **직접 계산한 것**이며, 그때마다 계산 과정을 보인다
+- 이 절의 내용은 [공개 기술 보고서 v1](https://arxiv.org/abs/2609.19969v1)과 [고정판 모델 설정 파일](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/2cba9e42aa026125f3ed06c6d98c1db82f7ca027/config.json)에서 가져왔다. 보고서에 없는 숫자는 설정 값으로 **직접 계산한 것**이며, 그때마다 계산 과정을 보인다
+- 출처 확인일: 2026-10-11. 설정 revision `2cba9e42aa026125f3ed06c6d98c1db82f7ca027`, 층·창 설정은 `text_config` 기준. 보고서 수치·설정 계산과 수업 노트북 실측의 구분
 - 결과부터 보자. 보고서가 밝힌 핵심 숫자는 다음과 같다
 
 | 항목 | 보고서 수치 |
@@ -410,7 +424,12 @@ a @ b.T      # b를 뒤집어 (3, 2)로 만들면 성공, 결과 shape는 (2, 2)
 
 **[구현]** 동작하는 학습 루프 코드를 받아 그대로 실행해 손실이 낮아지는 것을 먼저 확인하고, **손실 계산 한 줄만 바꿔** 결과가 어떻게 달라지는지 관찰. 이후 모든 주차가 이 코드를 재사용하므로 **이 주차는 전원이 끝까지 돌려보는 것을 목표**로 함
 
-**[실무]** AI Hub 「한국어 방언 발화(제주도)」의 **방언·표준어 대응쌍**으로, 방언 표기가 토크나이저에서 어떻게 쪼개지는지와 표준어 대비 토큰 수 증가를 실측. 같은 뜻을 담는 데 드는 비용이 표기에 따라 달라짐을 확인
+**[실무]** 교수 작성 방언·표준어 예시로 토큰 비용 차이를 관찰하고, 실제 AI Hub 「한국어 방언 발화(제주도)」 JSON이 확보되면 제공된 로더로 대응쌍을 자동 추출하여 비교
+
+- [공식 데이터 설명](https://www.aihub.or.kr/aihubdata/data/view.do?dataSetSn=121)의 `utterance` 배열과 `dialect_form`, `standard_form` 필드 기준 로더 제공
+- 실제 다운로드 접근과 원본 파일 추출은 아직 검증하지 않음. 파일이 없으면 실제 말뭉치 측정 미실행 표기
+- 노트북의 작은 문장 예시는 교수 작성이며 AI Hub 추출 샘플 아님. 코드에 대응쌍을 직접 채우는 추가 구현 요구 없음
+- 아래 토큰 수는 해당 예시의 측정이며 실제 말뭉치 전체의 방언 비용 경향으로 일반화하지 않기
 
 □ 토크나이저가 글자를 자르는 모습 (실측)
 
