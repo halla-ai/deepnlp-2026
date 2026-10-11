@@ -302,18 +302,18 @@ run_with_monitor = attach_monitor(public_fixture_logger)
 
 ## 학습활동
 
-□ 이론
+**[이론]**
 
 - 입력 이동, 프롬프트 갱신, 모델 갱신의 변화 경로와 지표 노후화의 측정 경로 구분
 - 예외 없음과 의미 품질 통과, replay 통과와 수신자 수락의 차이 설명
 
-□ 구현
+**[구현]**
 
 - 제공된 로깅·모니터링을 한 지점에 연결, 기본·대안 전체 실행
 - 세 실패와 버전 묶음 저장, 제공 replay로 결과 대조
 - 새 logger·verifier·재현 알고리즘 구현 요구 없음
 
-□ 실무
+**[실무]**
 
 - 실패 케이스 3건을 수신자 영향과 함께 멘토 리뷰 자료로 정리
 - 현장 기준의 우선순위 조정과 개발·운영·소통 역할별 피드백 기록
@@ -322,7 +322,7 @@ run_with_monitor = attach_monitor(public_fixture_logger)
 ## 자주 하는 오해 Q&A
 
 <details>
-<summary>로그를 많이 남길수록 원인을 빨리 찾는가</summary>
+<summary>Q1. 로그를 많이 남길수록 원인을 빨리 찾는가</summary>
 
 - 필요한 버전·실행 묶음 없이 원문만 쌓이면 같은 실패를 재현하지 못하는 상태
 - 기록 목적부터 정하고 ID·버전·hash·상태를 연결. 개인정보·비밀 수집량 증가를 디버깅 근거로 정당화하지 않는 원칙
@@ -330,7 +330,7 @@ run_with_monitor = attach_monitor(public_fixture_logger)
 </details>
 
 <details>
-<summary>hash를 저장하면 개인정보 문제도 해결되는가</summary>
+<summary>Q2. hash를 저장하면 개인정보 문제도 해결되는가</summary>
 
 - hash는 익명화 보장이 아님. 후보가 적은 원문은 후보 대입 가능
 - 이번 재현은 공개 작성 fixture registry가 있으므로 가능. 실제 개인 질의를 그 registry에 넣으라는 과제가 아님
@@ -338,7 +338,7 @@ run_with_monitor = attach_monitor(public_fixture_logger)
 </details>
 
 <details>
-<summary>예외가 없으면 운영 성공인가</summary>
+<summary>Q3. 예외가 없으면 운영 성공인가</summary>
 
 - F2와 F3는 코드 예외가 없어도 필드 누락·사실 오류로 실패
 - 실행 상태, 출력 계약, 의미 품질을 서로 다른 열로 관찰할 필요
@@ -346,7 +346,7 @@ run_with_monitor = attach_monitor(public_fixture_logger)
 </details>
 
 <details>
-<summary>재현 검증을 통과하면 그 실패는 해결된 것인가</summary>
+<summary>Q4. 재현 검증을 통과하면 그 실패는 해결된 것인가</summary>
 
 - 같은 조건에서 같은 실패를 다시 확인한 상태
 - 변경 후 비교할 기준이 생긴 것이며 해결 판정은 수정된 결과와 수신자 기준으로 별도 검증
@@ -354,7 +354,7 @@ run_with_monitor = attach_monitor(public_fixture_logger)
 </details>
 
 <details>
-<summary>현재 정확도를 알 수 없으면 우선 0으로 표시해도 되는가</summary>
+<summary>Q5. 현재 정확도를 알 수 없으면 우선 0으로 표시해도 되는가</summary>
 
 - 라벨 미수집은 미측정. 정답·오답 수를 만들어 내지 않는 원칙
 - 확인된 라벨만 정확도 분모에 넣고 라벨 커버리지 함께 보고
