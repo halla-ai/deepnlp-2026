@@ -231,7 +231,7 @@ import PrmLab from '../../../components/PrmLab.astro';
 □ 작은 관찰 trace: 토큰 비율에서 응답 점수로
 
 - 아래 확률은 **교수 제공 설명값**, 실제 모델 likelihood나 제주 문장의 tokenizer 결과 아님
-- 같은 질문 x와 같은 앞 토큰 y_<t를 조건으로 두 causal LM이 현재 예제 토큰 y_t에 준 확률 비교
+- 같은 질문 x와 같은 앞 토큰 `y_<t`를 조건으로 두 causal LM이 현재 예제 토큰 y_t에 준 확률 비교
 - 원전의 기호: pi_phi는 implicit PRM인 언어모델, pi_ref는 기준 언어모델, beta는 점수 배율
 - [PRIME 3.1, 식 (3)](https://arxiv.org/html/2502.01456v2#S3.SS1): 토큰 신호는 두 모델의 확률비에 로그를 취한 값
 
