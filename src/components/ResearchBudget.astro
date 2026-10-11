@@ -1,0 +1,32 @@
+---
+// Authored arithmetic example, not measured research results.
+---
+<research-budget class="not-content">
+  <p><strong>구성 예산 관찰기</strong>: 교수 작성 상정값, 실제 측정 아님</p>
+  <label>질문 수 <select data-questions><option value="1">1</option><option value="3" selected>3</option><option value="10">10</option></select></label>
+  <label>수정 횟수 <select data-rounds><option value="0">0 (direct)</option><option value="1" selected>1</option><option value="2">2</option></select></label>
+  <p data-budget aria-live="polite">기본 질문 3개, 수정 1회: 초안 3 + 검토 3 + 수정 3 = 9호출.</p>
+  <p>같은 모델 가중치 1개를 공유하는 순차 구성. 성공률·시간·현금 비용은 이 계산으로 예측 불가. 실습은 수정 1회만 실행.</p>
+</research-budget>
+<script>
+class ResearchBudget extends HTMLElement {
+  connectedCallback() {
+    const questions=this.querySelector<HTMLSelectElement>('[data-questions]')!;
+    const rounds=this.querySelector<HTMLSelectElement>('[data-rounds]')!;
+    const render=()=>{
+      const n=Number(questions.value),r=Number(rounds.value);
+      this.querySelector('[data-budget]')!.textContent=`질문 ${n}개, 수정 ${r}회: 초안 ${n} + 검토 ${n*r} + 수정 ${n*r} = ${n*(1+2*r)}호출. 직접 생성 대비 ${1+2*r}배 호출, 시간 비율은 미측정.`;
+    };
+    this.querySelectorAll('select').forEach(x=>x.addEventListener('change',render));
+    render();
+  }
+}
+if(!customElements.get('research-budget')) customElements.define('research-budget',ResearchBudget);
+</script>
+<style>
+research-budget { display:block; padding:1rem; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; margin:1.5rem 0; }
+label { display:inline-flex; align-items:center; gap:.5rem; margin:.5rem 1rem .5rem 0; }
+select { padding:.4rem; background:var(--sl-color-bg); color:var(--sl-color-text); border:1px solid var(--sl-color-gray-4); }
+select:focus-visible { outline:2px solid var(--sl-color-text-accent); outline-offset:3px; }
+@media(max-width:40rem) { label { display:flex; } }
+</style>

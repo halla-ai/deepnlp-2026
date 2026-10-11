@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 390" role="img">
+<title>발표의 주장과 근거</title>
+<rect width="1200" height="390" rx="18" fill="#f4f1e9"/>
+<text x="48" y="65" font-family="sans-serif" font-size="32" font-weight="700" fill="#182d38">발표의 주장과 근거</text>
+<rect x="40" y="110" width="260" height="165" rx="12" fill="#dce7e4" stroke="#84928f"/>
+<text x="58" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">사용자 문제</text>
+<text x="58" y="210" font-family="sans-serif" font-size="18" fill="#253f49">누구의 어떤 행동인지</text>
+<path d="M 306 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="330" y="110" width="260" height="165" rx="12" fill="#e8ddca" stroke="#84928f"/>
+<text x="348" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">제한한 주장</text>
+<text x="348" y="210" font-family="sans-serif" font-size="18" fill="#253f49">확인한 자료·질문 범위</text>
+<path d="M 596 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="620" y="110" width="260" height="165" rx="12" fill="#dce4ee" stroke="#84928f"/>
+<text x="638" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">근거 묶음</text>
+<text x="638" y="210" font-family="sans-serif" font-size="18" fill="#253f49">자료·코드·입력·출력</text>
+<path d="M 886 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="910" y="110" width="260" height="165" rx="12" fill="#e4dfeb" stroke="#84928f"/>
+<text x="928" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">남은 범위</text>
+<text x="928" y="210" font-family="sans-serif" font-size="18" fill="#253f49">미측정과 다음 확인</text>
+<text x="48" y="335" font-family="sans-serif" font-size="20" fill="#253f49">출력 화면 하나는 존재 증거. 재현 조건과 전체 품질의 증거는 별도.</text>
+</svg>

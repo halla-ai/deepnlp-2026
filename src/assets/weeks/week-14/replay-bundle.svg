@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img">
+<title>최소 로그와 재현 묶음</title>
+<rect width="1200" height="500" fill="#f5f3ed"/>
+<text x="48" y="64" font-family="sans-serif" font-size="30" fill="#183d42">최소 로그와 재현 묶음</text>
+<rect x="40" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="40" y="115" width="270" height="12" fill="#23857c"/>
+<text x="58" y="175" font-family="sans-serif" font-size="25" fill="#183d42">로그</text>
+<text x="58" y="238" font-family="sans-serif" font-size="20" fill="#183d42">ID / hash / 버전</text>
+<text x="58" y="295" font-family="sans-serif" font-size="16" fill="#183d42">원문 대신 참조 기록</text>
+<rect x="330" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="330" y="115" width="270" height="12" fill="#23857c"/>
+<text x="348" y="175" font-family="sans-serif" font-size="25" fill="#183d42">공개 fixture</text>
+<text x="348" y="238" font-family="sans-serif" font-size="20" fill="#183d42">작성 질의 + 기대값</text>
+<text x="348" y="295" font-family="sans-serif" font-size="16" fill="#183d42">개인 원문 복사 금지</text>
+<rect x="620" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="620" y="115" width="270" height="12" fill="#23857c"/>
+<text x="638" y="175" font-family="sans-serif" font-size="25" fill="#183d42">실행 코드</text>
+<text x="638" y="238" font-family="sans-serif" font-size="20" fill="#183d42">규칙 source + hash</text>
+<text x="638" y="295" font-family="sans-serif" font-size="16" fill="#183d42">config / retrieval 묶음</text>
+<rect x="910" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="910" y="115" width="270" height="12" fill="#23857c"/>
+<text x="928" y="175" font-family="sans-serif" font-size="25" fill="#183d42">재실행</text>
+<text x="928" y="238" font-family="sans-serif" font-size="20" fill="#183d42">출력 hash 대조</text>
+<text x="928" y="295" font-family="sans-serif" font-size="16" fill="#183d42">지연 byte 일치 제외</text>
+<text x="48" y="455" font-family="sans-serif" font-size="18" fill="#496568">교수 작성 규칙형 실험. 실제 LM 성능·현장 멘토 의견 아님.</text></svg>

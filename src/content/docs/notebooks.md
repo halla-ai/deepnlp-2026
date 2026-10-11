@@ -33,9 +33,9 @@ TODO를 건드리지 않아도 노트북은 처음부터 끝까지 돌아간다.
 | 10 | 정렬 기법의 계보 - RLHF에서 GRPO까지 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-10.ipynb) (관찰 전용, TODO 없음) |
 | 11 | 과정 감독과 신용 할당 - PRM과 토큰 수준 credit | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-11.ipynb) (관찰 전용, TODO 없음) |
 | 12 | AI 규제와 책임 있는 AI | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-12.ipynb) |
-| 13 | 최신 연구 동향과 미래 전망 | 준비 중 |
-| 14 | 최종 프로젝트 개발 및 운영 전환 | 준비 중 |
-| 15 | 산업 응용 사례 분석 및 최종 발표 | 없음 |
+| 13 | 최신 연구 동향과 미래 전망 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-13.ipynb) (제공된 실험 관찰, TODO 없음) |
+| 14 | 최종 프로젝트 개발 및 운영 전환 | [열기](https://colab.research.google.com/github/halla-ai/deepnlp-2026/blob/main/notebooks/week-14.ipynb) |
+| 15 | 산업 응용 사례 분석 및 최종 발표 | [발표·데모 자료](/weeks/week-15/) (새 노트북 없음) |
 
 ## 특강
 

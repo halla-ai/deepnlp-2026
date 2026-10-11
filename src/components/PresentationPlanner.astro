@@ -1,0 +1,50 @@
+---
+// Teaching time arithmetic only; no assessment policy or project measurement.
+---
+<presentation-planner class="not-content">
+  <p><strong>20분 발표 리허설 계산기</strong></p>
+  <p>작성 예시의 다섯 구간 조정. Q&A 10분은 발표 시간과 별도.</p>
+  <div class="fields">
+    <label>문제·사용자 (분)<input data-minutes type="number" min="0" max="60" step="0.5" value="3" /></label>
+    <label>설계·선택 이유 (분)<input data-minutes type="number" min="0" max="60" step="0.5" value="4" /></label>
+    <label>비교·근거 (분)<input data-minutes type="number" min="0" max="60" step="0.5" value="5" /></label>
+    <label>데모·실패 대응 (분)<input data-minutes type="number" min="0" max="60" step="0.5" value="5" /></label>
+    <label>한계·다음 단계 (분)<input data-minutes type="number" min="0" max="60" step="0.5" value="3" /></label>
+  </div>
+  <p data-result role="status" aria-live="polite"></p>
+  <label>현장 데모 상태<select data-demo><option value="live">정상 실행</option><option value="recorded">실패, 이전 실행 기록 제시</option><option value="unknown">실행 근거 없음</option></select></label>
+  <p data-evidence aria-live="polite"></p>
+  <p class="limit">시간 배분은 작성 교육 예시. 합계 충족으로 내용의 정확성이나 운영 준비가 보장되지 않음.</p>
+  <noscript>기본 합계 20분. Q&A 포함 30분. 정상 데모에서도 조건·실행 시점·출처 기록 필요.</noscript>
+</presentation-planner>
+<script>
+  class PresentationPlanner extends HTMLElement {
+    connectedCallback() {
+      const inputs = Array.from(this.querySelectorAll<HTMLInputElement>('[data-minutes]'));
+      const demo = this.querySelector<HTMLSelectElement>('[data-demo]')!;
+      const render = () => {
+        const valid = inputs.every(input => input.value !== '' && input.validity.valid && Number.isFinite(input.valueAsNumber));
+        const total = inputs.reduce((sum, input) => sum + input.valueAsNumber, 0);
+        this.querySelector('[data-result]')!.textContent = valid ? `발표 합계 ${total.toFixed(1)}분, Q&A 포함 ${(total + 10).toFixed(1)}분. ${total > 20 ? `${(total - 20).toFixed(1)}분 초과. 반복 설명부터 줄이고 근거·한계 유지.` : total < 20 ? `${(20 - total).toFixed(1)}분 여유. 빈 시간을 새 주장으로 채우기 전에 리허설로 확인.` : '발표 20분 충족. 실제 리허설 경과 시간으로 재확인.'}` : '각 구간에 0~60분을 0.5분 단위로 입력.';
+        const messages: Record<string,string> = {
+          live: '정상 실행: 현재 입력·출력·소요 시간과 실행 조건 공개. 한 번의 성공으로 전체 서비스 품질 확정 불가.',
+          recorded: '이전 기록: 현장 실행 실패를 먼저 표시. 이전 실행 날짜·코드 판·입력·출력을 제시하고 현재 성공으로 표현 금지.',
+          unknown: '판단 보류: 실행 근거 없음 표시. 구조와 재실행 계획만 설명하고 결과 수치 주장 보류.'
+        };
+        this.querySelector('[data-evidence]')!.textContent = messages[demo.value];
+      };
+      inputs.forEach(input => input.addEventListener('input', render));
+      demo.addEventListener('change', render);
+      render();
+    }
+  }
+  if (!customElements.get('presentation-planner')) customElements.define('presentation-planner', PresentationPlanner);
+</script>
+<style>
+  presentation-planner { display:block; padding:1rem; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; margin:1.5rem 0; }
+  .fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(12rem,1fr)); gap:.8rem; }
+  label { display:grid; gap:.4rem; margin-top:.8rem; }
+  input, select { width:100%; box-sizing:border-box; padding:.5rem; color:var(--sl-color-text); background:var(--sl-color-bg); border:1px solid var(--sl-color-gray-4); }
+  input:focus-visible, select:focus-visible { outline:2px solid var(--sl-color-accent); outline-offset:2px; }
+  .limit { font-size:.85rem; }
+</style>

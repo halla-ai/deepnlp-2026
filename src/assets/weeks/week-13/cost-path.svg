@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img">
+<title>공유 가중치와 반복 호출의 다른 비용</title>
+<rect width="1200" height="500" fill="#101827" rx="20"/>
+<text x="54" y="64" fill="#f8fafc" font-size="30" font-family="sans-serif">공유 가중치와 반복 호출의 다른 비용</text>
+<rect x="54" y="100" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="78" y="148" fill="#5eead4" font-size="27" font-family="sans-serif">direct</text>
+<text x="78" y="194" fill="#f1f5f9" font-size="21" font-family="sans-serif">질문당 1호출, 공개 문맥 입력</text>
+<rect x="614" y="100" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="638" y="148" fill="#5eead4" font-size="27" font-family="sans-serif">refine</text>
+<text x="638" y="194" fill="#f1f5f9" font-size="21" font-family="sans-serif">질문당 3호출, 초안·검토 전달</text>
+<rect x="54" y="280" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="78" y="328" fill="#5eead4" font-size="27" font-family="sans-serif">공유</text>
+<text x="78" y="374" fill="#f1f5f9" font-size="21" font-family="sans-serif">가중치 1개, 순차 실행, CPU</text>
+<rect x="614" y="280" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="638" y="328" fill="#5eead4" font-size="27" font-family="sans-serif">별도</text>
+<text x="638" y="374" fill="#f1f5f9" font-size="21" font-family="sans-serif">로딩·예열 / 현금·RSS 미측정</text>
+<text x="54" y="469" fill="#cbd5e1" font-size="20" font-family="sans-serif">교수 작성 흐름 도식, 논문 성능 수치나 모델 측정 결과 아님</text>
+</svg>

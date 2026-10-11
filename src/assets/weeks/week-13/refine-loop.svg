@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img">
+<title>제공 실험: 같은 CPU 모델, 다른 역할</title>
+<rect width="1200" height="500" fill="#101827" rx="20"/>
+<text x="54" y="64" fill="#f8fafc" font-size="30" font-family="sans-serif">제공 실험: 같은 CPU 모델, 다른 역할</text>
+<rect x="54" y="100" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="78" y="148" fill="#5eead4" font-size="27" font-family="sans-serif">초안 y0</text>
+<text x="78" y="194" fill="#f1f5f9" font-size="21" font-family="sans-serif">M(근거 + 질문 + 생성 지시)</text>
+<rect x="614" y="100" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="638" y="148" fill="#5eead4" font-size="27" font-family="sans-serif">피드백 fb</text>
+<text x="638" y="194" fill="#f1f5f9" font-size="21" font-family="sans-serif">M(근거 + 질문 + 초안 + 검토 지시)</text>
+<rect x="54" y="280" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="78" y="328" fill="#5eead4" font-size="27" font-family="sans-serif">수정 y1</text>
+<text x="78" y="374" fill="#f1f5f9" font-size="21" font-family="sans-serif">M(근거 + 초안 + 피드백 + 수정 지시)</text>
+<rect x="614" y="280" width="532" height="145" rx="12" fill="#1e293b" stroke="#64748b"/>
+<text x="638" y="328" fill="#5eead4" font-size="27" font-family="sans-serif">대조</text>
+<text x="638" y="374" fill="#f1f5f9" font-size="21" font-family="sans-serif">첫 줄 형식 / 토큰 / 생성 구간 시간</text>
+<text x="54" y="469" fill="#cbd5e1" font-size="20" font-family="sans-serif">교수 작성 흐름 도식, 논문 성능 수치나 모델 측정 결과 아님</text>
+</svg>

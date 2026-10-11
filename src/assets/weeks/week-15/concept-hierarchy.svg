@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 390" role="img">
+<title>학기 개념 위계</title>
+<rect width="1200" height="390" rx="18" fill="#f4f1e9"/>
+<text x="48" y="65" font-family="sans-serif" font-size="32" font-weight="700" fill="#182d38">학기 개념 위계</text>
+<rect x="40" y="110" width="260" height="165" rx="12" fill="#dce7e4" stroke="#84928f"/>
+<text x="58" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">1~3주차 기반</text>
+<text x="58" y="210" font-family="sans-serif" font-size="18" fill="#253f49">구조·학습·미세조정</text>
+<path d="M 306 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="330" y="110" width="260" height="165" rx="12" fill="#e8ddca" stroke="#84928f"/>
+<text x="348" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">4~8주차 조건</text>
+<text x="348" y="210" font-family="sans-serif" font-size="18" fill="#253f49">문맥·평가·시험</text>
+<path d="M 596 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="620" y="110" width="260" height="165" rx="12" fill="#dce4ee" stroke="#84928f"/>
+<text x="638" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">9~12주차 경계</text>
+<text x="638" y="210" font-family="sans-serif" font-size="18" fill="#253f49">검색·정렬·과정·책임</text>
+<path d="M 886 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="910" y="110" width="260" height="165" rx="12" fill="#e4dfeb" stroke="#84928f"/>
+<text x="928" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">13~15주차 연결</text>
+<text x="928" y="210" font-family="sans-serif" font-size="18" fill="#253f49">논문·운영·발표</text>
+<text x="48" y="335" font-family="sans-serif" font-size="20" fill="#253f49">8: 중간고사·심화 / 13: 논문 관찰 / 14: 운영 / 15: 발표·회고</text>
+</svg>

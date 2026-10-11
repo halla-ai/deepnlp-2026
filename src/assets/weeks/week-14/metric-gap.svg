@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img">
+<title>같은 실행, 다른 관측값</title>
+<rect width="1200" height="500" fill="#f5f3ed"/>
+<text x="48" y="64" font-family="sans-serif" font-size="30" fill="#183d42">같은 실행, 다른 관측값</text>
+<rect x="40" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="40" y="115" width="270" height="12" fill="#23857c"/>
+<text x="58" y="175" font-family="sans-serif" font-size="25" fill="#183d42">F1 입력 이동</text>
+<text x="58" y="238" font-family="sans-serif" font-size="20" fill="#183d42">이름 지표 실패</text>
+<text x="58" y="295" font-family="sans-serif" font-size="16" fill="#183d42">count 지표 실패</text>
+<rect x="330" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="330" y="115" width="270" height="12" fill="#23857c"/>
+<text x="348" y="175" font-family="sans-serif" font-size="25" fill="#183d42">F2 prompt 변경</text>
+<text x="348" y="238" font-family="sans-serif" font-size="20" fill="#183d42">이름 지표 통과</text>
+<text x="348" y="295" font-family="sans-serif" font-size="16" fill="#183d42">count 누락 → 실패</text>
+<rect x="620" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="620" y="115" width="270" height="12" fill="#23857c"/>
+<text x="638" y="175" font-family="sans-serif" font-size="25" fill="#183d42">F3 model 변경</text>
+<text x="638" y="238" font-family="sans-serif" font-size="20" fill="#183d42">이름 지표 통과</text>
+<text x="638" y="295" font-family="sans-serif" font-size="16" fill="#183d42">count 3 → 실패</text>
+<rect x="910" y="115" width="270" height="275" rx="14" fill="#ffffff" stroke="#aac4bf"/>
+<rect x="910" y="115" width="270" height="12" fill="#23857c"/>
+<text x="928" y="175" font-family="sans-serif" font-size="25" fill="#183d42">라벨 없음</text>
+<text x="928" y="238" font-family="sans-serif" font-size="20" fill="#183d42">정확도 unknown</text>
+<text x="928" y="295" font-family="sans-serif" font-size="16" fill="#183d42">미측정은 0 아님</text>
+<text x="48" y="455" font-family="sans-serif" font-size="18" fill="#496568">교수 작성 규칙형 실험. 실제 LM 성능·현장 멘토 의견 아님.</text></svg>

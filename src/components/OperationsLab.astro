@@ -1,0 +1,45 @@
+---
+// Deterministic authored pipeline fixtures, not language-model measurements.
+---
+<operations-lab class="not-content">
+  <p><strong>수신자와 실패 판정 관찰기</strong></p>
+  <p>교수 작성 규칙형 예시. 같은 출력에 다른 수신 기준을 적용하는 비교</p>
+  <label>실행 사례 <select data-case><option value="F1">F1: 입력 표현 이동</option><option value="F2">F2: 프롬프트 정책 변경</option><option value="F3">F3: 모델 규칙 변경</option></select></label>
+  <label>수신자 <select data-recipient><option value="machine">자동 집계 프로그램</option><option value="reader">공개 정보 독자</option><option value="operator">운영 담당자</option></select></label>
+  <p data-output></p>
+  <p data-verdict aria-live="polite"></p>
+  <p data-metric></p>
+  <p class="limit">멘토 의견이나 실제 이용자 만족도 미측정. 수신 조건은 수업용 상정. 재현 성공은 출력 품질 통과와 별도.</p>
+  <noscript>F1: 판단 보류, count 없음. 자동 집계 기준 실패, 이전 이름 포함 지표도 실패.</noscript>
+</operations-lab>
+<script>
+  class OperationsLab extends HTMLElement {
+    connectedCallback() {
+      const cases = {
+        F1: { text:'판단 보류', count:null, stale:false, replay:true },
+        F2: { text:'제주시, 서귀포시', count:null, stale:true, replay:true },
+        F3: { text:'제주시, 서귀포시, 3곳', count:3, stale:true, replay:true },
+      };
+      const pick = this.querySelector<HTMLSelectElement>('[data-case]')!;
+      const recipient = this.querySelector<HTMLSelectElement>('[data-recipient]')!;
+      const render = () => {
+        const c = cases[pick.value as keyof typeof cases];
+        this.querySelector('[data-output]')!.textContent = `출력: ${c.text}. count: ${c.count ?? '누락'}.`;
+        const verdict = recipient.value === 'machine' ? '실패: 확인된 정수 count=2 필요. 누락·3은 집계 금지.' : recipient.value === 'reader' ? pick.value === 'F2' ? '조건부 검토: 두 이름은 제시됐으나 수를 직접 답하지 않았음. 공개 출처 확인 후 사람이 검토.' : pick.value === 'F1' ? '실패: 문의에 응답 없음. 재문의·확인 안내 필요.' : '실패: 두 이름과 3곳의 모순. 오답 출력 보류 필요.' : '재현 가능: ID·버전·hash·공개 fixture 묶음 존재. 정확도 통과를 뜻하지 않음.';
+        this.querySelector('[data-verdict]')!.textContent = verdict;
+        this.querySelector('[data-metric]')!.textContent = `이전 이름 포함 지표: ${c.stale ? '통과' : '실패'}. 현재 count=2 지표: 실패. 운영 기록 재현: 일치.`;
+      };
+      pick.addEventListener('change', render);
+      recipient.addEventListener('change', render);
+      render();
+    }
+  }
+  if (!customElements.get('operations-lab')) customElements.define('operations-lab', OperationsLab);
+</script>
+<style>
+  operations-lab { display:block; padding:1rem; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; margin:1.5rem 0; }
+  label { display:grid; gap:.4rem; margin-top:1rem; max-width:30rem; }
+  select { width:100%; padding:.5rem; background:var(--sl-color-bg); color:var(--sl-color-text); border:1px solid var(--sl-color-gray-4); }
+  select:focus-visible { outline:2px solid var(--sl-color-accent); outline-offset:2px; }
+  .limit { font-size:.85rem; }
+</style>

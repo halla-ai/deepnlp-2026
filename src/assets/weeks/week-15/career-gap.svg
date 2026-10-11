@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 390" role="img">
+<title>도내 정주 진로 로드맵</title>
+<rect width="1200" height="390" rx="18" fill="#f4f1e9"/>
+<text x="48" y="65" font-family="sans-serif" font-size="32" font-weight="700" fill="#182d38">도내 정주 진로 로드맵</text>
+<rect x="40" y="110" width="260" height="165" rx="12" fill="#dce7e4" stroke="#84928f"/>
+<text x="58" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">현재 증거</text>
+<text x="58" y="210" font-family="sans-serif" font-size="18" fill="#253f49">실행한 것·설명한 것</text>
+<path d="M 306 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="330" y="110" width="260" height="165" rx="12" fill="#e8ddca" stroke="#84928f"/>
+<text x="348" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">상정 서비스 조건</text>
+<text x="348" y="210" font-family="sans-serif" font-size="18" fill="#253f49">갱신·평가·인수인계</text>
+<path d="M 596 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="620" y="110" width="260" height="165" rx="12" fill="#dce4ee" stroke="#84928f"/>
+<text x="638" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">역량 간격</text>
+<text x="638" y="210" font-family="sans-serif" font-size="18" fill="#253f49">아직 미확인인 행동</text>
+<path d="M 886 187 h 16 m -6 -6 l 6 6 l -6 6" stroke="#182d38" stroke-width="3" fill="none"/>
+<rect x="910" y="110" width="260" height="165" rx="12" fill="#e4dfeb" stroke="#84928f"/>
+<text x="928" y="154" font-family="sans-serif" font-size="23" font-weight="700" fill="#182d38">다음 작은 증거</text>
+<text x="928" y="210" font-family="sans-serif" font-size="18" fill="#253f49">비교표·기록·해석</text>
+<text x="48" y="335" font-family="sans-serif" font-size="20" fill="#253f49">작성 교육 예시. 실제 기업의 채용 기준·채용 수요·취업 보장 아님.</text>
+</svg>
