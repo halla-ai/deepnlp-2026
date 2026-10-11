@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img">
-<title>같은 후보, 다른 질문: Hit · Recall · RR</title>
+<title>같은 정답 집합, 다른 검색 순위의 지표 비교</title>
 <rect width="1200" height="640" fill="#f3f5f7"/>
-<text x="40" y="55" font-family="sans-serif" font-size="30" fill="#172b3a">같은 후보, 다른 질문: Hit · Recall · RR</text>
+<text x="40" y="55" font-family="sans-serif" font-size="30" fill="#172b3a">같은 정답 집합, 다른 검색 순위의 지표 비교</text>
 <text x="40" y="88" font-family="sans-serif" font-size="18" fill="#335d6b">교육용 정답 집합과 순위. 실제 제주 실습의 수동 정답 라벨이 아닌 계산 예제</text>
-<text x="40" y="143" font-family="sans-serif" font-size="27" fill="#172b3a">Q1 정답 근거: A와 B</text>
+<text x="40" y="143" font-family="sans-serif" font-size="27" fill="#172b3a">예제 1: Q1 정답 A·B, 검색 순위 C-A-D</text>
 <rect x="40" y="170" width="235" height="100" rx="12" fill="#e4e9ed" stroke="#397b8b" stroke-width="2"/>
 <text x="85" y="230" font-family="sans-serif" font-size="28" fill="#172b3a">1위 C</text>
 <rect x="310" y="170" width="235" height="100" rx="12" fill="#d7eee3" stroke="#397b8b" stroke-width="2"/>
@@ -25,7 +25,8 @@
 <text x="828" y="343" font-family="sans-serif" font-size="23" fill="#172b3a">RR</text>
 <text x="828" y="384" font-family="sans-serif" font-size="29" fill="#172b3a">1/2</text>
 <text x="930" y="384" font-family="sans-serif" font-size="18" fill="#172b3a">첫 정답 A가 2위</text>
-<text x="40" y="483" font-family="sans-serif" font-size="24" fill="#172b3a">순위 전체: 관련성 [1, 0, 1]의 DCG = 1 + 1/2 = 1.5</text>
-<text x="40" y="530" font-family="sans-serif" font-size="24" fill="#172b3a">이상적 순서 [1, 1, 0]: IDCG = 1 + 1/log2(3) = 1.6309</text>
-<text x="40" y="577" font-family="sans-serif" font-size="28" fill="#172b3a">nDCG = 1.5 / 1.6309 = 0.9197</text>
+<text x="828" y="416" font-family="sans-serif" font-size="18" fill="#172b3a">nDCG@3 = 0.3869</text>
+<text x="40" y="483" font-family="sans-serif" font-size="24" fill="#172b3a">예제 2: Q1 검색 순위 A-C-B, 관련성 [1, 0, 1]</text>
+<text x="40" y="530" font-family="sans-serif" font-size="24" fill="#172b3a">DCG = 1.5, 이상적 순서 [1, 1, 0]의 IDCG = 1.6309</text>
+<text x="40" y="577" font-family="sans-serif" font-size="28" fill="#172b3a">Recall = 1, RR = 1, nDCG = 1.5 / 1.6309 = 0.9197</text>
 </svg>

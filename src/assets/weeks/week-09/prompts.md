@@ -17,3 +17,4 @@
   - observed-failure.svg: 고정 판의 단어·문자 실행 로그에 근거한 0후보→D018동물근거→1000m 실패, 실제 출력과 발췌 구분
   - ranking-metrics.svg: 가상 정답 집합의 Hit/Recall/RR와 이진 nDCG 계산, 실습 성능 수치 아님
   - 계산값 확인: 기본 Python 산술, 저장된 week-09-default/char 실행 노트북과 결과 JSON 대조
+- ranking-metrics.svg: 같은 Q1 정답 집합 A·B에 대한 예제 1 C-A-D(nDCG 0.3869)와 예제 2 A-C-B(nDCG 0.9197)를 명시적으로 구분
