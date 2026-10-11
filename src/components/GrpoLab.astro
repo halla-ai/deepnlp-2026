@@ -1,0 +1,65 @@
+---
+// Outcome-supervision arithmetic only; no model training or token attribution.
+---
+<grpo-lab class="not-content">
+  <p><strong>그룹 보상 관찰기</strong>: 학습 없이 제공된 숫자만 비교</p>
+  <div class="controls">
+    <label>보상 예제 <select data-rewards><option value="mixed">혼합 [0, 0, 1, 1]</option><option value="same">동일 [1, 1, 1, 1]</option><option value="one">성공 하나 [0, 0, 0, 1]</option></select></label>
+    <label>표준편차 <select data-std><option value="sample">표본 (G - 1)</option><option value="population">모집단 (G)</option></select></label>
+    <label>응답 D 길이 <select data-length><option value="8">8토큰</option><option value="16">16토큰</option><option value="32">32토큰</option></select></label>
+  </div>
+  <p data-summary aria-live="polite"></p>
+  <div class="table-wrap"><table><caption>보상과 토큰에 전달되는 advantage</caption><thead><tr><th scope="col">응답</th><th scope="col">보상</th><th scope="col">길이</th><th scope="col">각 토큰 advantage</th><th scope="col">응답 평균 집계의 토큰 가중치</th><th scope="col">전체 토큰 집계의 토큰 가중치</th></tr></thead><tbody></tbody></table></div>
+  <p data-note aria-live="polite"></p>
+  <p class="limit">같은 advantage라도 토큰별 확률비와 gradient는 다를 수 있음. 이 표는 인과적 credit assignment나 전체 GRPO/DAPO 구현이 아님.</p>
+  <noscript>기본 예제: [0, 0, 1, 1], 표본 표준편차 0.577350, advantage [-0.866025, -0.866025, 0.866025, 0.866025].</noscript>
+</grpo-lab>
+<script>
+  class GrpoLab extends HTMLElement {
+    connectedCallback() {
+      const rewardsInput = this.querySelector<HTMLSelectElement>('[data-rewards]')!;
+      const stdInput = this.querySelector<HTMLSelectElement>('[data-std]')!;
+      const lengthInput = this.querySelector<HTMLSelectElement>('[data-length]')!;
+      const render = () => {
+        const rewards = rewardsInput.value === 'same' ? [1, 1, 1, 1] : rewardsInput.value === 'one' ? [0, 0, 0, 1] : [0, 0, 1, 1];
+        const lengths = [2, 4, 6, Number(lengthInput.value)];
+        const mean = rewards.reduce((sum, r) => sum + r, 0) / rewards.length;
+        const divisor = stdInput.value === 'sample' ? rewards.length - 1 : rewards.length;
+        const std = Math.sqrt(rewards.reduce((sum, r) => sum + (r - mean) ** 2, 0) / divisor);
+        const total = lengths.reduce((sum, n) => sum + n, 0);
+        this.querySelector('[data-summary]')!.textContent = `평균 ${mean.toFixed(6)}, 표준편차 ${std.toFixed(6)}, 총 ${total}토큰. 분산 0이면 advantage를 0으로 처리.`;
+        const body = this.querySelector('tbody')!;
+        body.replaceChildren();
+        rewards.forEach((reward, i) => {
+          const advantage = std === 0 ? 0 : (reward - mean) / std;
+          const row = document.createElement('tr');
+          [String.fromCharCode(65 + i), String(reward), String(lengths[i]), advantage.toFixed(6), (1 / (4 * lengths[i])).toFixed(6), (1 / total).toFixed(6)].forEach((value, j) => {
+            const cell = document.createElement(j === 0 ? 'th' : 'td');
+            if (j === 0) cell.setAttribute('scope', 'row');
+            cell.textContent = value;
+            row.append(cell);
+          });
+          body.append(row);
+        });
+        this.querySelector('[data-note]')!.textContent = std === 0
+          ? '보상 차이가 없어 그룹 상대 학습 신호가 0. KL 등 별도 항의 효과까지 사라진다는 뜻은 아님.'
+          : 'D의 길이를 바꾸어도 D의 advantage는 동일. 집계 가중치만 변화하며 토큰 원인의 중요도를 새로 추정하지 않음.';
+      };
+      this.querySelectorAll('select').forEach((select) => select.addEventListener('change', render));
+      render();
+    }
+  }
+  if (!customElements.get('grpo-lab')) customElements.define('grpo-lab', GrpoLab);
+</script>
+<style>
+  grpo-lab { display:block; padding:1rem; margin:1.5rem 0; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; }
+  .controls { display:flex; flex-wrap:wrap; gap:1rem; }
+  label { display:grid; gap:.4rem; font-size:.9rem; }
+  select { padding:.4rem; color:var(--sl-color-text); background:var(--sl-color-bg); border:1px solid var(--sl-color-gray-4); border-radius:.3rem; max-width:100%; }
+  select:focus-visible { outline:2px solid var(--sl-color-accent); outline-offset:2px; }
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  th,td { padding:.5rem; text-align:left; border-bottom:1px solid var(--sl-color-gray-5); }
+  caption { text-align:left; margin-bottom:.5rem; }
+  .limit { font-size:.85rem; }
+</style>

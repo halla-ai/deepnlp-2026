@@ -1,0 +1,47 @@
+---
+// 가상의 점수와 문서 ID로 후보 누락과 문맥 절단을 분리하는 교육용 모형.
+---
+<rag-evidence class="not-content">
+  <p><strong>근거 전달 실험</strong>: 점수는 설명용 가상 값, 노트북 실측과 무관.</p>
+  <label>검색 후보 수 k <input class="candidate" type="range" min="1" max="5" value="3" /> <output class="k-value">3</output></label>
+  <label>문맥에 넣을 문서 수 <input class="budget" type="range" min="1" max="5" value="2" /> <output class="b-value">2</output></label>
+  <label><input class="rerank" type="checkbox" /> 질문의 조건과 일치하는 D4를 후보 안에서 우선 배치</label>
+  <ol class="documents"></ol>
+  <p class="verdict" aria-live="polite"></p>
+</rag-evidence>
+<script>
+  class RagEvidence extends HTMLElement {
+    connectedCallback() {
+      const k = this.querySelector<HTMLInputElement>('.candidate')!;
+      const budget = this.querySelector<HTMLInputElement>('.budget')!;
+      const rerank = this.querySelector<HTMLInputElement>('.rerank')!;
+      const render = () => {
+        const count = Number(k.value), cap = Number(budget.value);
+        let ids = ['D1', 'D2', 'D3', 'D4', 'D5'].slice(0, count);
+        if (rerank.checked && ids.includes('D4')) ids = ['D4', ...ids.filter(id => id !== 'D4')];
+        this.querySelector('.k-value')!.textContent = k.value;
+        this.querySelector('.b-value')!.textContent = budget.value;
+        const list = this.querySelector('.documents')!;
+        list.replaceChildren(...ids.map((id, i) => {
+          const li = document.createElement('li');
+          li.textContent = `${id}${id === 'D4' ? ' (정답 근거)' : ' (주제는 비슷하나 조건 불일치)'}: ${i < cap ? '문맥 전달' : '예산 초과로 제외'}`;
+          return li;
+        }));
+        this.querySelector('.verdict')!.textContent = !ids.includes('D4')
+          ? '검색 실패: 근거 D4가 후보에 없음. 재순위로 복구 불가.'
+          : ids.indexOf('D4') >= cap
+            ? '문맥 구성 실패: 후보에는 근거가 있지만 최종 입력에는 없음.'
+            : '근거 전달 성공. 모델이 근거를 올바르게 쓰는지는 별도 답변 평가 필요.';
+      };
+      this.querySelectorAll('input').forEach(input => input.addEventListener('input', render));
+      render();
+    }
+  }
+  if (!customElements.get('rag-evidence')) customElements.define('rag-evidence', RagEvidence);
+</script>
+<style>
+  rag-evidence { display:block; padding:1.2rem; border:1px solid var(--sl-color-gray-5); border-radius:.5rem; margin:1rem 0; }
+  label { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; margin:.6rem 0; }
+  input[type=range] { max-width:100%; accent-color:var(--sl-color-accent); }
+  .verdict { border-top:1px solid var(--sl-color-gray-5); padding-top:.8rem; }
+</style>
