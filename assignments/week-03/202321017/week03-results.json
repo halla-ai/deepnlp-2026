@@ -1,0 +1,84 @@
+{
+  "source": "https://ko.wikipedia.org/w/index.php?oldid=42464087",
+  "revision": 42464087,
+  "license": "CC BY-SA 4.0",
+  "label_type": "keyword proxy",
+  "label_terms": [
+    "기후",
+    "지형",
+    "화산",
+    "해안",
+    "한라산"
+  ],
+  "model": "monologg/koelectra-base-v3-discriminator",
+  "seed": 42,
+  "max_length": 64,
+  "train_chunks": [
+    "P010-T0",
+    "P022-T0",
+    "P037-T156",
+    "P032-T52",
+    "P042-T52",
+    "P000-T104",
+    "P003-T52",
+    "P036-T0"
+  ],
+  "eval_chunks": [
+    "P016-T52",
+    "P026-T104",
+    "P006-T52",
+    "P039-T0"
+  ],
+  "eval_labels": [
+    1,
+    0,
+    0,
+    1
+  ],
+  "baseline": {
+    "rank": 4,
+    "alpha": 8,
+    "steps": 6,
+    "full_model_parameters_count_only": 112922882,
+    "full_model_parameter_bytes_only": 451691528,
+    "trainable_parameters": 739586,
+    "adapter_parameters": 147456,
+    "head_parameters": 592130,
+    "trainable_parameter_bytes": 2958344,
+    "all_parameter_bytes": 454649872,
+    "train_seconds": 2.2418278999975882,
+    "proxy_accuracy_before": 0.5,
+    "proxy_accuracy_after": 0.5,
+    "eval_predictions": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "full_finetuning_training": "미측정",
+    "peak_memory": "미측정"
+  },
+  "changed": {
+    "rank": 8,
+    "alpha": 16,
+    "steps": 6,
+    "full_model_parameters_count_only": 112922882,
+    "full_model_parameter_bytes_only": 451691528,
+    "trainable_parameters": 887042,
+    "adapter_parameters": 294912,
+    "head_parameters": 592130,
+    "trainable_parameter_bytes": 3548168,
+    "all_parameter_bytes": 455239696,
+    "train_seconds": 2.3013311000031536,
+    "proxy_accuracy_before": 0.5,
+    "proxy_accuracy_after": 0.5,
+    "eval_predictions": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "full_finetuning_training": "미측정",
+    "peak_memory": "미측정"
+  }
+}
