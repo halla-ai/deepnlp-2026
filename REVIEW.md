@@ -9,6 +9,7 @@ Course rules live in `AGENTS.md`; this file says how to review against them.
 Run these passes and tag every finding with its pass:
 
 - Bugs: broken pages, figures, or notebook cells; numbers in lecture text that do not match what the notebook or figure actually computes; interactive components whose labels or behavior contradict the text, or whose scripts never run.
+- Error messages: a new or changed error, refusal or failure message a person or agent sees names the cause (what failed and why) and the next step (the command, setting or target that fixes it). When secrets, ids or paths must stay out, it names the cause class and how to check it. A message missing either is a finding; Important when it is the only signal of a blocked action (a CLI exit, a refused tool call), otherwise a nit.
 - Security: secrets, tokens, or student personal data (names, contacts) in the diff. Student folders carry the student ID only.
 - Compliance: the change matches the linked issue, the lecture section/teaching contract, and the notebook and content rules in `AGENTS.md`:
   - a notebook runs top to bottom untouched and follows the week-specific TODO or observation-only contract in AGENTS.md and the linked issue; no student implementation from scratch
