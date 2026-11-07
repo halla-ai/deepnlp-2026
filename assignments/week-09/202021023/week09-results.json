@@ -1,0 +1,294 @@
+{
+  "execution_conditions": {
+    "model": "Qwen/Qwen3-0.6B-Base",
+    "model_revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+    "tokenizer_revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+    "device": "cpu",
+    "dtype": "float32",
+    "torch_threads": 2,
+    "seed": 0,
+    "python": "3.12.13",
+    "machine": "arm64",
+    "torch": "2.15.0",
+    "transformers": "4.57.6",
+    "scikit_learn": "1.9.1",
+    "numpy": "2.5.4",
+    "context_char_limit": 600,
+    "prompt_token_limit": 768,
+    "truncation_side": "right",
+    "generation": {
+      "max_new_tokens": 32,
+      "do_sample": false,
+      "use_cache": true
+    },
+    "generated_at_utc": "2026-10-30T08:42:27.932369+00:00"
+  },
+  "portal_data": {
+    "status": "미수집",
+    "reason": "교수가 확인한 공개 표와 출처 설정 파일 미제공",
+    "source": null,
+    "license": null,
+    "fetched_at_utc": null,
+    "file_sha256": null,
+    "row_count": null,
+    "indexed_rows": null,
+    "columns": null,
+    "queries": null
+  },
+  "source": "https://ko.wikipedia.org/w/index.php?oldid=42464087",
+  "revision": 42464087,
+  "license": "CC BY-SA 4.0",
+  "method_before": "retrieve_word",
+  "method_after": "retrieve_char",
+  "k": 5,
+  "baseline": [
+    {
+      "query": "한라산",
+      "candidate_ids": [
+        "D019",
+        "D018",
+        "D016",
+        "D015",
+        "D038"
+      ],
+      "ranked_ids": [
+        "D019",
+        "D018",
+        "D016",
+        "D015",
+        "D038"
+      ],
+      "evidence_id": "D019",
+      "evidence": "저지대는 아열대성 기후 를 보이나, 한라산 등 고지대는 여름에도 서늘한 편이며 겨울에는 대부분 영하권으로 떨어진다.",
+      "retrieval_score": 0.1825323816109207
+    },
+    {
+      "query": "한라산의 높이",
+      "candidate_ids": [],
+      "ranked_ids": [],
+      "evidence_id": null,
+      "evidence": "",
+      "retrieval_score": 0.0
+    },
+    {
+      "query": "제주도의 기후",
+      "candidate_ids": [
+        "D019",
+        "D036",
+        "D011",
+        "D032",
+        "D004"
+      ],
+      "ranked_ids": [
+        "D019",
+        "D036",
+        "D011",
+        "D032",
+        "D004"
+      ],
+      "evidence_id": "D019",
+      "evidence": "저지대는 아열대성 기후 를 보이나, 한라산 등 고지대는 여름에도 서늘한 편이며 겨울에는 대부분 영하권으로 떨어진다.",
+      "retrieval_score": 0.19008360998584667
+    },
+    {
+      "query": "제주 관광지 오늘 운영 시간",
+      "candidate_ids": [
+        "D047",
+        "D049",
+        "D031",
+        "D000",
+        "D044"
+      ],
+      "ranked_ids": [
+        "D047",
+        "D049",
+        "D031",
+        "D000",
+        "D044"
+      ],
+      "evidence_id": "D047",
+      "evidence": "2007년 6월 27일 제 31차 세계유산위원회의에서 만장일치로 제주 화산섬과 용암동굴 이 세계자연유산에 등재되었다.",
+      "retrieval_score": 0.2074829893891128
+    }
+  ],
+  "changed": [
+    {
+      "query": "한라산",
+      "candidate_ids": [
+        "D016",
+        "D018",
+        "D019",
+        "D010",
+        "D038"
+      ],
+      "ranked_ids": [
+        "D016",
+        "D018",
+        "D019",
+        "D010",
+        "D038"
+      ],
+      "evidence_id": "D016",
+      "evidence": "지형은 한라산을 중심으로 동서사면은 3˚ ~ 5˚의 매우 완만한 경사이며, 남북사면은 5˚정도로 약간 급한 경사를 이루고 있다.",
+      "retrieval_score": 0.12298147435789758
+    },
+    {
+      "query": "한라산의 높이",
+      "candidate_ids": [
+        "D018",
+        "D016",
+        "D019",
+        "D038",
+        "D015"
+      ],
+      "ranked_ids": [
+        "D018",
+        "D016",
+        "D019",
+        "D038",
+        "D015"
+      ],
+      "evidence_id": "D018",
+      "evidence": "동물은 한대성, 열대성 동물이 함께 서식하고 있는데, 77종의 포유류, 조류 198종 등을 비롯하여 파충류, 양서류가 각각 8종, 곤충류와 거미류가 873종과 74종 등이다.",
+      "retrieval_score": 0.09797464859784627
+    },
+    {
+      "query": "제주도의 기후",
+      "candidate_ids": [
+        "D011",
+        "D013",
+        "D019",
+        "D004",
+        "D032"
+      ],
+      "ranked_ids": [
+        "D011",
+        "D013",
+        "D019",
+        "D004",
+        "D032"
+      ],
+      "evidence_id": "D011",
+      "evidence": "조선 사회에서는 제주도의 여인이 바다를 건너는 것을 금지 했었는데, 정조 시대에는 굶주린 제주도 주민들을 구휼한 김만덕 에게 육지 구경을 어명으로 허락한다.",
+      "retrieval_score": 0.0877083923215934
+    },
+    {
+      "query": "제주 관광지 오늘 운영 시간",
+      "candidate_ids": [
+        "D025",
+        "D035",
+        "D023",
+        "D054",
+        "D000"
+      ],
+      "ranked_ids": [
+        "D025",
+        "D023",
+        "D035",
+        "D054",
+        "D000"
+      ],
+      "evidence_id": "D025",
+      "evidence": "그리고 제주특별자치도의 관광산업 활성화를 위해 테러 지원국 등 8개 국가 외국인을 제외한 모든 관광객은 비자 없이 왕래할 수 있으며 외국인 전용 카지노 의 경쟁력을 강화하기 위해 본래 중앙정부 소관인 설립 감독권 및 관광진흥개발기금 운영권한을 가지고 있다.",
+      "retrieval_score": 0.11119113676058294
+    }
+  ],
+  "generated_before": {
+    "status": "생성 생략: 검색 근거 없음",
+    "answer": "검색 근거 없음",
+    "context": "",
+    "actual_input_text": null,
+    "seconds": null,
+    "input_tokens_before_truncation": null,
+    "actual_input_tokens": null,
+    "output_tokens": null,
+    "prompt_truncated": null,
+    "context_char_truncated": null,
+    "prompt_sha256": null,
+    "actual_input_ids_sha256": null
+  },
+  "generated_after": {
+    "status": "생성 완료",
+    "answer": " 1000m\n근거 [D018]: 동물은 한대성, 열대성 동물이 함께 서식하고",
+    "context": "동물은 한대성, 열대성 동물이 함께 서식하고 있는데, 77종의 포유류, 조류 198종 등을 비롯하여 파충류, 양서류가 각각 8종, 곤충류와 거미류가 873종과 74종 등이다.",
+    "actual_input_text": "제공된 근거만 사용해 질문에 짧게 답하세요. 근거에 답이 없으면 '근거 부족'으로 답하세요.\n근거 [D018]: 동물은 한대성, 열대성 동물이 함께 서식하고 있는데, 77종의 포유류, 조류 198종 등을 비롯하여 파충류, 양서류가 각각 8종, 곤충류와 거미류가 873종과 74종 등이다.\n질문: 한라산의 높이\n답변:",
+    "seconds": 3.0149754589947406,
+    "input_tokens_before_truncation": 134,
+    "actual_input_tokens": 134,
+    "output_tokens": 32,
+    "prompt_truncated": false,
+    "context_char_truncated": false,
+    "prompt_sha256": "35d77bb90067c6eae10a7c9a3e53db3358213081239da5691aadb5509a050e1b",
+    "actual_input_ids_sha256": "29298d37cc3a027f10d3f5a744dc426477f4ddbd3d45d701457ef361a1fb46f4"
+  },
+  "generated_climate_before": {
+    "status": "생성 완료",
+    "answer": " 제주도는 아열대성 기후를 보이나, 한라산 등 고지대는 여름에도 서늘한 편이며",
+    "context": "저지대는 아열대성 기후 를 보이나, 한라산 등 고지대는 여름에도 서늘한 편이며 겨울에는 대부분 영하권으로 떨어진다.",
+    "actual_input_text": "제공된 근거만 사용해 질문에 짧게 답하세요. 근거에 답이 없으면 '근거 부족'으로 답하세요.\n근거 [D019]: 저지대는 아열대성 기후 를 보이나, 한라산 등 고지대는 여름에도 서늘한 편이며 겨울에는 대부분 영하권으로 떨어진다.\n질문: 제주도의 기후\n답변:",
+    "seconds": 3.3992175419989508,
+    "input_tokens_before_truncation": 106,
+    "actual_input_tokens": 106,
+    "output_tokens": 32,
+    "prompt_truncated": false,
+    "context_char_truncated": false,
+    "prompt_sha256": "6160f96cddf9f76e1fd6a54100d9c6b53a019ae08281eae016f40d3f220e1559",
+    "actual_input_ids_sha256": "a0a9502994ed9b24a8df135e5944e6a89459c8d70e08df0a614a64a2d8933fb0"
+  },
+  "generated_climate_after": {
+    "status": "생성 완료",
+    "answer": " 제주도의 기후는 서부와 남부의 차이가 크다. 서부는 강수량이 많고, 남부는",
+    "context": "조선 사회에서는 제주도의 여인이 바다를 건너는 것을 금지 했었는데, 정조 시대에는 굶주린 제주도 주민들을 구휼한 김만덕 에게 육지 구경을 어명으로 허락한다.",
+    "actual_input_text": "제공된 근거만 사용해 질문에 짧게 답하세요. 근거에 답이 없으면 '근거 부족'으로 답하세요.\n근거 [D011]: 조선 사회에서는 제주도의 여인이 바다를 건너는 것을 금지 했었는데, 정조 시대에는 굶주린 제주도 주민들을 구휼한 김만덕 에게 육지 구경을 어명으로 허락한다.\n질문: 제주도의 기후\n답변:",
+    "seconds": 3.268642875002115,
+    "input_tokens_before_truncation": 120,
+    "actual_input_tokens": 120,
+    "output_tokens": 32,
+    "prompt_truncated": false,
+    "context_char_truncated": false,
+    "prompt_sha256": "9e5e8e6074ee6f245d5c7e391f464e4af86f83abded8edd02e014f7cc534aae2",
+    "actual_input_ids_sha256": "8981a2a2c7bb77c45d5081fa2aebcf6b3c1c5f3ce7b057e56a603c85085d4f26"
+  },
+  "proxy_hit_before": [
+    true,
+    false,
+    true,
+    null
+  ],
+  "proxy_hit_after": [
+    true,
+    true,
+    true,
+    null
+  ],
+  "human_labels": [
+    {
+      "query": "한라산",
+      "gold_ids": [],
+      "answerable": null,
+      "failure_type": "미판정",
+      "reason": "원문과 전달된 근거를 직접 읽은 뒤 판정"
+    },
+    {
+      "query": "한라산의 높이",
+      "gold_ids": [],
+      "answerable": null,
+      "failure_type": "미판정",
+      "reason": "원문과 전달된 근거를 직접 읽은 뒤 판정"
+    },
+    {
+      "query": "제주도의 기후",
+      "gold_ids": [],
+      "answerable": null,
+      "failure_type": "미판정",
+      "reason": "원문과 전달된 근거를 직접 읽은 뒤 판정"
+    },
+    {
+      "query": "제주 관광지 오늘 운영 시간",
+      "gold_ids": [],
+      "answerable": null,
+      "failure_type": "미판정",
+      "reason": "원문과 전달된 근거를 직접 읽은 뒤 판정"
+    }
+  ]
+}
