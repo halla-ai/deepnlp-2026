@@ -1,0 +1,399 @@
+{
+  "kind": "교수 작성 후보와 상정 점수의 관찰, 실제 ORM/PRM 측정 아님",
+  "execution_conditions": {
+    "python": "3.10.0",
+    "machine": "AMD64",
+    "runtime": "CPU / Python standard library",
+    "algorithm_changes": false
+  },
+  "source_metadata": {
+    "url": "https://ko.wikipedia.org/w/index.php?oldid=42464087",
+    "title": "제주특별자치도",
+    "revision": 42464087,
+    "fetched_at_utc": "2026-11-12T15:02:45.085287+00:00",
+    "response_sha256": "8dd0d492441ff5c8b930eef682110b6736c472a119b0c935f3066462ac15f87f",
+    "attribution": "한국어 위키백과 제주특별자치도 문서와 해당 판의 기여자; 저자·이용 조건은 문서 이력 참조",
+    "license": "CC BY-SA 4.0",
+    "history_url": "https://ko.wikipedia.org/w/index.php?title=제주특별자치도&action=history"
+  },
+  "public_fact": [
+    "서귀포시",
+    "제주시"
+  ],
+  "candidates": [
+    {
+      "id": "A",
+      "steps": [
+        "문서에서 제주시와 서귀포시 명칭 확인",
+        "이름이 다른 지역은 모두 행정시라고 간주",
+        "제주시와 서귀포시라고 답변"
+      ],
+      "answer": [
+        "제주시",
+        "서귀포시"
+      ],
+      "outcome_score": 0.95,
+      "step_scores": [
+        0.9,
+        0.1,
+        0.9
+      ],
+      "process_review": "2단계 범주 추론 오류. 최종 답 일치가 이 추론을 정당화하지 않음",
+      "answer_match": true
+    },
+    {
+      "id": "B",
+      "steps": [
+        "공개 문서의 행정시 범주 확인",
+        "제주시와 서귀포시 두 명칭을 해당 범주와 연결",
+        "제주시와 서귀포시라고 답변"
+      ],
+      "answer": [
+        "제주시",
+        "서귀포시"
+      ],
+      "outcome_score": 0.85,
+      "step_scores": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "process_review": "근거 범주와 명칭, 최종 답이 일치",
+      "answer_match": true
+    },
+    {
+      "id": "C",
+      "steps": [
+        "공개 문서의 행정시 범주 확인",
+        "제주시와 서귀포시 두 명칭 확인",
+        "제주시와 성산읍으로 명칭을 잘못 옮겨 답변"
+      ],
+      "answer": [
+        "제주시",
+        "성산읍"
+      ],
+      "outcome_score": 0.2,
+      "step_scores": [
+        0.95,
+        0.95,
+        0.05
+      ],
+      "process_review": "앞 2단계 타당, 3단계 명칭 전사 오류",
+      "answer_match": false
+    },
+    {
+      "id": "D",
+      "steps": [
+        "공개 문서의 행정시 범주 확인",
+        "제주시와 서귀포시 두 명칭 확인",
+        "제주시와 제주시로 같은 명칭 두 번 답변"
+      ],
+      "answer": [
+        "제주시",
+        "제주시"
+      ],
+      "outcome_score": 0.6,
+      "step_scores": [
+        0.99,
+        0.99,
+        0.5
+      ],
+      "process_review": "앞 2단계 타당, 3단계 중복 결론 오류",
+      "answer_match": false
+    }
+  ],
+  "comparisons": [
+    {
+      "n": 2,
+      "method": "outcome",
+      "winner": "A",
+      "score": 0.95,
+      "answer_match": true,
+      "ranking": [
+        [
+          "A",
+          0.95
+        ],
+        [
+          "B",
+          0.85
+        ]
+      ]
+    },
+    {
+      "n": 2,
+      "method": "mean",
+      "winner": "B",
+      "score": 0.8,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.8
+        ],
+        [
+          "A",
+          0.6333333333333333
+        ]
+      ]
+    },
+    {
+      "n": 2,
+      "method": "min",
+      "winner": "B",
+      "score": 0.8,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.8
+        ],
+        [
+          "A",
+          0.1
+        ]
+      ]
+    },
+    {
+      "n": 2,
+      "method": "product",
+      "winner": "B",
+      "score": 0.5120000000000001,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.5120000000000001
+        ],
+        [
+          "A",
+          0.08100000000000002
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "method": "outcome",
+      "winner": "A",
+      "score": 0.95,
+      "answer_match": true,
+      "ranking": [
+        [
+          "A",
+          0.95
+        ],
+        [
+          "B",
+          0.85
+        ],
+        [
+          "C",
+          0.2
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "method": "mean",
+      "winner": "B",
+      "score": 0.8,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.8
+        ],
+        [
+          "C",
+          0.65
+        ],
+        [
+          "A",
+          0.6333333333333333
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "method": "min",
+      "winner": "B",
+      "score": 0.8,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.8
+        ],
+        [
+          "A",
+          0.1
+        ],
+        [
+          "C",
+          0.05
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "method": "product",
+      "winner": "B",
+      "score": 0.5120000000000001,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.5120000000000001
+        ],
+        [
+          "A",
+          0.08100000000000002
+        ],
+        [
+          "C",
+          0.045125
+        ]
+      ]
+    },
+    {
+      "n": 4,
+      "method": "outcome",
+      "winner": "A",
+      "score": 0.95,
+      "answer_match": true,
+      "ranking": [
+        [
+          "A",
+          0.95
+        ],
+        [
+          "B",
+          0.85
+        ],
+        [
+          "D",
+          0.6
+        ],
+        [
+          "C",
+          0.2
+        ]
+      ]
+    },
+    {
+      "n": 4,
+      "method": "mean",
+      "winner": "D",
+      "score": 0.8266666666666667,
+      "answer_match": false,
+      "ranking": [
+        [
+          "D",
+          0.8266666666666667
+        ],
+        [
+          "B",
+          0.8
+        ],
+        [
+          "C",
+          0.65
+        ],
+        [
+          "A",
+          0.6333333333333333
+        ]
+      ]
+    },
+    {
+      "n": 4,
+      "method": "min",
+      "winner": "B",
+      "score": 0.8,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.8
+        ],
+        [
+          "D",
+          0.5
+        ],
+        [
+          "A",
+          0.1
+        ],
+        [
+          "C",
+          0.05
+        ]
+      ]
+    },
+    {
+      "n": 4,
+      "method": "product",
+      "winner": "B",
+      "score": 0.5120000000000001,
+      "answer_match": true,
+      "ranking": [
+        [
+          "B",
+          0.5120000000000001
+        ],
+        [
+          "D",
+          0.49005
+        ],
+        [
+          "A",
+          0.08100000000000002
+        ],
+        [
+          "C",
+          0.045125
+        ]
+      ]
+    }
+  ],
+  "unreliable_scores": [
+    {
+      "method": "mean",
+      "winner": "D",
+      "score": 0.99,
+      "answer_match": false
+    },
+    {
+      "method": "min",
+      "winner": "D",
+      "score": 0.99,
+      "answer_match": false
+    },
+    {
+      "method": "product",
+      "winner": "D",
+      "score": 0.9702989999999999,
+      "answer_match": false
+    }
+  ],
+  "length_effect": [
+    {
+      "length": 3,
+      "mean": 0.8,
+      "min": 0.8,
+      "product": 0.5120000000000001
+    },
+    {
+      "length": 6,
+      "mean": 0.8,
+      "min": 0.8,
+      "product": 0.2621440000000001
+    }
+  ],
+  "credit_example": {
+    "response_signal": -1.0,
+    "positions": 20,
+    "teacher_error_position": 7
+  },
+  "learning_effect": "미측정: 파라미터 업데이트 없음"
+}
