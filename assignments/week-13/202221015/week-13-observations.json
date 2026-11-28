@@ -1,0 +1,216 @@
+{
+  "kind": "Self-Refine one-cycle structural reproduction, not paper benchmark reproduction",
+  "source_metadata": {
+    "url": "https://ko.wikipedia.org/w/index.php?oldid=42464087",
+    "title": "제주특별자치도",
+    "revision": 42464087,
+    "fetched_at_utc": "2026-11-28T07:54:34.929953+00:00",
+    "response_sha256": "51bbbe23bfae3fdfef15fb0984201fc6d872cd55c6894731e7e571329475575b",
+    "attribution": "한국어 위키백과 제주특별자치도 문서와 해당 판의 기여자; 저자·이용 조건은 문서 이력 참조",
+    "license": "CC BY-SA 4.0",
+    "history_url": "https://ko.wikipedia.org/w/index.php?title=제주특별자치도&action=history",
+    "terms_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use"
+  },
+  "conditions": {
+    "model": "Qwen/Qwen3-0.6B-Base",
+    "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 2,
+    "max_new_tokens": 24,
+    "do_sample": false,
+    "use_model_defaults": false,
+    "seed": 0,
+    "torch": "2.8.0+cpu",
+    "transformers": "4.57.6",
+    "python": "3.10.0",
+    "machine": "AMD64",
+    "load_sec": 4.298014799999919,
+    "parameter_count": 596049920,
+    "weight_bytes": 2384199680
+  },
+  "runs": [
+    {
+      "case_id": "cities",
+      "question": "제주특별자치도의 두 행정시 이름은?",
+      "expected": [
+        "제주시",
+        "서귀포시"
+      ],
+      "stages": [
+        {
+          "stage": "initial",
+          "text": "제주특별자치도의 두 행정시 이름은 제주시와 서귀포시이다.",
+          "input_tokens": 226,
+          "output_tokens": 23,
+          "generate_sec": 4.575529299999971,
+          "prompt_sha256": "85fdcec519b12787c90fb3b282451aa2232c300a7366b8b26930bf0eee595f11"
+        },
+        {
+          "stage": "feedback",
+          "text": "제주특별자치도의 두 행정시 이름은 제주시와 서귀포시이다.\n문서",
+          "input_tokens": 245,
+          "output_tokens": 24,
+          "generate_sec": 4.4855175000000145,
+          "prompt_sha256": "6c85d1315316c48615703477287ef83e925ccd1324cb21ce932c91680c6534a4"
+        },
+        {
+          "stage": "refined",
+          "text": "제주특별자치도의 두 행정시 이름은 제주시와 서귀포시이다.\n문서",
+          "input_tokens": 281,
+          "output_tokens": 24,
+          "generate_sec": 4.780497799999921,
+          "prompt_sha256": "f38a2be2542b56ff0dbca588a6866f8562886926d751f040bc96963aa3c4905d"
+        }
+      ],
+      "direct": {
+        "calls": 1,
+        "input_tokens": 226,
+        "output_tokens": 23,
+        "generate_sec": 4.575529299999971,
+        "format_match": false
+      },
+      "refine": {
+        "calls": 3,
+        "input_tokens": 752,
+        "output_tokens": 71,
+        "generate_sec": 13.841544599999906,
+        "format_match": false
+      }
+    },
+    {
+      "case_id": "count",
+      "question": "제주특별자치도의 행정시 수는?",
+      "expected": [
+        "2"
+      ],
+      "stages": [
+        {
+          "stage": "initial",
+          "text": "2",
+          "input_tokens": 225,
+          "output_tokens": 3,
+          "generate_sec": 1.633210100000042,
+          "prompt_sha256": "6608aa1bc592e34040241c075c7053baa23633a10fda76cee198d2582d94722e"
+        },
+        {
+          "stage": "feedback",
+          "text": "제주특별자치도의 행정시 수는 2개인 제주시와 서귀포시가",
+          "input_tokens": 225,
+          "output_tokens": 24,
+          "generate_sec": 4.3751371000000745,
+          "prompt_sha256": "1b91c70b68b5ff629d377c17e12007b3c8ab8e879658cfdbad51fed41d86b16a"
+        },
+        {
+          "stage": "refined",
+          "text": "제주특별자치도의 행정시 수는 2개인 제주시와 서귀포시가",
+          "input_tokens": 261,
+          "output_tokens": 24,
+          "generate_sec": 4.450753999999961,
+          "prompt_sha256": "c9936e9d2c74b8b7e214ba0b260fde5fc2a884eee0c4545fb0221863b67c5f28"
+        }
+      ],
+      "direct": {
+        "calls": 1,
+        "input_tokens": 225,
+        "output_tokens": 3,
+        "generate_sec": 1.633210100000042,
+        "format_match": true
+      },
+      "refine": {
+        "calls": 3,
+        "input_tokens": 711,
+        "output_tokens": 51,
+        "generate_sec": 10.459101200000077,
+        "format_match": false
+      }
+    },
+    {
+      "case_id": "other",
+      "question": "제주특별자치도에서 제주시 외의 행정시 이름은?",
+      "expected": [
+        "서귀포시"
+      ],
+      "stages": [
+        {
+          "stage": "initial",
+          "text": "제주특별자치도에서 제주시 외의 행정시 이름은 제주특별자치도 제",
+          "input_tokens": 230,
+          "output_tokens": 24,
+          "generate_sec": 4.466800400000011,
+          "prompt_sha256": "adcfde54633a9149cd819c06b781b4f29923f30ed1578aa5249629256ca1d0a8"
+        },
+        {
+          "stage": "feedback",
+          "text": "제주특별자치도에서 제주시 외의 행정시 이름은 제주특별자치도 제",
+          "input_tokens": 252,
+          "output_tokens": 24,
+          "generate_sec": 4.686221499999874,
+          "prompt_sha256": "0b5cbca507d358ffedc666897eb091a7e98a2c4b463d97e8dfd7a8b6f5a34abc"
+        },
+        {
+          "stage": "refined",
+          "text": "제주특별자치도에서 제주시 외의 행정시 이름은 제주특별자치도 제",
+          "input_tokens": 288,
+          "output_tokens": 24,
+          "generate_sec": 4.790374799999881,
+          "prompt_sha256": "54fda115ac09cea719d5308ff660655d48b907c8918863826fca96025d52b9a3"
+        }
+      ],
+      "direct": {
+        "calls": 1,
+        "input_tokens": 230,
+        "output_tokens": 24,
+        "generate_sec": 4.466800400000011,
+        "format_match": false
+      },
+      "refine": {
+        "calls": 3,
+        "input_tokens": 770,
+        "output_tokens": 72,
+        "generate_sec": 13.943396699999766,
+        "format_match": false
+      }
+    }
+  ],
+  "comparison": [
+    {
+      "method": "direct",
+      "calls": 3,
+      "input_tokens": 681,
+      "output_tokens": 50,
+      "generate_sec": 10.675539800000024,
+      "format_matches": 1,
+      "n": 3,
+      "cash_cost": null,
+      "peak_rss": null,
+      "energy": null
+    },
+    {
+      "method": "refine",
+      "calls": 9,
+      "input_tokens": 2233,
+      "output_tokens": 194,
+      "generate_sec": 38.24404249999975,
+      "format_matches": 0,
+      "n": 3,
+      "cash_cost": null,
+      "peak_rss": null,
+      "energy": null
+    }
+  ],
+  "transitions": {
+    "유지 정답": 0,
+    "교정": 0,
+    "퇴행": 1,
+    "유지 실패": 2
+  },
+  "limitations": [
+    "3 factual questions",
+    "base model",
+    "strict first-line format match",
+    "single timing run",
+    "no independent models",
+    "no SAIGE implementation"
+  ]
+}
